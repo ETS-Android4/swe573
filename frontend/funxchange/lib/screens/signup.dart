@@ -30,6 +30,11 @@ class SignUpPage extends StatelessWidget {
                   TextFormField(
                     decoration: const InputDecoration(
                         border: UnderlineInputBorder(),
+                        labelText: 'Enter your bio'),
+                  ),
+                  TextFormField(
+                    decoration: const InputDecoration(
+                        border: UnderlineInputBorder(),
                         labelText: 'Enter your password'),
                   ),
                 ],

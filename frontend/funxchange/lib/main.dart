@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:funxchange/colors.dart';
+import 'package:funxchange/models/event.dart';
 import 'package:funxchange/screens/feed.dart';
 import 'package:funxchange/screens/interests.dart';
+import 'package:funxchange/screens/profile.dart';
 import 'package:funxchange/screens/signup.dart';
 import 'package:funxchange/screens/welcome.dart';
+
+import 'models/user.dart';
 
 void main() {
   runApp(const MyApp());
@@ -33,11 +37,11 @@ class _ContainerPageState extends State<ContainerPage> {
   int _selectedIndex = 0;
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-  static const List<Widget> _widgetOptions = <Widget>[
+  static final List<Widget> _widgetOptions = <Widget>[
     FeedPage(),
-    Text(
-      'Index 1: User',
-      style: optionStyle,
+    ProfilePage(
+      user: User("jmkeenan", "I like to Golf sometimes.", 200, 132,
+          ["Sports", "Painting"]), events: Event.example,
     ),
   ];
 

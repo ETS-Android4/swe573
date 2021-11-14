@@ -16,6 +16,17 @@ class FeedPage extends StatelessWidget {
           child: const Icon(Icons.add),
         ),
         appBar: AppBar(
+          actions: [
+            Padding(
+                padding: const EdgeInsets.only(right: 20.0),
+                child: GestureDetector(
+                  onTap: () {},
+                  child: const Icon(
+                    Icons.filter_alt,
+                    size: 26.0,
+                  ),
+                )),
+          ],
           bottom: const TabBar(
             indicatorColor: FunColor.sunray,
             tabs: [

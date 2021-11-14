@@ -43,6 +43,7 @@ class _ContainerPageState extends State<ContainerPage> {
       user: User("jmkeenan", "I like to Golf sometimes.", 200, 132,
           ["Sports", "Painting"]), events: Event.example,
     ),
+    Container()
   ];
 
   void _onItemTapped(int index) {
@@ -66,6 +67,10 @@ class _ContainerPageState extends State<ContainerPage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
             label: 'User',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.notifications),
+            label: 'Notifications',
           ),
         ],
         currentIndex: _selectedIndex,

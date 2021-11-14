@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:funxchange/colors.dart';
+import 'package:funxchange/screens/signup.dart';
 import 'package:funxchange/screens/welcome.dart';
 
 void main() {
@@ -14,7 +15,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       title: 'Flutter Demo',
-      home: WelcomePage(),
+      home: SignUpPage(),
     );
   }
 }

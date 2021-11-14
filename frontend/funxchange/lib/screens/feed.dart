@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:funxchange/colors.dart';
 import 'package:funxchange/components/feed_tile.dart';
 import 'package:funxchange/models/event.dart';
 
@@ -16,6 +17,7 @@ class FeedPage extends StatelessWidget {
         ),
         appBar: AppBar(
           bottom: const TabBar(
+            indicatorColor: FunColor.sunray,
             tabs: [
               Tab(
                 text: "Everyone",
@@ -41,7 +43,6 @@ class FeedPage extends StatelessWidget {
     final events = Event.example;
     return ListView.builder(
       itemCount: events.length,
-      padding: const EdgeInsets.symmetric(vertical: 16),
       itemBuilder: (context, index) => FeedTile(events[index]),
     );
   }

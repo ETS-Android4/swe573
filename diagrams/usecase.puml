@@ -1,0 +1,37 @@
+@startuml UseCase
+left to right direction
+skinparam packageStyle rectangle
+actor user
+actor event_participant
+user <|-- event_creator
+user <|-- event_participant
+rectangle system {
+    user --> (create profile)
+    user --> (get profile)
+    user --> (update profile)
+    user --> (delete profile)
+    user --> (create event)
+    user --> (get events)
+    user --> (create join request)
+    user --> (delete join request)
+    user --> (get notifications)
+    user --> (get messages)
+    user --> (send message)
+    user --> (get conversations)
+    user --> (add follow)
+    user --> (delete follow)
+    user --> (login)
+    user --> (logout)
+    event_creator --> (approve join request)
+    event_creator --> (update event)
+    event_creator --> (delete event)
+    event_participant --> (unjoin event)
+    event_participant --> (rate participant)
+    event_creator --> (rate participant)
+    event_participant --> (get event participants)
+    event_creator --> (get event participants)
+    event_participant --> (get ratings of event participants)
+    event_creator --> (get ratings of event participants)
+}
+
+@enduml

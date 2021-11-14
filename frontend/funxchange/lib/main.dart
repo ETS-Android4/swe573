@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:funxchange/colors.dart';
+import 'package:funxchange/screens/feed.dart';
 import 'package:funxchange/screens/interests.dart';
 import 'package:funxchange/screens/signup.dart';
 import 'package:funxchange/screens/welcome.dart';
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       title: 'Flutter Demo',
-      home: InterestPickerPage(),
+      home: FeedPage(),
     );
   }
 }

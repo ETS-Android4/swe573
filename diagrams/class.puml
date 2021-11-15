@@ -1,0 +1,84 @@
+@startuml Class
+class User {
+    String id
+    String userName
+    String email
+    String passwordHash
+    String bio
+    LocalDateTime created
+}
+
+enum EventType {
+    MEETUP
+    SERVICE
+}
+
+class Event {
+    String id
+    String ownerId
+    EventType type
+    int capacity
+    String category
+    String title
+    String details
+    double latitude
+    double longitude
+    String cityName
+    String countryName
+    int durationInMinutes
+    LocalDateTime dateTime
+    LocalDateTime created
+}
+
+class Follow {
+    String id
+    String followerId
+    String followedId
+    LocalDateTime created
+}
+
+class Rating {
+    String id
+    String raterId
+    String ratedId
+    String eventId
+    int rating
+    LocalDateTime created
+}
+
+class Message {
+    String id
+    String senderId
+    String receiverId
+    LocalDateTime created
+}
+
+enum NotificationType {
+    SERVICE_JOIN_REQUEST
+    MEETUP_JOIN_REQUEST
+    NEW_FOLLOWER
+}
+
+class Notification {
+    String id
+    NotificationType type
+    String text
+    String deeplink
+    LocalDateTime created
+}
+
+class JoinRequest {
+    String id
+    String eventId
+    String userId
+    LocalDateTime created
+}
+
+class EventParticipant {
+    String id
+    String eventId
+    String userId
+    LocalDateTime created
+}
+
+@enduml

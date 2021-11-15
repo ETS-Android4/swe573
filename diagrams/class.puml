@@ -62,6 +62,7 @@ enum NotificationType {
 class Notification {
     String id
     NotificationType type
+    String receiverId
     String text
     String deeplink
     LocalDateTime created

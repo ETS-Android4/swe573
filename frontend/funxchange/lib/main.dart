@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:funxchange/colors.dart';
 import 'package:funxchange/models/event.dart';
+import 'package:funxchange/models/interest.dart';
 import 'package:funxchange/screens/feed.dart';
 import 'package:funxchange/screens/interests.dart';
 import 'package:funxchange/screens/profile.dart';
@@ -40,8 +41,8 @@ class _ContainerPageState extends State<ContainerPage> {
   static final List<Widget> _widgetOptions = <Widget>[
     FeedPage(),
     ProfilePage(
-      user: User("jmkeenan", "I like to Golf sometimes.", 200, 132,
-          ["Sports", "Painting"]),
+      user: User("thisUser", "jmkeenan", "I like to Golf sometimes.", 200, 132,
+          [Interest.golf, Interest.painting]),
       events: [],
     ),
     Container()

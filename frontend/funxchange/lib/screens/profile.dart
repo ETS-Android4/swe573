@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:funxchange/components/feed_tile.dart';
 import 'package:funxchange/models/event.dart';
+import 'package:funxchange/models/interest.dart';
 import 'package:funxchange/models/user.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -65,7 +66,7 @@ class ProfilePage extends StatelessWidget {
                     (e) => Padding(
                       padding: const EdgeInsets.symmetric(vertical: 4.0),
                       child: Align(
-                          alignment: Alignment.bottomLeft, child: Text(e)),
+                          alignment: Alignment.bottomLeft, child: Text(e.prettyName)),
                     ),
                   )
                   .toList(),

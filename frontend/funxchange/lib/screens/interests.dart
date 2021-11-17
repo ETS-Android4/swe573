@@ -5,17 +5,20 @@ class InterestPickerPage extends StatelessWidget {
 
   static const List<String> items = [
     "Golf",
-    "Computers",
-    "Makeup",
-    "History",
-    "Foreign Languages",
-    "Cars",
-    "Dancing",
-    "Sewing",
-    "Politics",
-    "Cooking",
-    "Video Games",
-    "Partying"
+    "Yoga",
+    "Painting",
+    "Graphic Design"
+    // "Computers",
+    // "Makeup",
+    // "History",
+    // "Foreign Languages",
+    // "Cars",
+    // "Dancing",
+    // "Sewing",
+    // "Politics",
+    // "Cooking",
+    // "Video Games",
+    // "Partying"
   ];
 
   @override

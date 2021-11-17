@@ -15,8 +15,6 @@ import 'models/user.dart';
 
 void main() {
   MockUtils.populateData();
-  print(MockEventDataSource.data.values.take(10).toList());
-  print(MockUserDataSource.data.values.take(10).toList());
   runApp(const MyApp());
 }
 

@@ -8,6 +8,11 @@ class User {
     LocalDateTime created
 }
 
+class UserInterest {
+    String userId
+    String category
+}
+
 enum EventType {
     MEETUP
     SERVICE

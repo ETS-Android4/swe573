@@ -1,25 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:funxchange/models/interest.dart';
 
 class InterestPickerPage extends StatelessWidget {
   const InterestPickerPage({Key? key}) : super(key: key);
-
-  static const List<String> items = [
-    "Golf",
-    "Yoga",
-    "Painting",
-    "Graphic Design"
-    // "Computers",
-    // "Makeup",
-    // "History",
-    // "Foreign Languages",
-    // "Cars",
-    // "Dancing",
-    // "Sewing",
-    // "Politics",
-    // "Cooking",
-    // "Video Games",
-    // "Partying"
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -32,16 +15,16 @@ class InterestPickerPage extends StatelessWidget {
         child: const Icon(Icons.done),
       ),
       body: ListView.builder(
-        itemCount: items.length,
+        itemCount: Interest.values.length,
         padding: const EdgeInsets.symmetric(vertical: 16),
-        itemBuilder: (context, index) => FavoriteItemTile(items[index]),
+        itemBuilder: (context, index) => FavoriteItemTile(Interest.values[index]),
       ),
     );
   }
 }
 
 class FavoriteItemTile extends StatelessWidget {
-  final String item;
+  final Interest item;
 
   const FavoriteItemTile(this.item, {Key? key}) : super(key: key);
 
@@ -55,7 +38,7 @@ class FavoriteItemTile extends StatelessWidget {
               Colors.primaries[item.hashCode % Colors.primaries.length],
         ),
         title: Text(
-          item,
+          item.prettyName,
           key: Key('favorites_text_$item'),
         ),
         trailing: IconButton(

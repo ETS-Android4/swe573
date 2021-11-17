@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:bordered_text/bordered_text.dart';
 import 'package:flutter/material.dart';
-import 'package:funxchange/colors.dart';
+import 'package:funxchange/models/interest.dart';
 import 'package:funxchange/models/event.dart';
 
 class FeedTile extends StatelessWidget {
@@ -40,7 +40,7 @@ class FeedTile extends StatelessWidget {
             BorderedText(
               strokeWidth: 1.0,
               child: Text(
-                item.location,
+                item.cityName,
                 textAlign: TextAlign.right,
                 overflow: TextOverflow.ellipsis,
                 softWrap: true,
@@ -88,7 +88,7 @@ class FeedTile extends StatelessWidget {
                   Colors.black.withOpacity(0.25),
                   BlendMode.srcOver,
                 ),
-                image: AssetImage(item.imagePath),
+                image: AssetImage(item.category.imagePath),
                 fit: BoxFit.cover)));
   }
 }

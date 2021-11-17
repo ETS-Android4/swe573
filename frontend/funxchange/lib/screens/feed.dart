@@ -51,7 +51,7 @@ class FeedPage extends StatelessWidget {
   }
 
   ListView feedPage() {
-    final events = Event.example;
+    final events = [];
     return ListView.builder(
       itemCount: events.length,
       itemBuilder: (context, index) => FeedTile(events[index]),

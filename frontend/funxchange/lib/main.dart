@@ -41,7 +41,8 @@ class _ContainerPageState extends State<ContainerPage> {
     FeedPage(),
     ProfilePage(
       user: User("jmkeenan", "I like to Golf sometimes.", 200, 132,
-          ["Sports", "Painting"]), events: Event.example,
+          ["Sports", "Painting"]),
+      events: [],
     ),
     Container()
   ];

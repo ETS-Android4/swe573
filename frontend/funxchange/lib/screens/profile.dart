@@ -66,7 +66,8 @@ class ProfilePage extends StatelessWidget {
                     (e) => Padding(
                       padding: const EdgeInsets.symmetric(vertical: 4.0),
                       child: Align(
-                          alignment: Alignment.bottomLeft, child: Text(e.prettyName)),
+                          alignment: Alignment.bottomLeft,
+                          child: Text(e.prettyName)),
                     ),
                   )
                   .toList(),
@@ -94,7 +95,7 @@ class ProfilePage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: events
                 .map(
-                  (e) => FeedTile(e),
+                  (e) => Container(),
                 )
                 .toList(),
           ),

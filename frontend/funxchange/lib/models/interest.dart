@@ -1,3 +1,7 @@
+import 'dart:typed_data';
+
+import 'package:flutter/services.dart';
+
 enum Interest {
   golf,
   yoga,
@@ -9,8 +13,8 @@ enum Interest {
   gaming
 }
 
-extension ImagePathExtension on Interest {
-  String get imagePath {
+extension ImageExtension on Interest {
+  String get _imagePath {
     switch (this) {
       case Interest.golf:
         return "assets/golf.jpg";
@@ -29,6 +33,13 @@ extension ImagePathExtension on Interest {
       case Interest.gaming:
         return "assets/gaming.jpg";
     }
+  }
+
+  Future<Uint8List> get imageData {
+    return rootBundle.load(_imagePath).then((value) {
+      var bytes = value.buffer.asUint8List();
+      return bytes;
+    });
   }
 }
 

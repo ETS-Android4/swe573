@@ -3,6 +3,10 @@ enum Interest {
   yoga,
   painting,
   graphicDesign,
+  computers,
+  makeup,
+  cooking,
+  gaming
 }
 
 extension ImagePathExtension on Interest {
@@ -16,6 +20,14 @@ extension ImagePathExtension on Interest {
         return "assets/painting.jpg";
       case Interest.graphicDesign:
         return "assets/graphics.jpg";
+      case Interest.computers:
+        return "assets/computers.jpg";
+      case Interest.makeup:
+        return "assets/makeup.jpg";
+      case Interest.cooking:
+        return "assets/cooking.jpg";
+      case Interest.gaming:
+        return "assets/gaming.jpg";
     }
   }
 }
@@ -31,17 +43,22 @@ extension PrettyNameExtension on Interest {
         return "Painting";
       case Interest.graphicDesign:
         return "Graphic Design";
+      case Interest.computers:
+        return "Computers";
+      case Interest.makeup:
+        return "Makeup";
+      case Interest.cooking:
+        return "Cooking";
+      case Interest.gaming:
+        return "Gaming";
     }
   }
 }
-    // "Computers",
-    // "Makeup",
+    
     // "History",
     // "Foreign Languages",
     // "Cars",
     // "Dancing",
     // "Sewing",
     // "Politics",
-    // "Cooking",
-    // "Video Games",
     // "Partying"

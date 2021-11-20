@@ -29,7 +29,6 @@ class _FeedPageState extends State<FeedPage> {
     _pagingController.addPageRequestListener((pageKey) {
       _fetchPage(pageKey);
     });
-    // TODO: implement initState
     super.initState();
   }
 

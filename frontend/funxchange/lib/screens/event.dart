@@ -1,10 +1,13 @@
 import 'dart:typed_data';
 
+import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:funxchange/components/user_snapshot.dart';
 import 'package:funxchange/framework/colors.dart';
+import 'package:funxchange/framework/di.dart';
 import 'package:funxchange/framework/utils.dart';
 import 'package:funxchange/models/event.dart';
+import 'package:funxchange/screens/user_list.dart';
 
 class EventPage extends StatelessWidget {
   final Event event;
@@ -44,7 +47,7 @@ class EventPage extends StatelessWidget {
                 const SizedBox(height: 6),
                 const Text("Created by: "),
                 const SizedBox(height: 6),
-                UserSnapshot(userId: event.ownerId),
+                UserSnapshot(userFetcher: Left(event.ownerId)),
                 const SizedBox(height: 6),
                 Text(event.cityName + " - " + event.countryName),
                 const SizedBox(height: 6),
@@ -85,7 +88,13 @@ class EventPage extends StatelessWidget {
                 MaterialButton(
                   height: 10,
                   onPressed: () {
-                    // TODO: show participants
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (ctx) => UserListPage(
+                          userFetcher: (limit, offset) => DIContainer
+                              .singleton.eventRepo
+                              .fetchParticipants(event.id, limit, offset),
+                          title: "Participants"),
+                    ));
                   },
                   child: Text(
                     "PARTICIPANTS (" + event.participantCount.toString() + ")",

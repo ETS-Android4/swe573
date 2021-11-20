@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:funxchange/framework/colors.dart';
 import 'package:funxchange/framework/di.dart';
 import 'package:funxchange/models/user.dart';
+import 'package:funxchange/screens/profile.dart';
 
 class UserSnapshot extends StatelessWidget {
   final Either<String, User> userFetcher;
@@ -20,14 +21,14 @@ class UserSnapshot extends StatelessWidget {
             return const CupertinoActivityIndicator();
           }
           var user = ss.requireData;
-          return _actualWidget(user);
+          return _actualWidget(ctx, user);
         },
       ),
-      (user) => _actualWidget(user),
+      (user) => _actualWidget(context, user),
     );
   }
 
-  Widget _actualWidget(User user) {
+  Widget _actualWidget(BuildContext context, User user) {
     var followed = user.isFollowed;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -36,7 +37,12 @@ class UserSnapshot extends StatelessWidget {
         const SizedBox(
           width: 10,
         ),
-        Text(user.userName),
+        GestureDetector(
+            child: Text(user.userName),
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (ctx) => ProfilePage(userId: user.id)));
+            }),
         const SizedBox(
           width: 10,
         ),

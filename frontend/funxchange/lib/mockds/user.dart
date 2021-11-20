@@ -5,6 +5,7 @@ import 'package:funxchange/models/user.dart';
 class MockUserDataSource implements UserDataSource {
   static Map<String, User> data = {};
   static Map<String, List<User>> followerGraph = {};
+  static String currentUserId = "";
 
   @override
   Future<User> fetchUser(String id) {

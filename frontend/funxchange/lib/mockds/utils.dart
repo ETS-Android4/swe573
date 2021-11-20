@@ -36,6 +36,8 @@ class MockUtils {
     MockUserDataSource.data =
         users.asMap().map((key, value) => MapEntry(value.id, value));
 
+    MockUserDataSource.currentUserId = users.first.id;
+
     var events = List.generate(users.length * 6, (index) {
       var type = _randomElem(EventType.values);
       var title = type == EventType.meetup

@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:funxchange/components/user_snapshot.dart';
 import 'package:funxchange/framework/utils.dart';
 import 'package:funxchange/models/event.dart';
 
@@ -69,6 +70,12 @@ class EventPage extends StatelessWidget {
                     ),
                   ],
                 ),
+                const SizedBox(height: 10),
+                Text("Capacity: " + event.capacity.toString() + " people"),
+                const SizedBox(height: 10),
+                const Text("Created by: "),
+                const SizedBox(height: 10),
+                UserSnapshot(userId: event.ownerId),
               ],
             ),
           )

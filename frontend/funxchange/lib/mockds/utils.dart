@@ -75,6 +75,18 @@ class MockUtils {
               value.id,
               _randomElems(users, value.followerCount, (u) => u.id != value.id),
             ));
+
+    MockUserDataSource.data = MockUserDataSource.data.map((key, u) => MapEntry(
+        key,
+        User(
+          u.id,
+          u.userName,
+          u.bio,
+          u.followerCount,
+          getFollowedUsers(u.id).length,
+          u.interests,
+          false,
+        )));
   }
 
   static String _mockBio(Faker faker) {
@@ -100,5 +112,13 @@ class MockUtils {
     var copy = [...list];
     copy.shuffle();
     return copy.first;
+  }
+
+  static List<User> getFollowedUsers(String userId) {
+    List<String> followedUserIds = [];
+    MockUserDataSource.followerGraph.forEach((key, value) {
+      if (value.map((e) => e.id).contains(userId)) followedUserIds.add(key);
+    });
+    return followedUserIds.map((e) => MockUserDataSource.data[e]!).toList();
   }
 }

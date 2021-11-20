@@ -87,7 +87,11 @@ class MockUtils {
           u.followerCount,
           getFollowedUsers(u.id).length,
           u.interests,
-          false,
+          u.id == MockUserDataSource.currentUserId
+              ? null
+              : getFollowedUsers(MockUserDataSource.currentUserId)
+                  .map((e) => e.id)
+                  .contains(u.id),
         )));
   }
 

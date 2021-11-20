@@ -26,7 +26,7 @@ class MockUtils {
         faker.internet.userName(),
         _mockBio(faker),
         random.nextInt(200),
-        random.nextInt(200),
+        0,
         _randomElems(Interest.values,
             random.nextInt(Interest.values.length - 1) + 1, (_) => true),
         false,

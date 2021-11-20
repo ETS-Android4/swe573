@@ -28,8 +28,8 @@ class MockUtils {
         _mockBio(faker),
         random.nextInt(300),
         random.nextInt(300),
-        _randomElems(
-            Interest.values, random.nextInt(Interest.values.length - 1) + 1),
+        _randomElems(Interest.values,
+            random.nextInt(Interest.values.length - 1) + 1, (_) => true),
         false,
       ),
     );
@@ -63,6 +63,13 @@ class MockUtils {
 
     MockEventDataSource.data =
         events.asMap().map((key, value) => MapEntry(value.id, value));
+
+    MockEventDataSource.participantGraph =
+        events.asMap().map((key, value) => MapEntry(
+              value.id,
+              _randomElems(
+                  users, value.participantCount, (u) => u.id != value.ownerId),
+            ));
   }
 
   static String _mockBio(Faker faker) {
@@ -74,10 +81,14 @@ class MockUtils {
         " is my fav of all time!";
   }
 
-  static List<T> _randomElems<T>(List<T> list, int n) {
+  static List<T> _randomElems<T>(
+    List<T> list,
+    int n,
+    bool Function(T) predicate,
+  ) {
     var copy = [...list];
     copy.shuffle();
-    return copy.take(n).toList();
+    return copy.where(predicate).take(n).toList();
   }
 
   static T _randomElem<T>(List<T> list) {

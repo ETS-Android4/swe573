@@ -46,9 +46,7 @@ class _ContainerPageState extends State<ContainerPage> {
   static final List<Widget> _widgetOptions = <Widget>[
     FeedPage(),
     ProfilePage(
-      user: User("thisUser", "jmkeenan", "I like to Golf sometimes.", 200, 132,
-          [Interest.golf, Interest.painting], true),
-      events: [],
+      userId: MockUserDataSource.currentUserId,
     ),
     Container()
   ];

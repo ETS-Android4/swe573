@@ -27,9 +27,17 @@ class EventPage extends StatelessWidget {
       appBar: AppBar(
         title: Text(event.title),
       ),
-      body: Column(
+      body: ListView(
         children: [
-          Image(image: MemoryImage(image), fit: BoxFit.cover),
+          Container(
+            height: MediaQuery.of(context).size.height / 4,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: MemoryImage(image),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(

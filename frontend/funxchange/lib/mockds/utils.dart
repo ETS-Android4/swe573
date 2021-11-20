@@ -29,6 +29,7 @@ class MockUtils {
         random.nextInt(300),
         _randomElems(
             Interest.values, random.nextInt(Interest.values.length - 1) + 1),
+        false,
       ),
     );
 

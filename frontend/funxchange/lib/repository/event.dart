@@ -7,8 +7,8 @@ class EventRepository {
 
   EventRepository(this.dataSource);
 
-  Future<List<Event>> fetchFeed(int limit, int offset) {
-    return dataSource.fetchFeed(limit, offset);
+  Future<List<Event>> fetchFeed(int limit, int offset, bool followed) {
+    return dataSource.fetchFeed(limit, offset, followed);
   }
   
   Future<List<User>> fetchParticipants(String eventId, int limit, int offset) {

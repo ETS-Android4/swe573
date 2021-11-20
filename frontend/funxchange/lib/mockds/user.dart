@@ -11,4 +11,16 @@ class MockUserDataSource implements UserDataSource {
   Future<User> fetchUser(String id) {
     return MockUtils.delayed(() => data[id]!);
   }
+
+  @override
+  Future<List<User>> fetchFollowed(int limit, int offset, String userId) {
+    return MockUtils.delayed(() =>
+        MockUtils.getFollowedUsers(userId).skip(offset).take(limit).toList());
+  }
+
+  @override
+  Future<List<User>> fetchFollowers(int limit, int offset, String userId) {
+    return MockUtils.delayed(
+        () => followerGraph[userId]!.skip(offset).take(limit).toList());
+  }
 }

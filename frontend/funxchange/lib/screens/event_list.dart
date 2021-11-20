@@ -34,7 +34,7 @@ class _EventListState extends State<EventList> {
 
   Future<void> _fetchPage(int pageKey) async {
     try {
-      final newItems = await widget.eventFetcher(_pageSize, pageKey * _pageSize);
+      final newItems = await widget.eventFetcher(_pageSize, pageKey);
       final isLastPage = newItems.length < _pageSize;
       if (isLastPage) {
         _pagingController.appendLastPage(newItems);

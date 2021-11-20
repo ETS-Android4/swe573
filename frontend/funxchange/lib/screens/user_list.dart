@@ -31,7 +31,7 @@ class _UserListPageState extends State<UserListPage> {
 
   Future<void> _fetchPage(int pageKey) async {
     try {
-      final newItems = await widget.userFetcher(_pageSize, pageKey * _pageSize);
+      final newItems = await widget.userFetcher(_pageSize, pageKey);
       final isLastPage = newItems.length < _pageSize;
       if (isLastPage) {
         _pagingController.appendLastPage(newItems);

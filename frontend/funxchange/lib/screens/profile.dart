@@ -7,6 +7,7 @@ import 'package:funxchange/models/event.dart';
 import 'package:funxchange/models/interest.dart';
 import 'package:funxchange/models/user.dart';
 import 'package:funxchange/screens/event_list.dart';
+import 'package:funxchange/screens/user_list.dart';
 
 class ProfilePage extends StatelessWidget {
   final String userId;
@@ -32,25 +33,35 @@ class ProfilePage extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    Column(
-                      children: [
-                        Text(
-                          "Followers",
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(height: 10),
-                        Text(user.followerCount.toString()),
-                      ],
+                    GestureDetector(
+                      child: Column(
+                        children: [
+                          Text(
+                            "Followers",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(height: 10),
+                          Text(user.followerCount.toString()),
+                        ],
+                      ),
+                      onTap: () {
+                        _pushUserListRoute(false, context);
+                      },
                     ),
-                    Column(
-                      children: [
-                        Text(
-                          "Following",
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(height: 10),
-                        Text(user.followedCount.toString()),
-                      ],
+                    GestureDetector(
+                      child: Column(
+                        children: [
+                          Text(
+                            "Following",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(height: 10),
+                          Text(user.followedCount.toString()),
+                        ],
+                      ),
+                      onTap: () {
+                        _pushUserListRoute(true, context);
+                      },
                     ),
                   ],
                 ),
@@ -123,5 +134,19 @@ class ProfilePage extends StatelessWidget {
             ),
           );
         });
+  }
+
+  void _pushUserListRoute(bool followed, BuildContext context) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
+      return UserListPage(
+          userFetcher: (limit, offset) {
+            var repo = DIContainer.singleton.userRepo;
+
+            return followed
+                ? repo.fetchFollowed(limit, offset, userId)
+                : repo.fetchFollowers(limit, offset, userId);
+          },
+          title: followed ? "Followed" : "Followers");
+    }));
   }
 }

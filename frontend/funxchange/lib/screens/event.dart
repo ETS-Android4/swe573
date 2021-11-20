@@ -35,6 +35,8 @@ class EventPage extends StatelessWidget {
                 const SizedBox(height: 10),
                 Text(event.type.prettyString),
                 const SizedBox(height: 10),
+                Text(event.cityName + " - " + event.countryName),
+                const SizedBox(height: 10),
                 Text(event.details),
                 const SizedBox(height: 10),
                 Row(

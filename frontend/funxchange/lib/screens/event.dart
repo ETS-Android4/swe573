@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:funxchange/components/user_snapshot.dart';
+import 'package:funxchange/framework/colors.dart';
 import 'package:funxchange/framework/utils.dart';
 import 'package:funxchange/models/event.dart';
 
@@ -11,6 +12,11 @@ class EventPage extends StatelessWidget {
 
   const EventPage({Key? key, required this.event, required this.image})
       : super(key: key);
+
+  bool _isJoinable() {
+    // TODO: implement
+    return true;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,16 +36,20 @@ class EventPage extends StatelessWidget {
                   event.title,
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 35,
+                    fontSize: 30,
                   ),
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 6),
                 Text(event.type.prettyString),
-                const SizedBox(height: 10),
+                const SizedBox(height: 6),
+                const Text("Created by: "),
+                const SizedBox(height: 6),
+                UserSnapshot(userId: event.ownerId),
+                const SizedBox(height: 6),
                 Text(event.cityName + " - " + event.countryName),
-                const SizedBox(height: 10),
+                const SizedBox(height: 6),
                 Text(event.details),
-                const SizedBox(height: 10),
+                const SizedBox(height: 6),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
@@ -49,7 +59,7 @@ class EventPage extends StatelessWidget {
                           "Starts at",
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
-                        const SizedBox(height: 10),
+                        const SizedBox(height: 6),
                         Text(
                           Utils.formatDateTime(event.dateTime),
                         ),
@@ -61,7 +71,7 @@ class EventPage extends StatelessWidget {
                           "Ends at",
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
-                        const SizedBox(height: 10),
+                        const SizedBox(height: 6),
                         Text(
                           Utils.formatDateTime(event.dateTime
                               .add(Duration(minutes: event.durationInMinutes))),
@@ -70,12 +80,27 @@ class EventPage extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 6),
                 Text("Capacity: " + event.capacity.toString() + " people"),
-                const SizedBox(height: 10),
-                const Text("Created by: "),
-                const SizedBox(height: 10),
-                UserSnapshot(userId: event.ownerId),
+                MaterialButton(
+                  height: 10,
+                  onPressed: () {
+                    // TODO: show participants
+                  },
+                  child: Text(
+                    "PARTICIPANTS (" + event.participantCount.toString() + ")",
+                  ),
+                ),
+                if (_isJoinable())
+                  MaterialButton(
+                    height: 50,
+                    minWidth: MediaQuery.of(context).size.width,
+                    color: FunColor.fulvous,
+                    child: const Text("JOIN EVENT"),
+                    onPressed: () {
+                      // TODO: join event
+                    },
+                  )
               ],
             ),
           )

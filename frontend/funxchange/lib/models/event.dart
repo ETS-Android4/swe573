@@ -5,6 +5,7 @@ class Event {
   final String ownerId;
   final EventType type;
   final int capacity;
+  final int participantCount;
   final Interest category;
   final String title;
   final String details;
@@ -20,6 +21,7 @@ class Event {
       this.ownerId,
       this.type,
       this.capacity,
+      this.participantCount,
       this.category,
       this.title,
       this.details,

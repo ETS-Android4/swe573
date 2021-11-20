@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:isolate';
 import 'dart:math';
 
 import 'package:faker/faker.dart';
@@ -41,11 +42,14 @@ class MockUtils {
       var title = type == EventType.meetup
           ? faker.conference.name()
           : faker.job.title();
+      var totalCapacity = random.nextInt(6) + 1;
+      var participantCount = random.nextInt(totalCapacity);
       return Event(
           uuid.v4(),
           _randomElem(users).id,
           type,
-          random.nextInt(6),
+          totalCapacity,
+          participantCount,
           _randomElem(Interest.values),
           title,
           faker.lorem.sentences(5).join(" "),

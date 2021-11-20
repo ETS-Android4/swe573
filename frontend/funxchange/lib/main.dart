@@ -1,18 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:funxchange/framework/colors.dart';
-import 'package:funxchange/mockds/event.dart';
 import 'package:funxchange/mockds/user.dart';
 import 'package:funxchange/mockds/utils.dart';
-import 'package:funxchange/models/event.dart';
-import 'package:funxchange/models/interest.dart';
 import 'package:funxchange/screens/feed.dart';
-import 'package:funxchange/screens/interests.dart';
 import 'package:funxchange/screens/profile.dart';
-import 'package:funxchange/screens/signup.dart';
-import 'package:funxchange/screens/welcome.dart';
-
-import 'models/user.dart';
 
 void main() {
   MockUtils.populateData();

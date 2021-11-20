@@ -21,13 +21,13 @@ class MockUtils {
     var random = Random();
 
     var users = List.generate(
-      200,
+      300,
       (index) => User(
         uuid.v4(),
         faker.internet.userName(),
         _mockBio(faker),
-        random.nextInt(300),
-        random.nextInt(300),
+        random.nextInt(200),
+        random.nextInt(200),
         _randomElems(Interest.values,
             random.nextInt(Interest.values.length - 1) + 1, (_) => true),
         false,
@@ -69,6 +69,12 @@ class MockUtils {
               value.id,
               _randomElems(
                   users, value.participantCount, (u) => u.id != value.ownerId),
+            ));
+
+    MockUserDataSource.followerGraph =
+        users.asMap().map((key, value) => MapEntry(
+              value.id,
+              _randomElems(users, value.followerCount, (u) => u.id != value.id),
             ));
   }
 

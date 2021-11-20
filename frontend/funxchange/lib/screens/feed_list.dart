@@ -9,15 +9,17 @@ import 'package:funxchange/models/event.dart';
 import 'package:funxchange/models/interest.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
-class FeedListPage extends StatefulWidget {
-  final bool followed;
-  const FeedListPage({Key? key, required this.followed}) : super(key: key);
+class FeedList extends StatefulWidget {
+  final Future<List<Event>> Function(int limit, int offset) eventFetcher;
+  final ScrollPhysics? physics;
+  final bool shrinkWrap;
+  const FeedList({Key? key, required this.eventFetcher, this.physics, this.shrinkWrap = false}) : super(key: key);
 
   @override
-  _FeedListPageState createState() => _FeedListPageState();
+  _FeedListState createState() => _FeedListState();
 }
 
-class _FeedListPageState extends State<FeedListPage> {
+class _FeedListState extends State<FeedList> {
   static const _pageSize = 20;
 
   final PagingController<int, Event> _pagingController =
@@ -33,8 +35,7 @@ class _FeedListPageState extends State<FeedListPage> {
 
   Future<void> _fetchPage(int pageKey) async {
     try {
-      final newItems = await DIContainer.singleton.eventRepo
-          .fetchFeed(_pageSize, pageKey * _pageSize, widget.followed);
+      final newItems = await widget.eventFetcher(_pageSize, pageKey * _pageSize);
       final isLastPage = newItems.length < _pageSize;
       if (isLastPage) {
         _pagingController.appendLastPage(newItems);
@@ -57,6 +58,8 @@ class _FeedListPageState extends State<FeedListPage> {
           }
           return PagedListView<int, Event>(
             pagingController: _pagingController,
+            shrinkWrap: widget.shrinkWrap,
+            physics: widget.physics,
             builderDelegate: PagedChildBuilderDelegate<Event>(
               itemBuilder: (ctx, item, idx) => FeedTile(
                 item,

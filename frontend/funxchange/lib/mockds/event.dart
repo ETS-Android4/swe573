@@ -16,9 +16,9 @@ class MockEventDataSource implements EventDataSource {
             .toList()
         : [];
     return MockUtils.delayed(() => data.values
-        .skip(offset)
         .where((element) =>
             followed ? followedUsers.contains(element.ownerId) : true)
+        .skip(offset)
         .take(limit)
         .toList());
   }
@@ -27,5 +27,14 @@ class MockEventDataSource implements EventDataSource {
   Future<List<User>> fetchParticipants(String eventId, int limit, int offset) {
     return MockUtils.delayed(
         () => participantGraph[eventId]!.skip(offset).take(limit).toList());
+  }
+
+  @override
+  Future<List<Event>> fetchEventsOfUser(int limit, int offset, String userId) {
+    return MockUtils.delayed(() => data.values
+        .where((element) => element.ownerId == userId)
+        .skip(offset)
+        .take(limit)
+        .toList());
   }
 }

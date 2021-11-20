@@ -6,6 +6,7 @@ import 'package:funxchange/framework/di.dart';
 import 'package:funxchange/models/event.dart';
 import 'package:funxchange/models/interest.dart';
 import 'package:funxchange/models/user.dart';
+import 'package:funxchange/screens/feed_list.dart';
 
 class ProfilePage extends StatelessWidget {
   final String userId;
@@ -101,6 +102,23 @@ class ProfilePage extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 12),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+                  child: Align(
+                      alignment: Alignment.bottomLeft,
+                      child: Text(
+                        "Events:",
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold),
+                      )),
+                ),
+                FeedList(
+                    physics: ClampingScrollPhysics(),
+                    shrinkWrap: true,
+                    eventFetcher: (limit, offset) => DIContainer
+                        .singleton.eventRepo
+                        .fetchEventsOfUser(limit, offset, userId)),
               ],
             ),
           );

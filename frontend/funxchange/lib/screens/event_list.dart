@@ -4,22 +4,21 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:funxchange/components/feed_tile.dart';
 import 'package:funxchange/framework/cache.dart';
-import 'package:funxchange/framework/di.dart';
 import 'package:funxchange/models/event.dart';
 import 'package:funxchange/models/interest.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
-class FeedList extends StatefulWidget {
+class EventList extends StatefulWidget {
   final Future<List<Event>> Function(int limit, int offset) eventFetcher;
   final ScrollPhysics? physics;
   final bool shrinkWrap;
-  const FeedList({Key? key, required this.eventFetcher, this.physics, this.shrinkWrap = false}) : super(key: key);
+  const EventList({Key? key, required this.eventFetcher, this.physics, this.shrinkWrap = false}) : super(key: key);
 
   @override
-  _FeedListState createState() => _FeedListState();
+  _EventListState createState() => _EventListState();
 }
 
-class _FeedListState extends State<FeedList> {
+class _EventListState extends State<EventList> {
   static const _pageSize = 20;
 
   final PagingController<int, Event> _pagingController =

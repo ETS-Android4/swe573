@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:funxchange/framework/colors.dart';
 import 'package:funxchange/framework/di.dart';
-import 'package:funxchange/screens/feed_list.dart';
+import 'package:funxchange/screens/event_list.dart';
 
 class FeedPage extends StatelessWidget {
   const FeedPage({Key? key}) : super(key: key);
@@ -43,11 +43,11 @@ class FeedPage extends StatelessWidget {
         ),
         body: TabBarView(
           children: [
-            FeedList(
+            EventList(
               eventFetcher: (limit, offset) => DIContainer.singleton.eventRepo
                   .fetchFeed(limit, offset, false),
             ),
-            FeedList(
+            EventList(
               eventFetcher: (limit, offset) => DIContainer.singleton.eventRepo
                   .fetchFeed(limit, offset, true),
             ),

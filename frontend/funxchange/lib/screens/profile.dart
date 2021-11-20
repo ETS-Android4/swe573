@@ -6,7 +6,7 @@ import 'package:funxchange/framework/di.dart';
 import 'package:funxchange/models/event.dart';
 import 'package:funxchange/models/interest.dart';
 import 'package:funxchange/models/user.dart';
-import 'package:funxchange/screens/feed_list.dart';
+import 'package:funxchange/screens/event_list.dart';
 
 class ProfilePage extends StatelessWidget {
   final String userId;
@@ -113,7 +113,7 @@ class ProfilePage extends StatelessWidget {
                             fontSize: 20, fontWeight: FontWeight.bold),
                       )),
                 ),
-                FeedList(
+                EventList(
                     physics: ClampingScrollPhysics(),
                     shrinkWrap: true,
                     eventFetcher: (limit, offset) => DIContainer

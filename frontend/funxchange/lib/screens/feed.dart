@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:funxchange/colors.dart';
+import 'package:funxchange/framework/colors.dart';
 import 'package:funxchange/components/feed_tile.dart';
 import 'package:funxchange/framework/cache.dart';
 import 'package:funxchange/framework/di.dart';
@@ -88,8 +88,9 @@ class _FeedPageState extends State<FeedPage> {
             FutureBuilder<Map<Interest, Uint8List>>(
                 future: Cache.interestImageMap(),
                 builder: (ctx, imgSnapshot) {
-                  if (!imgSnapshot.hasData)
+                  if (!imgSnapshot.hasData) {
                     return const CupertinoActivityIndicator();
+                  }
                   return PagedListView<int, Event>(
                     pagingController: _pagingController,
                     builderDelegate: PagedChildBuilderDelegate<Event>(

@@ -47,13 +47,13 @@ class MockUtils {
           random.nextInt(6),
           _randomElem(Interest.values),
           title,
-          faker.lorem.sentence(),
+          faker.lorem.sentences(5).join(" "),
           random.nextDouble() * 150,
           random.nextDouble() * 150,
           faker.address.city(),
           faker.address.country(),
           (random.nextInt(12) + 1) * 30,
-          faker.date.dateTime(minYear: 2022));
+          faker.date.dateTime(minYear: 2022, maxYear: 2023));
     });
 
     MockEventDataSource.data =

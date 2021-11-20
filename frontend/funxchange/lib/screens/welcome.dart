@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:funxchange/colors.dart';
+import 'package:funxchange/framework/colors.dart';
 
 class WelcomePage extends StatelessWidget {
   const WelcomePage({Key? key}) : super(key: key);

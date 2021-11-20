@@ -35,3 +35,14 @@ enum EventType {
   meetup,
   service,
 }
+
+extension PrettyString on EventType {
+  String get prettyString {
+    switch (this) {
+      case EventType.meetup:
+        return "MEETUP";
+      case EventType.service:
+        return "SERVICE";
+    }
+  }
+}

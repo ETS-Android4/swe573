@@ -157,7 +157,7 @@ class MockUtils {
     final textBase = '${_generateUserHtml(requestor)} would like to ';
     final cont = event.type == EventType.meetup
         ? 'join your meetup ${_generateEventHtml(event)}.'
-        : 'take your service ${_generateEventHtml(event)}';
+        : 'take your service ${_generateEventHtml(event)}.';
     return Notification(textBase + cont, deeplink);
   }
 

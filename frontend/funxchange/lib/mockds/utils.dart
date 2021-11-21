@@ -6,6 +6,7 @@ import 'package:funxchange/mockds/event.dart';
 import 'package:funxchange/mockds/user.dart';
 import 'package:funxchange/models/event.dart';
 import 'package:funxchange/models/interest.dart';
+import 'package:funxchange/models/notification.dart';
 import 'package:funxchange/models/user.dart';
 import 'package:uuid/uuid.dart';
 
@@ -118,6 +119,46 @@ class MockUtils {
     var copy = [...list];
     copy.shuffle();
     return copy.first;
+  }
+
+  static const String _baseDeeplink = "funxchange://";
+
+  static String _generateUserDeeplink(String userId) {
+    return _baseDeeplink + "users/" + userId;
+  }
+
+  static String _generateEventDeeplink(String eventId) {
+    return _baseDeeplink + "events/" + eventId;
+  }
+
+  static const String _requestsDeeplink = _baseDeeplink + "requests";
+
+  static String _generateUserHtml(User user) {
+    final deeplink = _generateUserDeeplink(user.id);
+    return '<a href="$deeplink">${user.userName}</a>';
+  }
+
+  static String _generateEventHtml(Event event) {
+    final deeplink = _generateEventDeeplink(event.id);
+    return '<a href="$deeplink">${event.title}</a>';
+  }
+
+  static Notification _generateFollowerNotification(User follower) {
+    final deeplink = _generateUserDeeplink(follower.id);
+    final text = '${_generateUserHtml(follower)} has just followed you!';
+    return Notification(text, deeplink);
+  }
+
+  static Notification _generateJoinRequestNotification(
+    User requestor,
+    Event event,
+  ) {
+    const deeplink = _requestsDeeplink;
+    final textBase = '${_generateUserHtml(requestor)} would like to ';
+    final cont = event.type == EventType.meetup
+        ? 'join your meetup ${_generateEventHtml(event)}.'
+        : 'take your service ${_generateEventHtml(event)}';
+    return Notification(textBase + cont, deeplink);
   }
 
   static List<User> getFollowedUsers(String userId) {

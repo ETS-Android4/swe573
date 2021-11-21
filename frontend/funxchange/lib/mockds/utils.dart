@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:faker/faker.dart';
 import 'package:funxchange/mockds/event.dart';
+import 'package:funxchange/mockds/notification.dart';
 import 'package:funxchange/mockds/user.dart';
 import 'package:funxchange/models/event.dart';
 import 'package:funxchange/models/interest.dart';
@@ -94,6 +95,43 @@ class MockUtils {
                   .map((e) => e.id)
                   .contains(u.id),
         )));
+
+    final currentUserEvents = MockEventDataSource.data.values
+        .where((element) => element.ownerId == MockUserDataSource.currentUserId)
+        .toList();
+
+    final joinRequestors = currentUserEvents.asMap().map(
+          (key, value) => MapEntry(
+            value.id,
+            _randomElems<User>(
+              MockUserDataSource.data.values.toList(),
+              random.nextInt(value.capacity),
+              (u) =>
+                  u.id != MockUserDataSource.currentUserId &&
+                  !MockEventDataSource.participantGraph[value.id]!
+                      .map((e) => e.id)
+                      .contains(u.id),
+            ),
+          ),
+        );
+
+    final followNotifs = MockUserDataSource
+        .followerGraph[MockUserDataSource.currentUserId]!
+        .map((e) => _generateFollowerNotification(e))
+        .toList();
+
+    final joinRequestNotifs = joinRequestors.keys.map((eventId) {
+      final requestorUsers = joinRequestors[eventId]!;
+      final currentEvent = MockEventDataSource.data[eventId]!;
+      return requestorUsers
+          .map((u) => _generateJoinRequestNotification(u, currentEvent))
+          .toList();
+    }).fold<List<Notification>>(
+        [], (previousValue, element) => previousValue + element);
+    
+    final allNotifs = (followNotifs + joinRequestNotifs);
+    allNotifs.shuffle();
+    MockNotificationDataSource.data = allNotifs;
   }
 
   static String _mockBio(Faker faker) {

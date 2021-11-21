@@ -3,6 +3,7 @@ import 'package:funxchange/framework/colors.dart';
 import 'package:funxchange/mockds/user.dart';
 import 'package:funxchange/mockds/utils.dart';
 import 'package:funxchange/screens/feed.dart';
+import 'package:funxchange/screens/notification.dart';
 import 'package:funxchange/screens/profile.dart';
 
 void main() {
@@ -35,11 +36,11 @@ class _ContainerPageState extends State<ContainerPage> {
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static final List<Widget> _widgetOptions = <Widget>[
-    FeedPage(),
+    const FeedPage(),
     ProfilePage(
       userId: MockUserDataSource.currentUserId,
     ),
-    Container()
+    const NotificationPage()
   ];
 
   void _onItemTapped(int index) {

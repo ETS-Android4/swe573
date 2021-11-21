@@ -46,20 +46,21 @@ class UserSnapshot extends StatelessWidget {
         const SizedBox(
           width: 10,
         ),
-        if (followed != null)
-          MaterialButton(
-            height: 30,
-            onPressed: () {
-              print("follow user pressed");
-              // TODO: follow user
-            },
-            color: !followed ? FunColor.fulvous : Colors.grey,
-            child: !followed
-                ? const Text(
-                    'FOLLOW',
-                  )
-                : const Text("UNFOLLOW"),
-          )
+        (followed != null)
+            ? MaterialButton(
+                height: 30,
+                onPressed: () {
+                  print("follow user pressed");
+                  // TODO: follow user
+                },
+                color: !followed ? FunColor.fulvous : Colors.grey,
+                child: !followed
+                    ? const Text(
+                        'FOLLOW',
+                      )
+                    : const Text("UNFOLLOW"),
+              )
+            : Container(height: 30)
       ],
     );
   }

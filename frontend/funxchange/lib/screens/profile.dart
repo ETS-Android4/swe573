@@ -1,7 +1,9 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:dartz/dartz.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:funxchange/components/user_snapshot.dart';
 import 'package:funxchange/framework/di.dart';
 import 'package:funxchange/models/interest.dart';
 import 'package:funxchange/models/user.dart';
@@ -27,7 +29,9 @@ class ProfilePage extends StatelessWidget {
                 ? Center(child: const CupertinoActivityIndicator())
                 : ListView(
                     children: [
-                      SizedBox(height: 20),
+                      SizedBox(height: 6),
+                      UserSnapshot(userFetcher: Right(user)),
+                      SizedBox(height: 6),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [

@@ -1,6 +1,6 @@
-class Notification {
+class NotificationModel {
   final String htmlText;
   final String deeplink;
 
-  Notification(this.htmlText, this.deeplink);
+  NotificationModel(this.htmlText, this.deeplink);
 }

@@ -126,7 +126,7 @@ class MockUtils {
       return requestorUsers
           .map((u) => _generateJoinRequestNotification(u, currentEvent))
           .toList();
-    }).fold<List<Notification>>(
+    }).fold<List<NotificationModel>>(
         [], (previousValue, element) => previousValue + element);
     
     final allNotifs = (followNotifs + joinRequestNotifs);
@@ -181,13 +181,13 @@ class MockUtils {
     return '<a href="$deeplink">${event.title}</a>';
   }
 
-  static Notification _generateFollowerNotification(User follower) {
+  static NotificationModel _generateFollowerNotification(User follower) {
     final deeplink = _generateUserDeeplink(follower.id);
     final text = '${_generateUserHtml(follower)} has just followed you!';
-    return Notification(text, deeplink);
+    return NotificationModel(text, deeplink);
   }
 
-  static Notification _generateJoinRequestNotification(
+  static NotificationModel _generateJoinRequestNotification(
     User requestor,
     Event event,
   ) {
@@ -196,7 +196,7 @@ class MockUtils {
     final cont = event.type == EventType.meetup
         ? 'join your meetup ${_generateEventHtml(event)}.'
         : 'take your service ${_generateEventHtml(event)}.';
-    return Notification(textBase + cont, deeplink);
+    return NotificationModel(textBase + cont, deeplink);
   }
 
   static List<User> getFollowedUsers(String userId) {

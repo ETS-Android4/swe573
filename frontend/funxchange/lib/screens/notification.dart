@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:funxchange/framework/colors.dart';
+import 'package:funxchange/screens/notification_list.dart';
 
 class NotificationPage extends StatelessWidget {
   const NotificationPage({Key? key}) : super(key: key);
@@ -42,7 +43,11 @@ class NotificationPage extends StatelessWidget {
           title: const Text('Notifications'),
         ),
         body: TabBarView(
-          children: [Container(), Container(), Container()],
+          children: [
+            const NotificationList(),
+            Container(),
+            Container(),
+          ],
         ),
       ),
     );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:funxchange/components/notification_tile.dart';
 import 'package:funxchange/framework/di.dart';
 import 'package:funxchange/models/notification.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -45,7 +46,8 @@ class _NotificationListState extends State<NotificationList> {
     return PagedListView<int, NotificationModel>(
       pagingController: _pagingController,
       builderDelegate: PagedChildBuilderDelegate<NotificationModel>(
-          itemBuilder: (ctx, item, idx) => Text(item.htmlText)),
+        itemBuilder: (ctx, item, idx) => NotificationTile(model: item),
+      ),
     );
   }
 }

@@ -2,12 +2,15 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:faker/faker.dart';
+import 'package:funxchange/data_source/request.dart';
 import 'package:funxchange/mockds/event.dart';
 import 'package:funxchange/mockds/notification.dart';
+import 'package:funxchange/mockds/request.dart';
 import 'package:funxchange/mockds/user.dart';
 import 'package:funxchange/models/event.dart';
 import 'package:funxchange/models/interest.dart';
 import 'package:funxchange/models/notification.dart';
+import 'package:funxchange/models/request.dart';
 import 'package:funxchange/models/user.dart';
 import 'package:uuid/uuid.dart';
 
@@ -128,7 +131,21 @@ class MockUtils {
           .toList();
     }).fold<List<NotificationModel>>(
         [], (previousValue, element) => previousValue + element);
-    
+
+    final joinRequests = joinRequestors.keys.map((eventId) {
+      final requestorUsers = joinRequestors[eventId]!;
+      final currentEvent = MockEventDataSource.data[eventId]!;
+
+      return requestorUsers
+          .map((e) => _generateJoinRequest(e, currentEvent))
+          .toList();
+    }).fold<List<JoinRequest>>(
+        [], (previousValue, element) => previousValue + element);
+
+    joinRequests.shuffle();
+
+    MockJoinRequestDataSource.data = joinRequests;
+
     final allNotifs = (followNotifs + joinRequestNotifs);
     allNotifs.shuffle();
     MockNotificationDataSource.data = allNotifs;
@@ -185,6 +202,14 @@ class MockUtils {
     final deeplink = _generateUserDeeplink(follower.id);
     final text = '${_generateUserHtml(follower)} has just followed you!';
     return NotificationModel(text, deeplink);
+  }
+
+  static JoinRequest _generateJoinRequest(User requestor, Event event) {
+    final textBase = '${_generateUserHtml(requestor)} would like to ';
+    final cont = event.type == EventType.meetup
+        ? 'join your meetup ${_generateEventHtml(event)}.'
+        : 'take your service ${_generateEventHtml(event)}.';
+    return JoinRequest(event.id, requestor.id, textBase + cont);
   }
 
   static NotificationModel _generateJoinRequestNotification(

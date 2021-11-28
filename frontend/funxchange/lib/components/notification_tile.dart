@@ -12,18 +12,12 @@ class NotificationTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final document = parse(model.htmlText);
-    final span = parseSpans(document);
-    return GestureDetector(
-      child: Padding(
-          padding: const EdgeInsets.all(16.0), child: RichText(text: span)),
-      onTap: () {
-        // TODO: implement deep link
-        print(model.deeplink);
-      },
-    );
+    final span = parseSpans(document, model.deeplink);
+    return Padding(
+        padding: const EdgeInsets.all(16.0), child: RichText(text: span));
   }
 
-  TextSpan parseSpans(dom.Document doc) {
+  TextSpan parseSpans(dom.Document doc, String deeplink) {
     final nodes = doc.body!.nodes;
     final spans = nodes.map((n) {
       final href = n.attributes["href"];
@@ -37,6 +31,8 @@ class NotificationTile extends StatelessWidget {
             if (href != null) {
               // TODO: implement deep link
               print(href);
+            } else {
+              print(deeplink);
             }
           },
       );

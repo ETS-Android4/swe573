@@ -10,10 +10,6 @@ class NotificationPage extends StatelessWidget {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {},
-          child: const Icon(Icons.add),
-        ),
         appBar: AppBar(
           bottom: const TabBar(
             indicatorColor: FunColor.sunray,

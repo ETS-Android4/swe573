@@ -11,9 +11,15 @@ class NotificationTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final document = parse(model.htmlText);
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Text(document.body?.text ?? ""),
+    return GestureDetector(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Text(document.body?.text ?? ""),
+      ),
+      onTap: () {
+        // TODO: implement deep link
+        print(model.deeplink);
+      },
     );
   }
 }

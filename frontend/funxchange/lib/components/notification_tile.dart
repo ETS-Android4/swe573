@@ -14,7 +14,9 @@ class NotificationTile extends StatelessWidget {
     final document = parse(model.htmlText);
     final span = parseSpans(document, model.deeplink);
     return Padding(
-        padding: const EdgeInsets.all(16.0), child: RichText(text: span));
+      child: RichText(text: span),
+      padding: const EdgeInsets.all(16.0),
+    );
   }
 
   TextSpan parseSpans(dom.Document doc, String deeplink) {

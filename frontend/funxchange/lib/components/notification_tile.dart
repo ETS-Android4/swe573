@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:funxchange/models/notification.dart';
+import 'package:html/parser.dart';
 
 class NotificationTile extends StatelessWidget {
 
@@ -9,6 +10,10 @@ class NotificationTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(model.htmlText);
+    final document = parse(model.htmlText);
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Text(document.body?.text ?? ""),
+    );
   }
 }

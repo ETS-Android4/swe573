@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:funxchange/framework/colors.dart';
 import 'package:funxchange/framework/di.dart';
 import 'package:funxchange/screens/event_list.dart';
+import 'package:funxchange/screens/new_evet.dart';
 
 class FeedPage extends StatelessWidget {
   const FeedPage({Key? key}) : super(key: key);
@@ -13,7 +14,11 @@ class FeedPage extends StatelessWidget {
       length: 2,
       child: Scaffold(
         floatingActionButton: FloatingActionButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (ctx) => const NewEventScreen()),
+            );
+          },
           child: const Icon(Icons.add),
         ),
         appBar: AppBar(

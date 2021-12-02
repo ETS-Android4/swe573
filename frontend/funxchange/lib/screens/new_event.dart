@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:funxchange/components/location_picker.dart';
 
 class NewEventScreen extends StatelessWidget {
   const NewEventScreen({Key? key}) : super(key: key);
@@ -9,7 +10,11 @@ class NewEventScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text("New Event"),
       ),
-      body: Container(),
+      body: Column(
+        children: [
+          const LocationPicker(),
+        ],
+      ),
     );
   }
 }

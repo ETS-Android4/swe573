@@ -41,6 +41,7 @@ dependencies:
   intl: ^0.17.0
   dartz: ^0.10.0
   html: ^0.15.0
+  http: ^0.13.4
 
 dev_dependencies:
   flutter_test:

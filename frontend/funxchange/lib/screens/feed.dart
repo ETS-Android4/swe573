@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:funxchange/data_source/geocoding.dart';
+import 'package:funxchange/framework/api/geocoding.dart';
 import 'package:funxchange/framework/colors.dart';
 import 'package:funxchange/framework/di.dart';
 import 'package:funxchange/screens/event_list.dart';
@@ -15,6 +17,10 @@ class FeedPage extends StatelessWidget {
       child: Scaffold(
         floatingActionButton: FloatingActionButton(
           onPressed: () {
+            GeocodingApiDataSource()
+                .reverseGeocode(40.763841, -73.972972)
+                .then((value) => print(value.region))
+                .onError((error, stackTrace) => print(error));
             Navigator.of(context).push(
               MaterialPageRoute(builder: (ctx) => const NewEventScreen()),
             );

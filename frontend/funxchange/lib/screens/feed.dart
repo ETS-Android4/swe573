@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:funxchange/framework/colors.dart';
 import 'package:funxchange/framework/di.dart';
 import 'package:funxchange/screens/event_list.dart';
-import 'package:funxchange/screens/new_evet.dart';
+import 'package:funxchange/screens/new_event.dart';
 
 class FeedPage extends StatelessWidget {
   const FeedPage({Key? key}) : super(key: key);

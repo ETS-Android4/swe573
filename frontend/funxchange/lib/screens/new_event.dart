@@ -110,17 +110,6 @@ class _NewEventScreenState extends State<NewEventScreen> {
                 });
               });
             },
-          ),
-          MaterialButton(
-            onPressed: () {
-              if (_formKey.currentState!.validate()) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Processing Data')),
-                );
-                return;
-              }
-            },
-            child: const Text('Submit'),
           )
         ],
       ),

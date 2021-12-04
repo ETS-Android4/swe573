@@ -239,6 +239,12 @@ class _NewEventScreenState extends State<NewEventScreen> {
   }
 
   bool _validateDates() {
-    return false;
+    if (_endDateTime == null) return false;
+    if (_startDateTime == null) return false;
+    final nowPlusAnHour = DateTime.now().add(const Duration(hours: 1));
+    if (_startDateTime!.isBefore(nowPlusAnHour)) return false;
+    if (_endDateTime!.isBefore(_startDateTime!)) return false;
+
+    return true;
   }
 }

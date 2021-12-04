@@ -31,7 +31,17 @@ class _NewEventScreenState extends State<NewEventScreen> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {
-          if (_formKey.currentState!.validate()) {
+          final formValidation = _formKey.currentState!.validate();
+          final dateValidation = _validateDates();
+
+          if (!dateValidation) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Picked dates must be valid')),
+            );
+            return;
+          }
+
+          if (formValidation) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Processing Data')),
             );
@@ -228,5 +238,9 @@ class _NewEventScreenState extends State<NewEventScreen> {
         ],
       ),
     );
+  }
+
+  bool _validateDates() {
+    return false;
   }
 }

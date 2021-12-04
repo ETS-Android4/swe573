@@ -75,6 +75,10 @@ class _NewEventScreenState extends State<NewEventScreen> {
                       if (value == null || value.isEmpty) {
                         return 'Please enter a title';
                       }
+
+                      if (value.length > 255) {
+                        return 'Title must contain at most 255 characters.';
+                      }
                       return null;
                     },
                     decoration: const InputDecoration(
@@ -89,6 +93,14 @@ class _NewEventScreenState extends State<NewEventScreen> {
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter some details';
+                      }
+
+                      const limit = 255 * 8;
+
+                      if (value.length > limit) {
+                        return 'Title must contain at most ' +
+                            limit.toString() +
+                            ' characters.';
                       }
                       return null;
                     },

@@ -60,6 +60,22 @@ class _NewEventScreenState extends State<NewEventScreen> {
                     ),
                   ),
                 ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                  child: TextFormField(
+                    keyboardType: TextInputType.number,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter participant count';
+                      }
+                      return null;
+                    },
+                    decoration: const InputDecoration(
+                      border: UnderlineInputBorder(),
+                      labelText: 'Enter participant count',
+                    ),
+                  ),
+                ),
               ],
             ),
           ),

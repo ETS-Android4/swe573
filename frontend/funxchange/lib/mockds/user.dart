@@ -23,4 +23,9 @@ class MockUserDataSource implements UserDataSource {
     return MockUtils.delayed(
         () => followerGraph[userId]!.skip(offset).take(limit).toList());
   }
+
+  @override
+  String getCurrentUserId() {
+    return currentUserId;
+  }
 }

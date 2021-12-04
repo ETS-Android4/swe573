@@ -17,4 +17,8 @@ class UserRepository {
   Future<List<User>> fetchFollowed(int limit, int offset, String userId) {
     return dataSource.fetchFollowed(limit, offset, userId);
   }
+
+  String getCurrentUserId() {
+    return dataSource.getCurrentUserId();
+  }
 }

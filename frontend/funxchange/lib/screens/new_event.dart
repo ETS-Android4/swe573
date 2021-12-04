@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:funxchange/components/location_picker.dart';
 import 'package:funxchange/framework/colors.dart';
+import 'package:funxchange/framework/di.dart';
 import 'package:funxchange/framework/utils.dart';
 import 'package:funxchange/models/detailed_location.dart';
 import 'package:funxchange/models/event.dart';
@@ -44,6 +45,7 @@ class _NewEventScreenState extends State<NewEventScreen> {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Please pick a location.')),
             );
+            return;
           }
 
           final duration = _durationInMinutes();
@@ -59,7 +61,7 @@ class _NewEventScreenState extends State<NewEventScreen> {
           if (!formValidation) return;
 
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Adding event...')),
+            const SnackBar(content: Text('Creating event...')),
           );
 
           final model = NewEventParams(
@@ -75,8 +77,22 @@ class _NewEventScreenState extends State<NewEventScreen> {
             duration,
             _startDateTime!,
           );
-          
-          // TODO: send model to repo
+
+          final userId = DIContainer.singleton.userRepo.getCurrentUserId();
+          DIContainer.singleton.eventRepo.createEvent(model, userId).then((_) {
+            final messenger = ScaffoldMessenger.of(context);
+            messenger.hideCurrentSnackBar();
+            messenger.showSnackBar(
+              const SnackBar(content: Text('Created event.')),
+            );
+            Navigator.of(context).pop();
+          }).onError((error, _) {
+            final messenger = ScaffoldMessenger.of(context);
+            messenger.hideCurrentSnackBar();
+            messenger.showSnackBar(
+              SnackBar(content: Text(error.toString())),
+            );
+          });
         },
       ),
       appBar: AppBar(

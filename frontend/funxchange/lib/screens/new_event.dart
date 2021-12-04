@@ -29,7 +29,7 @@ class _NewEventScreenState extends State<NewEventScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
         onPressed: () {
           final formValidation = _formKey.currentState!.validate();
           final dateValidation = _validateDates();

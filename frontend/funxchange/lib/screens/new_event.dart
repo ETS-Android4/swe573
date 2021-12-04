@@ -31,7 +31,11 @@ class _NewEventScreenState extends State<NewEventScreen> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {
-          // TODO: submit
+          if (_formKey.currentState!.validate()) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Processing Data')),
+            );
+          }
         },
       ),
       appBar: AppBar(
@@ -109,7 +113,7 @@ class _NewEventScreenState extends State<NewEventScreen> {
                         return 'Please enter a number.';
                       }
 
-                      if (intVal < 1 && intVal > 12) {
+                      if (intVal < 1 || intVal > 12) {
                         return 'Participant count must be between 1 and 12.';
                       }
 

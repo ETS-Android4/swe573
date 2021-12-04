@@ -28,4 +28,21 @@ class MockUserDataSource implements UserDataSource {
   String getCurrentUserId() {
     return currentUserId;
   }
+
+  @override
+  Future<String> followUser(String userId) {
+    return MockUtils.delayed(() {
+      followerGraph[userId]!.add(data[currentUserId]!);
+      return userId;
+    });
+  }
+
+  @override
+  Future<String> unfollowUser(String userId) {
+    return MockUtils.delayed(() {
+      followerGraph[userId]!
+          .removeWhere((element) => element.id == currentUserId);
+      return userId;
+    });
+  }
 }

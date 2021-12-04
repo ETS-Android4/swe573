@@ -21,4 +21,8 @@ class UserRepository {
   String getCurrentUserId() {
     return dataSource.getCurrentUserId();
   }
+
+  Future<String> followUser(String userId) => dataSource.followUser(userId);
+
+  Future<String> unfollowUser(String userId) => dataSource.unfollowUser(userId);
 }

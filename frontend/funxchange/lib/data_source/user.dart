@@ -5,4 +5,6 @@ abstract class UserDataSource {
   Future<List<User>> fetchFollowed(int limit, int offset, String userId);
   Future<List<User>> fetchFollowers(int limit, int offset, String userId);
   String getCurrentUserId();
+  Future<String> followUser(String userId);
+  Future<String> unfollowUser(String userId);
 }

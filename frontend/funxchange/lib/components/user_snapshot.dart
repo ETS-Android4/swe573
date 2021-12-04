@@ -16,6 +16,8 @@ class UserSnapshot extends StatefulWidget {
 }
 
 class _UserSnapshotState extends State<UserSnapshot> {
+  User? _currentModel;
+
   @override
   Widget build(BuildContext context) {
     return widget.userFetcher.fold(
@@ -25,16 +27,19 @@ class _UserSnapshotState extends State<UserSnapshot> {
           if (!ss.hasData) {
             return const CupertinoActivityIndicator();
           }
-          var user = ss.requireData;
-          return _actualWidget(ctx, user);
+          _currentModel = ss.requireData;
+          return _actualWidget(ctx);
         },
       ),
-      (user) => _actualWidget(context, user),
+      (user) {
+        _currentModel = user;
+        return _actualWidget(context);
+      },
     );
   }
 
-  Widget _actualWidget(BuildContext context, User user) {
-    var followed = user.isFollowed;
+  Widget _actualWidget(BuildContext context) {
+    var followed = _currentModel!.isFollowed;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
@@ -43,10 +48,10 @@ class _UserSnapshotState extends State<UserSnapshot> {
           width: 10,
         ),
         GestureDetector(
-            child: Text(user.userName),
+            child: Text(_currentModel!.userName),
             onTap: () {
               Navigator.of(context).push(MaterialPageRoute(
-                  builder: (ctx) => ProfilePage(userId: user.id)));
+                  builder: (ctx) => ProfilePage(userId: _currentModel!.id)));
             }),
         const SizedBox(
           width: 10,
@@ -55,8 +60,18 @@ class _UserSnapshotState extends State<UserSnapshot> {
             ? MaterialButton(
                 height: 30,
                 onPressed: () {
-                  print("follow user pressed");
-                  // TODO: follow user
+                  setState(() {
+                    if (_currentModel != null) {
+                      if (_currentModel!.isFollowed!) {
+                        DIContainer.singleton.userRepo
+                            .unfollowUser(_currentModel!.id);
+                      } else {
+                        DIContainer.singleton.userRepo
+                            .followUser(_currentModel!.id);
+                      }
+                      _currentModel!.isFollowed = !_currentModel!.isFollowed!;
+                    }
+                  });
                 },
                 color: !followed ? FunColor.fulvous : Colors.grey,
                 child: !followed

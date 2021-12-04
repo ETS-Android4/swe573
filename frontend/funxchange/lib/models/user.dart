@@ -7,7 +7,7 @@ class User {
   final int followerCount;
   final int followedCount;
   final List<Interest> interests;
-  final bool? isFollowed;
+  bool? isFollowed;
 
   User(this.id, this.userName, this.bio, this.followerCount, this.followedCount, this.interests, this.isFollowed);
 }

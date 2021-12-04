@@ -32,9 +32,9 @@ class _NewEventScreenState extends State<NewEventScreen> {
         child: const Icon(Icons.add),
         onPressed: () {
           final formValidation = _formKey.currentState!.validate();
-          final dateValidation = _validateDates();
+          final duration = _durationInMinutes();
 
-          if (!dateValidation) {
+          if (duration == null) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Picked dates must be valid')),
             );
@@ -238,13 +238,13 @@ class _NewEventScreenState extends State<NewEventScreen> {
     );
   }
 
-  bool _validateDates() {
-    if (_endDateTime == null) return false;
-    if (_startDateTime == null) return false;
+  int? _durationInMinutes() {
+    if (_endDateTime == null) return null;
+    if (_startDateTime == null) return null;
     final nowPlusAnHour = DateTime.now().add(const Duration(hours: 1));
-    if (_startDateTime!.isBefore(nowPlusAnHour)) return false;
-    if (_endDateTime!.isBefore(_startDateTime!)) return false;
+    if (_startDateTime!.isBefore(nowPlusAnHour)) return null;
+    if (_endDateTime!.isBefore(_startDateTime!)) return null;
 
-    return true;
+    return _endDateTime!.difference(_startDateTime!).inMinutes;
   }
 }

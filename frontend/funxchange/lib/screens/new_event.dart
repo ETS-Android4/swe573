@@ -104,6 +104,15 @@ class _NewEventScreenState extends State<NewEventScreen> {
                       if (value == null || value.isEmpty) {
                         return 'Please enter participant count';
                       }
+                      int? intVal = int.tryParse(value);
+                      if (intVal == null) {
+                        return 'Please enter a number.';
+                      }
+
+                      if (intVal < 1 && intVal > 12) {
+                        return 'Participant count must be between 1 and 12.';
+                      }
+
                       return null;
                     },
                     decoration: const InputDecoration(

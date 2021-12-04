@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:funxchange/components/location_picker.dart';
 import 'package:funxchange/framework/utils.dart';
+import 'package:funxchange/models/event.dart';
 
 class NewEventScreen extends StatefulWidget {
   const NewEventScreen({Key? key}) : super(key: key);
@@ -16,6 +17,10 @@ class _NewEventScreenState extends State<NewEventScreen> {
   DateTime? _startDateTime;
   DateTime? _endDateTime;
 
+  var isSelected = [true, false];
+
+  EventType _currentEventType = EventType.service;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,6 +33,27 @@ class _NewEventScreenState extends State<NewEventScreen> {
             key: _formKey,
             child: Column(
               children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ToggleButtons(
+                    children: const [
+                      Text("        Service        "),
+                      Text("        Meetup        "),
+                    ],
+                    onPressed: (int index) {
+                      setState(() {
+                        isSelected[0] = !isSelected[0];
+                        isSelected[1] = !isSelected[1];
+                        if (index == 0) {
+                          _currentEventType = EventType.service;
+                        } else {
+                          _currentEventType = EventType.meetup;
+                        }
+                      });
+                    },
+                    isSelected: isSelected,
+                  ),
+                ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24.0),
                   child: TextFormField(

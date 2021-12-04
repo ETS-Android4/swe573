@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:funxchange/framework/colors.dart';
 import 'package:funxchange/framework/di.dart';
+import 'package:funxchange/models/detailed_location.dart';
 import 'package:latlong2/latlong.dart';
 
 class MapPicker extends StatefulWidget {
@@ -63,7 +64,14 @@ class _MapPickerState extends State<MapPicker> {
                 });
                 final location = await DIContainer.singleton.geocodingRepo
                     .reverseGeocode(center.latitude, center.longitude);
-                Navigator.pop(context, location);
+                Navigator.pop(
+                  context,
+                  DetailedLocation(
+                    location,
+                    center.latitude,
+                    center.longitude,
+                  ),
+                );
               })
         ],
       ),

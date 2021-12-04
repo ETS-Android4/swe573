@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:funxchange/framework/di.dart';
+import 'package:funxchange/models/detailed_location.dart';
 import 'package:funxchange/models/location.dart';
 import 'package:funxchange/screens/map_picker.dart';
 import 'package:latlong2/latlong.dart';
 
 class LocationPicker extends StatefulWidget {
-  const LocationPicker({Key? key}) : super(key: key);
+
+  final Function(DetailedLocation) onLocationPicked;
+
+  const LocationPicker({Key? key, required this.onLocationPicked}) : super(key: key);
 
   @override
   _LocationPickerState createState() => _LocationPickerState();
@@ -31,11 +35,12 @@ class _LocationPickerState extends State<LocationPicker> {
         ),
         onPressed: () async {
           final data = await Navigator.of(context).push(
-            MaterialPageRoute(builder: (ctx) => MapPicker()),
-          ) as Location;
+            MaterialPageRoute(builder: (ctx) => const MapPicker()),
+          ) as DetailedLocation;
 
           setState(() {
-            _currentLocation = data;
+            widget.onLocationPicked(data);
+            _currentLocation = data.location;
           });
         },
       ),

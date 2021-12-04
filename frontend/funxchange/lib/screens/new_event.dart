@@ -3,8 +3,10 @@ import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:funxchange/components/location_picker.dart';
 import 'package:funxchange/framework/colors.dart';
 import 'package:funxchange/framework/utils.dart';
+import 'package:funxchange/models/detailed_location.dart';
 import 'package:funxchange/models/event.dart';
 import 'package:funxchange/models/interest.dart';
+import 'package:funxchange/models/new_event.dart';
 
 class NewEventScreen extends StatefulWidget {
   const NewEventScreen({Key? key}) : super(key: key);
@@ -19,11 +21,17 @@ class _NewEventScreenState extends State<NewEventScreen> {
   DateTime? _startDateTime;
   DateTime? _endDateTime;
 
+  DetailedLocation? _currentLocation;
+
   Interest _currentCategory = Interest.golf;
 
   var isSelected = [true, false];
 
   EventType _currentEventType = EventType.service;
+
+  final _titleController = TextEditingController();
+  final _detailController = TextEditingController();
+  final _participantCountController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +39,13 @@ class _NewEventScreenState extends State<NewEventScreen> {
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () {
-          final formValidation = _formKey.currentState!.validate();
+          final location = _currentLocation;
+          if (location == null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Please pick a location.')),
+            );
+          }
+
           final duration = _durationInMinutes();
 
           if (duration == null) {
@@ -41,11 +55,28 @@ class _NewEventScreenState extends State<NewEventScreen> {
             return;
           }
 
-          if (formValidation) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Processing Data')),
-            );
-          }
+          final formValidation = _formKey.currentState!.validate();
+          if (!formValidation) return;
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Adding event...')),
+          );
+
+          final model = NewEventParams(
+            _currentEventType,
+            int.parse(_participantCountController.text),
+            _currentCategory,
+            _titleController.text,
+            _detailController.text,
+            location!.latitude,
+            location.longitude,
+            location.location.region,
+            location.location.country,
+            duration,
+            _startDateTime!,
+          );
+          
+          // TODO: send model to repo
         },
       ),
       appBar: AppBar(
@@ -81,6 +112,7 @@ class _NewEventScreenState extends State<NewEventScreen> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24.0),
                   child: TextFormField(
+                    controller: _titleController,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter a title';
@@ -100,6 +132,7 @@ class _NewEventScreenState extends State<NewEventScreen> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24.0),
                   child: TextFormField(
+                    controller: _detailController,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter some details';
@@ -125,6 +158,7 @@ class _NewEventScreenState extends State<NewEventScreen> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24.0),
                   child: TextFormField(
+                    controller: _participantCountController,
                     keyboardType: TextInputType.number,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -181,7 +215,11 @@ class _NewEventScreenState extends State<NewEventScreen> {
               ),
             ],
           ),
-          const LocationPicker(),
+          LocationPicker(
+            onLocationPicked: (loc) {
+              _currentLocation = loc;
+            },
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [

@@ -70,7 +70,7 @@ class _NewEventScreenState extends State<NewEventScreen> {
             _currentCategory,
             _titleController.text,
             _detailController.text,
-            location!.latitude,
+            location.latitude,
             location.longitude,
             location.location.region,
             location.location.country,

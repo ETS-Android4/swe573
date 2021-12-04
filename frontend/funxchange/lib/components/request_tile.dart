@@ -6,8 +6,15 @@ import 'package:html/parser.dart';
 
 class JoinRequestTile extends StatelessWidget {
   final JoinRequest model;
+  final Function(JoinRequest) onAcceptTapped;
+  final Function(JoinRequest) onRejectTapped;
 
-  const JoinRequestTile({Key? key, required this.model}) : super(key: key);
+  const JoinRequestTile({
+    Key? key,
+    required this.model,
+    required this.onAcceptTapped,
+    required this.onRejectTapped,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -22,16 +29,14 @@ class JoinRequestTile extends StatelessWidget {
             children: [
               MaterialButton(
                 onPressed: () {
-                  // TODO: implement
-                  print("Reject request");
+                  onRejectTapped(model);
                 },
                 color: Colors.grey,
                 child: const Text('REJECT'),
               ),
               MaterialButton(
                 onPressed: () {
-                  // TODO: implement
-                  print("Accept request");
+                  onAcceptTapped(model);
                 },
                 color: FunColor.fulvous,
                 child: const Text('ACCEPT'),

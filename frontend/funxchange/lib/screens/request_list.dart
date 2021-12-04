@@ -48,6 +48,32 @@ class _RequestListState extends State<RequestList> {
       builderDelegate: PagedChildBuilderDelegate<JoinRequest>(
         itemBuilder: (ctx, item, idx) => JoinRequestTile(
           model: item,
+          onAcceptTapped: (m) {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(const SnackBar(content: Text("Accepting...")));
+            DIContainer.singleton.joinRequestRepo
+                .acceptJoinRequest(m)
+                .then((_) {
+              _pagingController.refresh();
+            }).onError((error, _) {
+              final messenger = ScaffoldMessenger.of(context);
+              messenger.removeCurrentSnackBar();
+              messenger.showSnackBar(SnackBar(content: Text(error.toString())));
+            });
+          },
+          onRejectTapped: (m) {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(const SnackBar(content: Text("Rejecting...")));
+            DIContainer.singleton.joinRequestRepo
+                .rejectJoinRequest(m)
+                .then((_) {
+              _pagingController.refresh();
+            }).onError((error, _) {
+              final messenger = ScaffoldMessenger.of(context);
+              messenger.removeCurrentSnackBar();
+              messenger.showSnackBar(SnackBar(content: Text(error.toString())));
+            });
+          },
         ),
       ),
     );

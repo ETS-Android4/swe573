@@ -1,4 +1,4 @@
-import 'package:dartz/dartz.dart';
+import 'package:dartz/dartz.dart' as dz;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:funxchange/framework/colors.dart';
@@ -6,14 +6,19 @@ import 'package:funxchange/framework/di.dart';
 import 'package:funxchange/models/user.dart';
 import 'package:funxchange/screens/profile.dart';
 
-class UserSnapshot extends StatelessWidget {
-  final Either<String, User> userFetcher;
+class UserSnapshot extends StatefulWidget {
+  final dz.Either<String, User> userFetcher;
 
   const UserSnapshot({Key? key, required this.userFetcher}) : super(key: key);
 
   @override
+  State<UserSnapshot> createState() => _UserSnapshotState();
+}
+
+class _UserSnapshotState extends State<UserSnapshot> {
+  @override
   Widget build(BuildContext context) {
-    return userFetcher.fold(
+    return widget.userFetcher.fold(
       (str) => FutureBuilder<User>(
         future: DIContainer.singleton.userRepo.fetchUser(str),
         builder: (ctx, ss) {

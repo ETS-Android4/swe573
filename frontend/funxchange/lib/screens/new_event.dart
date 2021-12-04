@@ -213,8 +213,7 @@ class _NewEventScreenState extends State<NewEventScreen> {
             children: [
               const Text(
                 "End Time: ",
-                style:
-                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               MaterialButton(
                 child: Text(_endDateTime != null

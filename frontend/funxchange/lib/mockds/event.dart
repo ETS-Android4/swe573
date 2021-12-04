@@ -2,7 +2,9 @@ import 'package:funxchange/data_source/event.dart';
 import 'package:funxchange/mockds/user.dart';
 import 'package:funxchange/mockds/utils.dart';
 import 'package:funxchange/models/event.dart';
+import 'package:funxchange/models/new_event.dart';
 import 'package:funxchange/models/user.dart';
+import 'package:uuid/uuid.dart';
 
 class MockEventDataSource implements EventDataSource {
   static Map<String, Event> data = {};
@@ -36,5 +38,30 @@ class MockEventDataSource implements EventDataSource {
         .skip(offset)
         .take(limit)
         .toList());
+  }
+
+  @override
+  Future<Event> createEvent(NewEventParams params, String userId) {
+    const uuid = Uuid();
+    final model = Event(
+      uuid.v4(),
+      userId,
+      params.type,
+      params.capacity,
+      0,
+      params.category,
+      params.title,
+      params.details,
+      params.latitude,
+      params.longitude,
+      params.cityName,
+      params.countryName,
+      params.durationInMinutes,
+      params.dateTime,
+    );
+
+    data[model.id] = model;
+    participantGraph[model.id] = [];
+    return MockUtils.delayed(() => model);
   }
 }

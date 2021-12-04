@@ -1,5 +1,6 @@
 import 'package:funxchange/data_source/event.dart';
 import 'package:funxchange/models/event.dart';
+import 'package:funxchange/models/new_event.dart';
 import 'package:funxchange/models/user.dart';
 
 class EventRepository {
@@ -17,5 +18,9 @@ class EventRepository {
 
   Future<List<Event>> fetchEventsOfUser(int limit, int offset, String userId) {
     return dataSource.fetchEventsOfUser(limit, offset, userId);
+  }
+
+  Future<Event> createEvent(NewEventParams params, String userId) {
+    return dataSource.createEvent(params, userId);
   }
 }

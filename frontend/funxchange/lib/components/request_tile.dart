@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:funxchange/framework/colors.dart';
+import 'package:funxchange/framework/deeplink.dart';
 import 'package:funxchange/framework/utils.dart';
 import 'package:funxchange/models/request.dart';
 import 'package:html/parser.dart';
@@ -19,7 +20,9 @@ class JoinRequestTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final document = parse(model.htmlText);
-    final span = Utils.parseSpans(document, null);
+    final span = Utils.parseSpans(document, null, (deeplink) {
+      DeeplinkNavigator.of(context).navigate(deeplink);
+    });
     return Padding(
       child: Column(
         children: [

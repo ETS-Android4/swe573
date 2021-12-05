@@ -10,7 +10,8 @@ class Utils {
     return format.format(dateTime);
   }
 
-  static TextSpan parseSpans(dom.Document doc, String? deeplink) {
+  static TextSpan parseSpans(
+      dom.Document doc, String? deeplink, Function(String) onDeeplinkTap) {
     final nodes = doc.body!.nodes;
     final spans = nodes.map((n) {
       final href = n.attributes["href"];
@@ -22,10 +23,9 @@ class Utils {
         recognizer: TapGestureRecognizer()
           ..onTap = () {
             if (href != null) {
-              // TODO: implement deep link
-              print(href);
-            } else {
-              print(deeplink);
+              onDeeplinkTap(href);
+            } else if (deeplink != null) {
+              onDeeplinkTap(deeplink);
             }
           },
       );

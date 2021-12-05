@@ -17,7 +17,8 @@ class EventPage extends StatelessWidget {
       : super(key: key);
 
   bool _isJoinable() {
-    return event.ownerId != DIContainer.singleton.userRepo.getCurrentUserId();
+    return event.ownerId != DIContainer.singleton.userRepo.getCurrentUserId() &&
+        event.participantCount < event.capacity;
   }
 
   @override

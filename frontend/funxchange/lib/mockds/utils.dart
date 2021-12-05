@@ -4,11 +4,13 @@ import 'dart:math';
 import 'package:faker/faker.dart';
 import 'package:funxchange/data_source/request.dart';
 import 'package:funxchange/mockds/event.dart';
+import 'package:funxchange/mockds/message.dart';
 import 'package:funxchange/mockds/notification.dart';
 import 'package:funxchange/mockds/request.dart';
 import 'package:funxchange/mockds/user.dart';
 import 'package:funxchange/models/event.dart';
 import 'package:funxchange/models/interest.dart';
+import 'package:funxchange/models/message.dart';
 import 'package:funxchange/models/notification.dart';
 import 'package:funxchange/models/request.dart';
 import 'package:funxchange/models/user.dart';
@@ -149,6 +151,67 @@ class MockUtils {
     final allNotifs = (followNotifs + joinRequestNotifs);
     allNotifs.shuffle();
     MockNotificationDataSource.data = allNotifs;
+
+    MockMessageDataSource.data = generateMockMessages(
+      MockUserDataSource.currentUserId,
+      users,
+      faker,
+    );
+  }
+
+  static List<Message> generateMockMessages(
+    String currentUserId,
+    List<User> users,
+    Faker faker,
+  ) {
+    final luckyUsers =
+        _randomElems<User>(users, 35, (p0) => p0.id != currentUserId)
+            .map((e) => e.id);
+
+    final messages = luckyUsers
+        .map((e) => List.generate(faker.randomGenerator.integer(200) + 1, (_) {
+              final firstIsSender = faker.randomGenerator.boolean();
+              final sender = firstIsSender ? e : currentUserId;
+              final receiver = firstIsSender ? currentUserId : e;
+              return _mockMessage(faker, sender, receiver);
+            }))
+        .fold<List<Message>>(
+            [], (previousValue, element) => previousValue + element);
+
+    messages.sort((a, b) => b.created.compareTo(a.created));
+    return messages;
+  }
+
+  static Message _mockMessage(Faker faker, String senderId, String receiverId) {
+    final body = _mockMessageText(faker);
+    final created = _mockMessageCreationDate(faker);
+    final senderUserName = MockUserDataSource.data[senderId]!.userName;
+    return Message(
+      senderId,
+      receiverId,
+      makeConversationId(senderId, receiverId),
+      senderUserName,
+      body,
+      created,
+    );
+  }
+
+  static DateTime _mockMessageCreationDate(Faker faker) {
+    final maxDate = DateTime.now().subtract(const Duration(hours: 1));
+    final minDate = maxDate.subtract(const Duration(days: 365));
+    final randomMillis = faker.randomGenerator.integer(
+          maxDate.millisecondsSinceEpoch ~/ 1000,
+          min: minDate.millisecondsSinceEpoch ~/ 1000,
+        ) *
+        1000;
+
+    return DateTime.fromMillisecondsSinceEpoch(randomMillis);
+  }
+
+  static String _mockMessageText(Faker faker) {
+    return faker.lorem
+        .sentences(faker.randomGenerator.integer(10, min: 1))
+        .join(" ");
   }
 
   static String _mockBio(Faker faker) {

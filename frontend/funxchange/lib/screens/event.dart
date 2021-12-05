@@ -115,6 +115,25 @@ class EventPage extends StatelessWidget {
                     color: FunColor.fulvous,
                     child: const Text("JOIN EVENT"),
                     onPressed: () {
+                      final messenger = ScaffoldMessenger.of(context);
+                      messenger.showSnackBar(
+                        const SnackBar(
+                            content: Text('Creating join request...')),
+                      );
+                      DIContainer.singleton.joinRequestRepo
+                          .createJoinRequest(event.id,
+                              DIContainer.singleton.userRepo.getCurrentUserId())
+                          .then((value) {
+                        messenger.hideCurrentSnackBar();
+                        messenger.showSnackBar(
+                          const SnackBar(
+                              content: Text('Created join request.')),
+                        );
+                      }).onError((error, _) {
+                        messenger.hideCurrentSnackBar();
+                        messenger.showSnackBar(
+                            SnackBar(content: Text(error.toString())));
+                      });
                       // TODO: join event
                     },
                   )

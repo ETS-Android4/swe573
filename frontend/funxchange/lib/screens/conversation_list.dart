@@ -51,8 +51,12 @@ class _ConversationListState extends State<ConversationList> {
           message: item,
           onTap: (m) {
             Navigator.of(context).push(MaterialPageRoute(
-                builder: (ctx) =>
-                    MessageListPage(conversationId: m.conversationId)));
+                builder: (ctx) => MessageListPage(
+                    conversationId: m.conversationId,
+                    receiverId: m.senderId ==
+                            DIContainer.singleton.userRepo.getCurrentUserId()
+                        ? m.receiverId
+                        : m.senderId)));
           },
         ),
       ),

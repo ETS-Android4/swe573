@@ -16,6 +16,8 @@ class MessageTile extends StatelessWidget {
     return MessageBubble(
         message: message,
         child: Column(
+          crossAxisAlignment:
+              messageIsMine ? CrossAxisAlignment.start : CrossAxisAlignment.end,
           children: [
             Text(message.text),
             const SizedBox(

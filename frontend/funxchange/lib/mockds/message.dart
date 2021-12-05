@@ -45,7 +45,7 @@ class MockMessageDataSource implements MessageDataSource {
       text,
       DateTime.now(),
     );
-    data.add(messageModel);
+    data.insert(0, messageModel);
     return messageModel;
   }
 }

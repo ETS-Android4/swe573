@@ -231,4 +231,8 @@ class MockUtils {
     });
     return followedUserIds.map((e) => MockUserDataSource.data[e]!).toList();
   }
+
+  static String makeConversationId(String senderId, String receiverId) {
+    return ([senderId, receiverId]..sort()).join("");
+  }
 }

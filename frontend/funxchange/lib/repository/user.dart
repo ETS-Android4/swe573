@@ -25,4 +25,7 @@ class UserRepository {
   Future<String> followUser(String userId) => dataSource.followUser(userId);
 
   Future<String> unfollowUser(String userId) => dataSource.unfollowUser(userId);
+
+  Future<User> fetchUserByUserName(String userName) =>
+      dataSource.fetchUserByUserName(userName);
 }

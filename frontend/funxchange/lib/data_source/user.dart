@@ -7,4 +7,5 @@ abstract class UserDataSource {
   String getCurrentUserId();
   Future<String> followUser(String userId);
   Future<String> unfollowUser(String userId);
+  Future<User> fetchUserByUserName(String userName);
 }

@@ -45,4 +45,10 @@ class MockUserDataSource implements UserDataSource {
       return userId;
     });
   }
+
+  @override
+  Future<User> fetchUserByUserName(String userName) {
+    return MockUtils.delayed(() =>
+        data.values.firstWhere((element) => element.userName == userName));
+  }
 }

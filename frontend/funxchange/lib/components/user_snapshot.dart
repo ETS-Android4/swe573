@@ -40,48 +40,102 @@ class _UserSnapshotState extends State<UserSnapshot> {
 
   Widget _actualWidget(BuildContext context) {
     var followed = _currentModel!.isFollowed;
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        const Icon(Icons.person),
-        const SizedBox(
-          width: 10,
-        ),
-        GestureDetector(
-            child: Text(_currentModel!.userName),
-            onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (ctx) => ProfilePage(userId: _currentModel!.id)));
-            }),
-        const SizedBox(
-          width: 10,
-        ),
-        (followed != null)
-            ? MaterialButton(
-                height: 30,
-                onPressed: () {
-                  setState(() {
-                    if (_currentModel != null) {
-                      if (_currentModel!.isFollowed!) {
-                        DIContainer.singleton.userRepo
-                            .unfollowUser(_currentModel!.id);
-                      } else {
-                        DIContainer.singleton.userRepo
-                            .followUser(_currentModel!.id);
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      child: Row(
+        children: [
+          const Icon(Icons.person),
+          const SizedBox(
+            width: 10,
+          ),
+          Expanded(
+            child: GestureDetector(
+                child: Text(_currentModel!.userName),
+                onTap: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (ctx) =>
+                          ProfilePage(userId: _currentModel!.id)));
+                }),
+          ),
+          const SizedBox(
+            width: 10,
+          ),
+          (followed != null)
+              ? GestureDetector(
+                  child: const Icon(Icons.message),
+                  onTap: () {
+                    showDialogWithFields();
+                  },
+                )
+              : Container(height: 30),
+          const SizedBox(
+            width: 10,
+          ),
+          (followed != null)
+              ? MaterialButton(
+                  height: 30,
+                  onPressed: () {
+                    setState(() {
+                      if (_currentModel != null) {
+                        if (_currentModel!.isFollowed!) {
+                          DIContainer.singleton.userRepo
+                              .unfollowUser(_currentModel!.id);
+                        } else {
+                          DIContainer.singleton.userRepo
+                              .followUser(_currentModel!.id);
+                        }
+                        _currentModel!.isFollowed = !_currentModel!.isFollowed!;
                       }
-                      _currentModel!.isFollowed = !_currentModel!.isFollowed!;
-                    }
-                  });
-                },
-                color: !followed ? FunColor.fulvous : Colors.grey,
-                child: !followed
-                    ? const Text(
-                        'FOLLOW',
-                      )
-                    : const Text("UNFOLLOW"),
-              )
-            : Container(height: 30)
-      ],
+                    });
+                  },
+                  color: !followed ? FunColor.fulvous : Colors.grey,
+                  child: !followed
+                      ? const Text(
+                          'FOLLOW',
+                        )
+                      : const Text("UNFOLLOW"),
+                )
+              : Container(height: 30)
+        ],
+      ),
+    );
+  }
+
+  void showDialogWithFields() {
+    showDialog(
+      context: context,
+      builder: (_) {
+        var messageController = TextEditingController();
+        var isSending = false;
+        return AlertDialog(
+          title: const Text('Send A Message'),
+          content: TextFormField(
+            controller: messageController,
+            decoration: const InputDecoration(hintText: 'Message'),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                var text = messageController.text;
+
+                if (text.isEmpty || isSending) return;
+
+                isSending = true;
+
+                DIContainer.singleton.messageRepo
+                    .sendMessage(text, _currentModel!.id);
+
+                Navigator.pop(context);
+              },
+              child: const Text('Send'),
+            ),
+          ],
+        );
+      },
     );
   }
 }

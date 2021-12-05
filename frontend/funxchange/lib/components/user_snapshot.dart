@@ -64,7 +64,7 @@ class _UserSnapshotState extends State<UserSnapshot> {
               ? GestureDetector(
                   child: const Icon(Icons.message),
                   onTap: () {
-                    showDialogWithFields();
+                    showSendMessageDialog();
                   },
                 )
               : Container(height: 30),
@@ -101,7 +101,7 @@ class _UserSnapshotState extends State<UserSnapshot> {
     );
   }
 
-  void showDialogWithFields() {
+  void showSendMessageDialog() {
     showDialog(
       context: context,
       builder: (_) {

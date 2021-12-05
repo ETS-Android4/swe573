@@ -134,7 +134,6 @@ class EventPage extends StatelessWidget {
                         messenger.showSnackBar(
                             SnackBar(content: Text(error.toString())));
                       });
-                      // TODO: join event
                     },
                   )
               ],

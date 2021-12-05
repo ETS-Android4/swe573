@@ -34,12 +34,14 @@ class MockMessageDataSource implements MessageDataSource {
     final userRepo = DIContainer.singleton.userRepo;
     final currentUserId = userRepo.getCurrentUserId();
     final currentUser = await userRepo.fetchUser(currentUserId);
+    final receiverUser = await userRepo.fetchUser(receiverId);
     final convoId = MockUtils.makeConversationId(currentUserId, receiverId);
     final messageModel = Message(
       currentUserId,
       receiverId,
       convoId,
       currentUser.userName,
+      receiverUser.userName,
       text,
       DateTime.now(),
     );

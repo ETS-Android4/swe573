@@ -186,11 +186,13 @@ class MockUtils {
     final body = _mockMessageText(faker);
     final created = _mockMessageCreationDate(faker);
     final senderUserName = MockUserDataSource.data[senderId]!.userName;
+    final receiverUserName = MockUserDataSource.data[receiverId]!.userName;
     return Message(
       senderId,
       receiverId,
       makeConversationId(senderId, receiverId),
       senderUserName,
+      receiverUserName,
       body,
       created,
     );

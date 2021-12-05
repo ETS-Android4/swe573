@@ -3,6 +3,7 @@ class Message {
   final String receiverId;
   final String conversationId;
   final String senderUserName;
+  final String receiverUserName;
   final String text;
   final DateTime created;
 
@@ -11,6 +12,7 @@ class Message {
     this.receiverId,
     this.conversationId,
     this.senderUserName,
+    this.receiverUserName,
     this.text,
     this.created,
   );

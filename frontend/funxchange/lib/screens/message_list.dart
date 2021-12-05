@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:funxchange/components/message_tile.dart';
 import 'package:funxchange/framework/di.dart';
 import 'package:funxchange/models/message.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -50,10 +51,10 @@ class _MessageListPageState extends State<MessageListPage> {
           title: const Text("Chat"),
         ),
         body: PagedListView<int, Message>(
-          pagingController: _pagingController,
-          reverse: true,
-          builderDelegate: PagedChildBuilderDelegate<Message>(
-              itemBuilder: (ctx, item, idx) => Text(item.created.toString())),
-        ));
+            pagingController: _pagingController,
+            reverse: true,
+            builderDelegate: PagedChildBuilderDelegate<Message>(
+              itemBuilder: (ctx, item, idx) => MessageTile(message: item),
+            )));
   }
 }

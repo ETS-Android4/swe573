@@ -46,7 +46,13 @@ class _ConversationListState extends State<ConversationList> {
     return PagedListView<int, Message>(
       pagingController: _pagingController,
       builderDelegate: PagedChildBuilderDelegate<Message>(
-        itemBuilder: (ctx, item, idx) => ConversationTile(message: item),
+        itemBuilder: (ctx, item, idx) => ConversationTile(
+          message: item,
+          onTap: (m) {
+            // TODO: go to conversation detail
+            print(m.text);
+          },
+        ),
       ),
     );
   }

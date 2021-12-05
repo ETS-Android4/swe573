@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:funxchange/components/conversation_tile.dart';
 import 'package:funxchange/framework/di.dart';
 import 'package:funxchange/models/message.dart';
-import 'package:funxchange/screens/message_list.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
-class ConversationList extends StatefulWidget {
-  const ConversationList({Key? key}) : super(key: key);
+class MessageListPage extends StatefulWidget {
+  final String conversationId;
+
+  const MessageListPage({Key? key, required this.conversationId})
+      : super(key: key);
 
   @override
-  _ConversationListState createState() => _ConversationListState();
+  _MessageListPageState createState() => _MessageListPageState();
 }
 
-class _ConversationListState extends State<ConversationList> {
+class _MessageListPageState extends State<MessageListPage> {
   static const _pageSize = 20;
 
   final PagingController<int, Message> _pagingController =
@@ -29,7 +30,7 @@ class _ConversationListState extends State<ConversationList> {
   Future<void> _fetchPage(int pageKey) async {
     try {
       final newItems = await DIContainer.singleton.messageRepo
-          .fetchConversations(_pageSize, pageKey);
+          .fetchMessages(_pageSize, pageKey, widget.conversationId);
       final isLastPage = newItems.length < _pageSize;
       if (isLastPage) {
         _pagingController.appendLastPage(newItems);
@@ -44,18 +45,15 @@ class _ConversationListState extends State<ConversationList> {
 
   @override
   Widget build(BuildContext context) {
-    return PagedListView<int, Message>(
-      pagingController: _pagingController,
-      builderDelegate: PagedChildBuilderDelegate<Message>(
-        itemBuilder: (ctx, item, idx) => ConversationTile(
-          message: item,
-          onTap: (m) {
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (ctx) =>
-                    MessageListPage(conversationId: m.conversationId)));
-          },
+    return Scaffold(
+        appBar: AppBar(
+          title: const Text("Chat"),
         ),
-      ),
-    );
+        body: PagedListView<int, Message>(
+          pagingController: _pagingController,
+          reverse: true,
+          builderDelegate: PagedChildBuilderDelegate<Message>(
+              itemBuilder: (ctx, item, idx) => Text(item.created.toString())),
+        ));
   }
 }

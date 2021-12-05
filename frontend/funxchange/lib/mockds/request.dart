@@ -1,4 +1,5 @@
 import 'package:funxchange/data_source/request.dart';
+import 'package:funxchange/framework/di.dart';
 import 'package:funxchange/mockds/event.dart';
 import 'package:funxchange/mockds/user.dart';
 import 'package:funxchange/mockds/utils.dart';
@@ -32,5 +33,24 @@ class MockJoinRequestDataSource implements JoinRequestDataSource {
           element.eventId == request.eventId);
       return request;
     });
+  }
+
+  @override
+  Future<JoinRequest> createJoinRequest(String eventId, String userId) async {
+    final eventRepo = DIContainer.singleton.eventRepo;
+    final event = await eventRepo.fetchEvent(eventId);
+    if (event.participantCount >= event.capacity) {
+      throw Exception("Event is already full.");
+    }
+
+    final participantList =
+        await eventRepo.fetchParticipants(eventId, event.capacity, 0);
+
+    if (event.ownerId == userId ||
+        participantList.any((element) => element.id == userId)) {
+      throw Exception("You have already joined.");
+    }
+
+    return JoinRequest(eventId, userId, "");
   }
 }

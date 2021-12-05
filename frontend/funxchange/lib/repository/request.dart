@@ -17,4 +17,7 @@ class JoinRequestRepository {
   Future<JoinRequest> rejectJoinRequest(JoinRequest request) {
     return dataSource.rejectJoinRequest(request);
   }
+
+  Future<JoinRequest> createJoinRequest(String eventId, String userId) =>
+      dataSource.createJoinRequest(eventId, userId);
 }

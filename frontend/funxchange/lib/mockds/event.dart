@@ -64,4 +64,9 @@ class MockEventDataSource implements EventDataSource {
     participantGraph[model.id] = [];
     return MockUtils.delayed(() => model);
   }
+
+  @override
+  Future<Event> fetchEvent(String id) {
+    return MockUtils.delayed(() => data[id]!);
+  }
 }

@@ -27,6 +27,7 @@ public class UserService {
         if (!isPasswordValid(params.getPassword()))
             throw new IllegalArgumentException("Password should consist of more than 4 characters.");
 
+        // TODO: check if username is being used
 
         final String passwordHash = DigestUtils.sha256Hex(params.getPassword());
         final User userEntity = new User();

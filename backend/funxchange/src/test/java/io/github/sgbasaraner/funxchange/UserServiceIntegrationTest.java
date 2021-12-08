@@ -5,6 +5,7 @@ import io.github.sgbasaraner.funxchange.model.NewUserDTO;
 import io.github.sgbasaraner.funxchange.model.UserDTO;
 import io.github.sgbasaraner.funxchange.repository.UserRepository;
 import io.github.sgbasaraner.funxchange.service.UserService;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,19 +40,14 @@ public class UserServiceIntegrationTest {
 
     @Test
     public void whenValidUser_thenUserShouldBeSaved() {
-        User user = makeTestUser();
-        Mockito.when(userRepository.save(user)).thenReturn(user);
-        NewUserDTO newUserParams = new NewUserDTO(user.getUserName(), user.getBio(), List.of("test"), "test");
-        UserDTO createdUser = userService.signUp(newUserParams);
-        Assertions.assertEquals(createdUser.getId(), user.getId().toString());
-    }
-
-    User makeTestUser() {
         User user = new User();
         user.setUserName("test");
         user.setBio("testbio");
         user.setId(UUID.randomUUID());
-        user.setPasswordHash("hash");
-        return user;
+        user.setPasswordHash(DigestUtils.sha256Hex("somelongpassword"));
+        Mockito.when(userRepository.save(Mockito.any(User.class))).thenReturn(user);
+        NewUserDTO newUserParams = new NewUserDTO(user.getUserName(), user.getBio(), List.of("test"), "somelongpassword");
+        UserDTO createdUser = userService.signUp(newUserParams);
+        Assertions.assertEquals(createdUser.getId(), user.getId().toString());
     }
 }

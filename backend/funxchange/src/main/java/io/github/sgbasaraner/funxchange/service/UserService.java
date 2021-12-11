@@ -6,6 +6,7 @@ import io.github.sgbasaraner.funxchange.model.UserDTO;
 import io.github.sgbasaraner.funxchange.repository.UserRepository;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -27,19 +28,23 @@ public class UserService {
         if (!isPasswordValid(params.getPassword()))
             throw new IllegalArgumentException("Password should consist of more than 4 characters.");
 
-        // TODO: check if username is being used
-
         final String passwordHash = DigestUtils.sha256Hex(params.getPassword());
         final User userEntity = new User();
         userEntity.setBio(params.getBio());
         userEntity.setPasswordHash(passwordHash);
         userEntity.setUserName(params.getUserName());
 
-        final User createdUser = repository.save(userEntity);
+        try {
+            final User createdUser = repository.save(userEntity);
+            return new UserDTO(createdUser.getId().toString(), createdUser.getUserName(), createdUser.getBio(), 0,0, params.getInterests(), Optional.empty());
+        } catch (DataIntegrityViolationException e) {
+            throw new IllegalArgumentException("Username already taken.");
+        }
+
 
         // TODO: save interests
 
-        return new UserDTO(createdUser.getId().toString(), createdUser.getUserName(), createdUser.getBio(), 0,0, params.getInterests(), Optional.empty());
+
     }
 
     private boolean isUserNameValid(String userName) {

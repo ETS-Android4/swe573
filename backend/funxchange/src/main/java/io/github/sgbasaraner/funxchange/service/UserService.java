@@ -7,6 +7,7 @@ import io.github.sgbasaraner.funxchange.repository.UserRepository;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -17,6 +18,8 @@ public class UserService {
     @Autowired
     private UserRepository repository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public UserDTO signUp(NewUserDTO params) {
         if (!isUserNameValid(params.getUserName()))
@@ -28,7 +31,7 @@ public class UserService {
         if (!isPasswordValid(params.getPassword()))
             throw new IllegalArgumentException("Password should consist of more than 4 characters.");
 
-        final String passwordHash = DigestUtils.sha256Hex(params.getPassword());
+        final String passwordHash = passwordEncoder.encode(params.getPassword());
         final User userEntity = new User();
         userEntity.setBio(params.getBio());
         userEntity.setPasswordHash(passwordHash);

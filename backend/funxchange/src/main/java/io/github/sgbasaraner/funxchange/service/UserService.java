@@ -1,15 +1,23 @@
 package io.github.sgbasaraner.funxchange.service;
 
 import io.github.sgbasaraner.funxchange.entity.User;
+import io.github.sgbasaraner.funxchange.model.AuthRequest;
+import io.github.sgbasaraner.funxchange.model.AuthResponse;
 import io.github.sgbasaraner.funxchange.model.NewUserDTO;
 import io.github.sgbasaraner.funxchange.model.UserDTO;
 import io.github.sgbasaraner.funxchange.repository.UserRepository;
-import org.apache.commons.codec.digest.DigestUtils;
+import io.github.sgbasaraner.funxchange.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.security.sasl.AuthenticationException;
 import java.util.Optional;
 
 @Service
@@ -20,6 +28,15 @@ public class UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JwtUtil jwtTokenUtil;
+
+    @Autowired
+    private UserDetailsService userDetailsService;
 
     public UserDTO signUp(NewUserDTO params) {
         if (!isUserNameValid(params.getUserName()))
@@ -48,6 +65,24 @@ public class UserService {
         // TODO: save interests
 
 
+    }
+
+    public AuthResponse createAuthenticationToken(AuthRequest authenticationRequest) throws AuthenticationException {
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(authenticationRequest.getUserName(), authenticationRequest.getPassword())
+            );
+        }
+        catch (BadCredentialsException e) {
+            throw new AuthenticationException();
+        }
+
+
+        final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUserName());
+
+        final String jwt = jwtTokenUtil.generateToken(userDetails);
+
+        return new AuthResponse(jwt);
     }
 
     private boolean isUserNameValid(String userName) {

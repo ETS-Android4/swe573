@@ -23,7 +23,10 @@ jobs:
             username: ${{ secrets.REGISTRY_USERNAME }}
             password: ${{ secrets.REGISTRY_PASSWORD }}
         - run: |
-            cd backend/funxchange/src/main/docker
+            cd backend/funxchange
+            ./mvnw clean package -DskipTests
+            cp target/funxchange-0.0.1-SNAPSHOT.jar src/main/docker
+            cd src/main/docker
             docker-compose build --build-arg target=${{ secrets.REGISTRY_LOGIN_SERVER }}/funxchange:${{ github.sha }}
             docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/funxchange:${{ github.sha }}
 

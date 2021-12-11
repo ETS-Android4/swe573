@@ -27,7 +27,7 @@ jobs:
             ./mvnw clean package -DskipTests
             cp target/funxchange-0.0.1-SNAPSHOT.jar src/main/docker
             cd src/main/docker
-            docker-compose build --build-arg target=${{ secrets.REGISTRY_LOGIN_SERVER }}/funxchange:${{ github.sha }}
+            docker-compose build --build-arg tag=${{ secrets.REGISTRY_LOGIN_SERVER }}/funxchange:${{ github.sha }}
             docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/funxchange:${{ github.sha }}
 
         - name: 'Deploy to Azure Container Instances'

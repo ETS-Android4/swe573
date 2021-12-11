@@ -28,8 +28,8 @@ jobs:
             cp target/funxchange-0.0.1-SNAPSHOT.jar src/main/docker
             cd src/main/docker
             docker-compose build
-            docker images --format='{{.ID}}' | head -1
-            docker tag (docker images --format='{{.ID}}' | head -1) ${{ secrets.REGISTRY_LOGIN_SERVER }}/funxchange:${{ github.sha }}
+            IMAGE_ID=docker images --format='{{.ID}}' | head -1
+            docker tag $IMAGE_ID ${{ secrets.REGISTRY_LOGIN_SERVER }}/funxchange:${{ github.sha }}
             docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/funxchange:${{ github.sha }}
 
         - name: 'Deploy to Azure Container Instances'

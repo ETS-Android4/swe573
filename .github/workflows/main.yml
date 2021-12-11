@@ -23,7 +23,8 @@ jobs:
             username: ${{ secrets.REGISTRY_USERNAME }}
             password: ${{ secrets.REGISTRY_PASSWORD }}
         - run: |
-            cd ./backend/funxchange/src/main/docker
+            pwd
+            cd backend/funxchange/src/main/docker
             docker-compose build . -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/funxchange:${{ github.sha }}
             docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/funxchange:${{ github.sha }}
 

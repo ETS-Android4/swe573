@@ -24,7 +24,7 @@ jobs:
             password: ${{ secrets.REGISTRY_PASSWORD }}
         - run: |
             cd backend/funxchange/src/main/docker
-            docker-compose build -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/funxchange:${{ github.sha }}
+            docker-compose build --build-arg target=${{ secrets.REGISTRY_LOGIN_SERVER }}/funxchange:${{ github.sha }}
             docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/funxchange:${{ github.sha }}
 
         - name: 'Deploy to Azure Container Instances'

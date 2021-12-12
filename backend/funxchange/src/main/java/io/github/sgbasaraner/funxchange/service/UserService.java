@@ -1,16 +1,21 @@
 package io.github.sgbasaraner.funxchange.service;
 
+import io.github.sgbasaraner.funxchange.entity.Follower;
 import io.github.sgbasaraner.funxchange.entity.Interest;
 import io.github.sgbasaraner.funxchange.entity.User;
 import io.github.sgbasaraner.funxchange.model.AuthRequest;
 import io.github.sgbasaraner.funxchange.model.AuthResponse;
 import io.github.sgbasaraner.funxchange.model.NewUserDTO;
 import io.github.sgbasaraner.funxchange.model.UserDTO;
+import io.github.sgbasaraner.funxchange.repository.FollowerRepository;
 import io.github.sgbasaraner.funxchange.repository.InterestRepository;
 import io.github.sgbasaraner.funxchange.repository.UserRepository;
 import io.github.sgbasaraner.funxchange.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.security.sasl.AuthenticationException;
+import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -44,6 +50,9 @@ public class UserService {
 
     @Autowired
     private InterestRepository interestRepository;
+
+    @Autowired
+    private FollowerRepository followerRepository;
 
     @Transactional
     public UserDTO signUp(NewUserDTO params) {
@@ -76,15 +85,7 @@ public class UserService {
 
         try {
             final User createdUser = repository.save(userEntity);
-            return new UserDTO(
-                    createdUser.getId().toString(),
-                    createdUser.getUserName(),
-                    createdUser.getBio(),
-                    0,
-                    0,
-                    createdUser.getInterests().stream().map(Interest::getName).collect(Collectors.toUnmodifiableList()),
-                    Optional.empty()
-            );
+            return mapUserToDTO(createdUser, createdUser);
         } catch (DataIntegrityViolationException e) {
             throw new IllegalArgumentException("Username already taken.");
         }
@@ -108,7 +109,116 @@ public class UserService {
         return new AuthResponse(jwt);
     }
 
-    private static final List<String> allowedInterests = List
+    public UserDTO fetchUser(String id, Principal principal) {
+        final User loggedInUser = repository.findUserByUserName(principal.getName()).get();
+        final Optional<User> userOption = repository.findById(UUID.fromString(id));
+        if (userOption.isEmpty())
+            throw new IllegalArgumentException("User doesn't exist.");
+        return mapUserToDTO(userOption.get(), loggedInUser);
+    }
+
+    private UserDTO mapUserToDTO(User user, User requestor) {
+
+        Optional<Boolean> isFollowed;
+        if (user.getId().equals(requestor.getId())) {
+            isFollowed = Optional.empty();
+        } else if (requestor.getFollows().stream().anyMatch(f -> f.getFollowee().getId().equals(user.getId()))) {
+            isFollowed = Optional.of(true);
+        } else {
+            isFollowed = Optional.of(false);
+        }
+
+        return new UserDTO(
+                user.getId().toString(),
+                user.getUserName(),
+                user.getBio(),
+                followerRepository.findByFollowee(user).size(),
+                followerRepository.findByFollower(user).size(),
+                user.getInterests().stream().map(Interest::getName).collect(Collectors.toUnmodifiableList()),
+                isFollowed
+        );
+    }
+
+    private Pageable makePageable(int offset, int limit, Sort sort) {
+        if (offset < 0 || limit <= 0)
+            throw new IllegalArgumentException("Invalid limit or offset");
+        int currentPage = offset / limit;
+        return PageRequest.of(currentPage, limit, sort);
+    }
+
+    public List<UserDTO> fetchFollowed(String id, int offset, int limit, Principal principal) {
+        final User requestor = repository.findUserByUserName(principal.getName()).get();
+        final Optional<User> targetUserOption = repository.findById(UUID.fromString(id));
+        if (targetUserOption.isEmpty())
+            throw new IllegalArgumentException("User doesn't exist.");
+
+        final Pageable pageRequest = makePageable(offset, limit, Sort.by("created").descending());
+
+        return followerRepository
+                .findByFollower(targetUserOption.get(), pageRequest)
+                .stream()
+                .map(f -> mapUserToDTO(f.getFollowee(), requestor))
+                .collect(Collectors.toUnmodifiableList());
+    }
+
+    public List<UserDTO> fetchFollowers(String id, int offset, int limit, Principal principal) {
+        final User requestor = repository.findUserByUserName(principal.getName()).get();
+        final Optional<User> targetUserOption = repository.findById(UUID.fromString(id));
+        if (targetUserOption.isEmpty())
+            throw new IllegalArgumentException("User doesn't exist.");
+
+        final Pageable pageRequest = makePageable(offset, limit, Sort.by("created").descending());
+
+        return followerRepository
+                .findByFollowee(targetUserOption.get(), pageRequest)
+                .stream()
+                .map(f -> mapUserToDTO(f.getFollower(), requestor))
+                .collect(Collectors.toUnmodifiableList());
+    }
+
+    public String followUser(String userId, Principal principal) {
+        final User loggedInUser = repository.findUserByUserName(principal.getName()).get();
+        final Optional<User> followeeUserOption = repository.findById(UUID.fromString(userId));
+        if (followeeUserOption.isEmpty())
+            throw new IllegalArgumentException("User doesn't exist.");
+
+        final User followeeUser = followeeUserOption.get();
+
+        if (followerRepository.findByFolloweeAndFollower(followeeUser, loggedInUser).isPresent())
+            throw new IllegalArgumentException("Already following.");
+
+        final Follower f = new Follower();
+        f.setFollower(loggedInUser);
+        f.setFollowee(followeeUser);
+        followerRepository.save(f);
+        return followeeUser.getId().toString();
+    }
+
+    public String unfollowUser(String userId, Principal principal) {
+        final User loggedInUser = repository.findUserByUserName(principal.getName()).get();
+        final Optional<User> followeeUserOption = repository.findById(UUID.fromString(userId));
+        if (followeeUserOption.isEmpty())
+            throw new IllegalArgumentException("User doesn't exist.");
+
+        final User followeeUser = followeeUserOption.get();
+
+        Optional<Follower> f = followerRepository.findByFolloweeAndFollower(followeeUser, loggedInUser);
+        if (f.isEmpty()) {
+            throw new IllegalArgumentException("Follow relation doesn't exist.");
+        }
+        followerRepository.delete(f.get());
+        return f.get().getFollowee().getId().toString();
+    }
+
+    public UserDTO fetchUserByUserName(String userName, Principal principal) {
+        final User loggedInUser = repository.findUserByUserName(principal.getName()).get();
+        final Optional<User> userOption = repository.findUserByUserName(userName);
+        if (userOption.isEmpty())
+            throw new IllegalArgumentException("User doesn't exist.");
+        return mapUserToDTO(userOption.get(), loggedInUser);
+    }
+
+    public static final List<String> allowedInterests = List
             .of("Golf", "Yoga", "Painting", "Graphic Design", "Computers", "Makeup", "Cooking", "Gaming");
 
     private boolean areInterestsValid(List<String> interests) {
@@ -118,7 +228,7 @@ public class UserService {
     }
 
     private boolean isUserNameValid(String userName) {
-        return !(userName == null || userName.isBlank() || userName.length() < 3);
+        return !(userName == null || userName.isBlank() || userName.length() < 3 || userName.length() > 31);
     }
 
     private boolean isBioValid(String bio) {

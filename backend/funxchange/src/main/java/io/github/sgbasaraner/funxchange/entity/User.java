@@ -5,6 +5,7 @@ import org.hibernate.annotations.ManyToAny;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -35,6 +36,9 @@ public class User {
     @Column
     @CreationTimestamp
     private LocalDateTime created;
+
+    @OneToMany(mappedBy = "follower")
+    private List<Follower> follows;
 
     public UUID getId() {
         return id;
@@ -82,5 +86,13 @@ public class User {
 
     public void setCreated(LocalDateTime created) {
         this.created = created;
+    }
+
+    public List<Follower> getFollows() {
+        return follows;
+    }
+
+    public void setFollows(List<Follower> follows) {
+        this.follows = follows;
     }
 }

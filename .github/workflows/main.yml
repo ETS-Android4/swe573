@@ -31,6 +31,6 @@ jobs:
           printenv VM_KEY > funxchange-key.pem
           ls
           chmod 400 funxchange-key.pem
-          scp -r -i funxchange-key.pem docker azureuser@$IP_ADDRESS:/home/azureuser
+          scp -r -o StrictHostKeyChecking=no -i funxchange-key.pem docker azureuser@$IP_ADDRESS:/home/azureuser
     
 

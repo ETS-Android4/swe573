@@ -1,6 +1,9 @@
 package io.github.sgbasaraner.funxchange.entity;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "follower")
@@ -17,6 +20,10 @@ public class Follower {
     @JoinColumn(name = "follower")
     private User follower;
 
+    @Column
+    @CreationTimestamp
+    private LocalDateTime created;
+
     public User getFollowee() {
         return followee;
     }
@@ -31,5 +38,13 @@ public class Follower {
 
     public void setFollower(User follower) {
         this.follower = follower;
+    }
+
+    public LocalDateTime getCreated() {
+        return created;
+    }
+
+    public void setCreated(LocalDateTime created) {
+        this.created = created;
     }
 }

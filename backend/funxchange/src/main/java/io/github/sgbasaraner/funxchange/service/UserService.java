@@ -13,6 +13,9 @@ import io.github.sgbasaraner.funxchange.repository.UserRepository;
 import io.github.sgbasaraner.funxchange.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -136,12 +139,41 @@ public class UserService {
         );
     }
 
-    public List<UserDTO> fetchFollowed(String id, Long offset, Long limit, Principal principal) {
-        return null;
+    private Pageable makePageable(int offset, int limit, Sort sort) {
+        if (offset < 0 || limit <= 0)
+            throw new IllegalArgumentException("Invalid limit or offset");
+        int currentPage = offset / limit;
+        return PageRequest.of(currentPage, limit, sort);
     }
 
-    public List<UserDTO> fetchFollowers(String id, Long offset, Long limit, Principal principal) {
-        return null;
+    public List<UserDTO> fetchFollowed(String id, int offset, int limit, Principal principal) {
+        final User requestor = repository.findUserByUserName(principal.getName()).get();
+        final Optional<User> targetUserOption = repository.findById(UUID.fromString(id));
+        if (targetUserOption.isEmpty())
+            throw new IllegalArgumentException("User doesn't exist.");
+
+        final Pageable pageRequest = makePageable(offset, limit, Sort.by("created").descending());
+
+        return followerRepository
+                .findByFollower(targetUserOption.get(), pageRequest)
+                .stream()
+                .map(f -> mapUserToDTO(f.getFollowee(), requestor))
+                .collect(Collectors.toUnmodifiableList());
+    }
+
+    public List<UserDTO> fetchFollowers(String id, int offset, int limit, Principal principal) {
+        final User requestor = repository.findUserByUserName(principal.getName()).get();
+        final Optional<User> targetUserOption = repository.findById(UUID.fromString(id));
+        if (targetUserOption.isEmpty())
+            throw new IllegalArgumentException("User doesn't exist.");
+
+        final Pageable pageRequest = makePageable(offset, limit, Sort.by("created").descending());
+
+        return followerRepository
+                .findByFollowee(targetUserOption.get(), pageRequest)
+                .stream()
+                .map(f -> mapUserToDTO(f.getFollower(), requestor))
+                .collect(Collectors.toUnmodifiableList());
     }
 
     public String followUser(String userId, Principal principal) {

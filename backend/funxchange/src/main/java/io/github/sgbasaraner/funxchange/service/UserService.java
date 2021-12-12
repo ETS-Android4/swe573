@@ -1,10 +1,12 @@
 package io.github.sgbasaraner.funxchange.service;
 
+import io.github.sgbasaraner.funxchange.entity.Interest;
 import io.github.sgbasaraner.funxchange.entity.User;
 import io.github.sgbasaraner.funxchange.model.AuthRequest;
 import io.github.sgbasaraner.funxchange.model.AuthResponse;
 import io.github.sgbasaraner.funxchange.model.NewUserDTO;
 import io.github.sgbasaraner.funxchange.model.UserDTO;
+import io.github.sgbasaraner.funxchange.repository.InterestRepository;
 import io.github.sgbasaraner.funxchange.repository.UserRepository;
 import io.github.sgbasaraner.funxchange.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +18,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.security.sasl.AuthenticationException;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -38,6 +42,10 @@ public class UserService {
     @Autowired
     private UserDetailsService userDetailsService;
 
+    @Autowired
+    private InterestRepository interestRepository;
+
+    @Transactional
     public UserDTO signUp(NewUserDTO params) {
         if (!isUserNameValid(params.getUserName()))
             throw new IllegalArgumentException("Invalid username.");
@@ -48,23 +56,38 @@ public class UserService {
         if (!isPasswordValid(params.getPassword()))
             throw new IllegalArgumentException("Password should consist of more than 4 characters.");
 
+        if (!areInterestsValid(params.getInterests()))
+            throw new IllegalArgumentException("Invalid interest list.");
+
+        interestRepository.saveAll(params.getInterests().stream().map(i -> {
+            final Interest interest = new Interest();
+            interest.setName(i);
+            return interest;
+        }).collect(Collectors.toSet()));
+
+        final Set<Interest> interests = new HashSet<>(interestRepository.findByNameIn(params.getInterests()));
+
         final String passwordHash = passwordEncoder.encode(params.getPassword());
         final User userEntity = new User();
         userEntity.setBio(params.getBio());
         userEntity.setPasswordHash(passwordHash);
         userEntity.setUserName(params.getUserName());
+        userEntity.setInterests(interests);
 
         try {
             final User createdUser = repository.save(userEntity);
-            return new UserDTO(createdUser.getId().toString(), createdUser.getUserName(), createdUser.getBio(), 0,0, params.getInterests(), Optional.empty());
+            return new UserDTO(
+                    createdUser.getId().toString(),
+                    createdUser.getUserName(),
+                    createdUser.getBio(),
+                    0,
+                    0,
+                    createdUser.getInterests().stream().map(Interest::getName).collect(Collectors.toUnmodifiableList()),
+                    Optional.empty()
+            );
         } catch (DataIntegrityViolationException e) {
             throw new IllegalArgumentException("Username already taken.");
         }
-
-
-        // TODO: save interests
-
-
     }
 
     public AuthResponse createAuthenticationToken(AuthRequest authenticationRequest) throws AuthenticationException {
@@ -83,6 +106,15 @@ public class UserService {
         final String jwt = jwtTokenUtil.generateToken(userDetails);
 
         return new AuthResponse(jwt);
+    }
+
+    private static final List<String> allowedInterests = List
+            .of("Golf", "Yoga", "Painting", "Graphic Design", "Computers", "Makeup", "Cooking", "Gaming");
+
+    private boolean areInterestsValid(List<String> interests) {
+        final List<String> distinct = interests.stream().distinct().collect(Collectors.toUnmodifiableList());
+        if (distinct.size() != interests.size()) return false;
+        return allowedInterests.containsAll(distinct);
     }
 
     private boolean isUserNameValid(String userName) {

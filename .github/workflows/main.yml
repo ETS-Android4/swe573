@@ -29,8 +29,7 @@ jobs:
           cp target/funxchange-0.0.1-SNAPSHOT.jar src/main/docker
           cd src/main
           printenv VM_KEY > funxchange-key.pem
-          ls
           chmod 400 funxchange-key.pem
           scp -r -o StrictHostKeyChecking=no -i funxchange-key.pem docker azureuser@$IP_ADDRESS:/home/azureuser
-    
+          ssh -o StrictHostKeyChecking=no -i funxchange-key.pem azureuser@$IP_ADDRESS 'screen -d -m sh up.sh'  
 

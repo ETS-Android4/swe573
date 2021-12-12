@@ -1,11 +1,13 @@
 package io.github.sgbasaraner.funxchange.service;
 
+import io.github.sgbasaraner.funxchange.entity.Follower;
 import io.github.sgbasaraner.funxchange.entity.Interest;
 import io.github.sgbasaraner.funxchange.entity.User;
 import io.github.sgbasaraner.funxchange.model.AuthRequest;
 import io.github.sgbasaraner.funxchange.model.AuthResponse;
 import io.github.sgbasaraner.funxchange.model.NewUserDTO;
 import io.github.sgbasaraner.funxchange.model.UserDTO;
+import io.github.sgbasaraner.funxchange.repository.FollowerRepository;
 import io.github.sgbasaraner.funxchange.repository.InterestRepository;
 import io.github.sgbasaraner.funxchange.repository.UserRepository;
 import io.github.sgbasaraner.funxchange.util.JwtUtil;
@@ -45,6 +47,9 @@ public class UserService {
 
     @Autowired
     private InterestRepository interestRepository;
+
+    @Autowired
+    private FollowerRepository followerRepository;
 
     @Transactional
     public UserDTO signUp(NewUserDTO params) {
@@ -122,11 +127,34 @@ public class UserService {
     }
 
     public String followUser(String userId, Principal principal) {
-        return null;
+        final User loggedInUser = repository.findUserByUserName(principal.getName()).get();
+        final Optional<User> followeeUserOption = repository.findById(UUID.fromString(userId));
+        if (followeeUserOption.isEmpty())
+            throw new IllegalArgumentException("User doesn't exist.");
+
+        final User followeeUser = followeeUserOption.get();
+
+        final Follower f = new Follower();
+        f.setFollower(loggedInUser);
+        f.setFollowee(followeeUser);
+        followerRepository.save(f);
+        return followeeUser.getId().toString();
     }
 
     public String unfollowUser(String userId, Principal principal) {
-        return null;
+        final User loggedInUser = repository.findUserByUserName(principal.getName()).get();
+        final Optional<User> followeeUserOption = repository.findById(UUID.fromString(userId));
+        if (followeeUserOption.isEmpty())
+            throw new IllegalArgumentException("User doesn't exist.");
+
+        final User followeeUser = followeeUserOption.get();
+
+        Optional<Follower> f = followerRepository.findByFolloweeAndFollower(followeeUser, loggedInUser);
+        if (f.isEmpty()) {
+            throw new IllegalArgumentException("Follow relation doesn't exist.");
+        }
+        followerRepository.delete(f.get());
+        return f.get().getFollowee().getId().toString();
     }
 
     public UserDTO fetchUserByUserName(String id) {

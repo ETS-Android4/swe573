@@ -26,6 +26,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -102,6 +103,8 @@ public class UserServiceIntegrationTest {
         followEntity.setFollower(currentUser);
         followEntity.setFollowee(userToFollow);
 
+        Mockito.when(userRepository.findUserByUserName(currentUser.getUserName())).thenReturn(Optional.of(currentUser));
+        Mockito.when(userRepository.findById(userToFollow.getId())).thenReturn(Optional.of(userToFollow));
         Mockito.when(followRepository.save(Mockito.any(Follower.class))).thenReturn(followEntity);
         final String followedUserId = userService.followUser(userToFollow.getId().toString(), currentUser::getUserName);
         Assertions.assertEquals(userToFollow.getId().toString(), followedUserId);
@@ -117,8 +120,15 @@ public class UserServiceIntegrationTest {
         userToUnfollow.setUserName("unfollowed_user");
         userToUnfollow.setId(UUID.randomUUID());
 
+        final Follower followToDelete = new Follower();
+        followToDelete.setFollowee(userToUnfollow);
+        followToDelete.setFollower(currentUser);
+
+        Mockito.when(userRepository.findUserByUserName(currentUser.getUserName())).thenReturn(Optional.of(currentUser));
+        Mockito.when(userRepository.findById(userToUnfollow.getId())).thenReturn(Optional.of(userToUnfollow));
+        Mockito.when(followRepository.findByFolloweeAndFollower(Mockito.any(User.class), Mockito.any(User.class))).thenReturn(Optional.of(followToDelete));
+        final String followedUserId = userService.unfollowUser(userToUnfollow.getId().toString(), currentUser::getUserName);
         Mockito.verify(followRepository).delete(Mockito.any(Follower.class));
-        final String followedUserId = userService.followUser(userToUnfollow.getId().toString(), currentUser::getUserName);
         Assertions.assertEquals(userToUnfollow.getId().toString(), followedUserId);
     }
 }

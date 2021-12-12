@@ -133,7 +133,7 @@ public class UserService {
                 user.getUserName(),
                 user.getBio(),
                 followerRepository.findByFollowee(user).size(),
-                user.getFollows().size(),
+                followerRepository.findByFollower(user).size(),
                 user.getInterests().stream().map(Interest::getName).collect(Collectors.toUnmodifiableList()),
                 isFollowed
         );
@@ -184,6 +184,9 @@ public class UserService {
 
         final User followeeUser = followeeUserOption.get();
 
+        if (followerRepository.findByFolloweeAndFollower(followeeUser, loggedInUser).isPresent())
+            throw new IllegalArgumentException("Already following.");
+
         final Follower f = new Follower();
         f.setFollower(loggedInUser);
         f.setFollowee(followeeUser);
@@ -215,7 +218,7 @@ public class UserService {
         return mapUserToDTO(userOption.get(), loggedInUser);
     }
 
-    private static final List<String> allowedInterests = List
+    public static final List<String> allowedInterests = List
             .of("Golf", "Yoga", "Painting", "Graphic Design", "Computers", "Makeup", "Cooking", "Gaming");
 
     private boolean areInterestsValid(List<String> interests) {
@@ -225,7 +228,7 @@ public class UserService {
     }
 
     private boolean isUserNameValid(String userName) {
-        return !(userName == null || userName.isBlank() || userName.length() < 3);
+        return !(userName == null || userName.isBlank() || userName.length() < 3 || userName.length() > 31);
     }
 
     private boolean isBioValid(String bio) {

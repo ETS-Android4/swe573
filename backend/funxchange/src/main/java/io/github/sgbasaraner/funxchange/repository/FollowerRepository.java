@@ -16,4 +16,5 @@ public interface FollowerRepository extends JpaRepository<Follower, Long> {
     List<Follower> findByFollowee(User followee);
     List<Follower> findByFollowee(User followee, Pageable pageable);
     List<Follower> findByFollower(User follower, Pageable pageable);
+    List<Follower> findByFollower(User follower);
 }

@@ -14,7 +14,7 @@ services:
       - SPRING_DATASOURCE_PASSWORD=compose-postgres
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
     ports:
-      - "80:80"
+      - "8080:8080"
 
   db:
     image: 'postgres:13.1-alpine'
@@ -22,5 +22,3 @@ services:
     environment:
       - POSTGRES_USER=compose-postgres
       - POSTGRES_PASSWORD=compose-postgres
-    ports:
-      - "5432:5432"

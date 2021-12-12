@@ -28,7 +28,7 @@ jobs:
           cp target/funxchange-0.0.1-SNAPSHOT.jar src/main/docker
           cd src/main/docker
           printenv VM_KEY >"$funxchangekey.pem"
-          chmod 400 funxchangekey.pem
           ls
+          chmod 400 funxchangekey.pem
     
 

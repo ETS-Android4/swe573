@@ -22,13 +22,15 @@ jobs:
       - name: Compile spring boot project
         env:
           VM_KEY: ${{ secrets.VM_KEY }}
+          IP_ADDRESS: ${{ secrets.IP_ADDRESS }}
         run: |
           cd backend/funxchange
           ./mvnw clean package -DskipTests
           cp target/funxchange-0.0.1-SNAPSHOT.jar src/main/docker
           cd src/main
           printenv VM_KEY > funxchange-key.pem
+          ls
           chmod 400 funxchange-key.pem
-          scp -r -i funxchange-key.pem docker azureuser@20.107.24.75:/home/azureuser
+          scp -r -i funxchange-key.pem docker azureuser@$IP_ADDRESS:/home/azureuser
     
 

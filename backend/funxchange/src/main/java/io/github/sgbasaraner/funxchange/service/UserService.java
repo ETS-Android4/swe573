@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.security.sasl.AuthenticationException;
+import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -106,6 +107,30 @@ public class UserService {
         final String jwt = jwtTokenUtil.generateToken(userDetails);
 
         return new AuthResponse(jwt);
+    }
+
+    public UserDTO fetchUser(String id) {
+        return null;
+    }
+
+    public List<UserDTO> fetchFollowed(String id, Long offset, Long limit, Principal principal) {
+        return null;
+    }
+
+    public List<UserDTO> fetchFollowers(String id, Long offset, Long limit, Principal principal) {
+        return null;
+    }
+
+    public String followUser(String userId, Principal principal) {
+        return null;
+    }
+
+    public String unfollowUser(String userId, Principal principal) {
+        return null;
+    }
+
+    public UserDTO fetchUserByUserName(String id) {
+        return null;
     }
 
     private static final List<String> allowedInterests = List

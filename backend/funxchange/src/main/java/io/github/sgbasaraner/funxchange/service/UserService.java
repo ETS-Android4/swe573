@@ -157,7 +157,7 @@ public class UserService {
         return f.get().getFollowee().getId().toString();
     }
 
-    public UserDTO fetchUserByUserName(String id) {
+    public UserDTO fetchUserByUserName(String userName) {
         return null;
     }
 

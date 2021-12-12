@@ -3,6 +3,7 @@ package io.github.sgbasaraner.funxchange.controller;
 import io.github.sgbasaraner.funxchange.model.AuthRequest;
 import io.github.sgbasaraner.funxchange.model.AuthResponse;
 import io.github.sgbasaraner.funxchange.model.NewUserDTO;
+import io.github.sgbasaraner.funxchange.model.UserDTO;
 import io.github.sgbasaraner.funxchange.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;

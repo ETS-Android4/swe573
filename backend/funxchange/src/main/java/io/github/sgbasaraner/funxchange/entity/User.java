@@ -1,9 +1,11 @@
 package io.github.sgbasaraner.funxchange.entity;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.ManyToAny;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -21,6 +23,14 @@ public class User {
 
     @Column
     private String bio;
+
+    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @JoinTable(
+            name = "user_interest",
+            joinColumns = { @JoinColumn(name = "user_id") },
+            inverseJoinColumns = { @JoinColumn(name = "interest_id") }
+    )
+    private Set<Interest> interests;
 
     @Column
     @CreationTimestamp
@@ -60,5 +70,17 @@ public class User {
 
     public void setBio(String bio) {
         this.bio = bio;
+    }
+
+    public Set<Interest> getInterests() {
+        return interests;
+    }
+
+    public void setInterests(Set<Interest> interests) {
+        this.interests = interests;
+    }
+
+    public void setCreated(LocalDateTime created) {
+        this.created = created;
     }
 }

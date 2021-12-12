@@ -82,15 +82,7 @@ public class UserService {
 
         try {
             final User createdUser = repository.save(userEntity);
-            return new UserDTO(
-                    createdUser.getId().toString(),
-                    createdUser.getUserName(),
-                    createdUser.getBio(),
-                    0,
-                    0,
-                    createdUser.getInterests().stream().map(Interest::getName).collect(Collectors.toUnmodifiableList()),
-                    Optional.empty()
-            );
+            return mapUserToDTO(createdUser, createdUser);
         } catch (DataIntegrityViolationException e) {
             throw new IllegalArgumentException("Username already taken.");
         }
@@ -114,8 +106,34 @@ public class UserService {
         return new AuthResponse(jwt);
     }
 
-    public UserDTO fetchUser(String id) {
-        return null;
+    public UserDTO fetchUser(String id, Principal principal) {
+        final User loggedInUser = repository.findUserByUserName(principal.getName()).get();
+        final Optional<User> userOption = repository.findById(UUID.fromString(id));
+        if (userOption.isEmpty())
+            throw new IllegalArgumentException("User doesn't exist.");
+        return mapUserToDTO(userOption.get(), loggedInUser);
+    }
+
+    private UserDTO mapUserToDTO(User user, User requestor) {
+
+        Optional<Boolean> isFollowed;
+        if (user.getId().equals(requestor.getId())) {
+            isFollowed = Optional.empty();
+        } else if (requestor.getFollows().stream().anyMatch(f -> f.getFollowee().getId().equals(user.getId()))) {
+            isFollowed = Optional.of(true);
+        } else {
+            isFollowed = Optional.of(false);
+        }
+
+        return new UserDTO(
+                user.getId().toString(),
+                user.getUserName(),
+                user.getBio(),
+                followerRepository.findByFollowee(user).size(),
+                user.getFollows().size(),
+                user.getInterests().stream().map(Interest::getName).collect(Collectors.toUnmodifiableList()),
+                isFollowed
+        );
     }
 
     public List<UserDTO> fetchFollowed(String id, Long offset, Long limit, Principal principal) {
@@ -157,8 +175,12 @@ public class UserService {
         return f.get().getFollowee().getId().toString();
     }
 
-    public UserDTO fetchUserByUserName(String userName) {
-        return null;
+    public UserDTO fetchUserByUserName(String userName, Principal principal) {
+        final User loggedInUser = repository.findUserByUserName(principal.getName()).get();
+        final Optional<User> userOption = repository.findUserByUserName(userName);
+        if (userOption.isEmpty())
+            throw new IllegalArgumentException("User doesn't exist.");
+        return mapUserToDTO(userOption.get(), loggedInUser);
     }
 
     private static final List<String> allowedInterests = List

@@ -25,10 +25,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @ExtendWith(SpringExtension.class)
 public class UserServiceIntegrationTest {
@@ -79,11 +76,13 @@ public class UserServiceIntegrationTest {
         user.setUserName("test");
         user.setBio("testbio");
         user.setId(UUID.randomUUID());
+        user.setFollows(Collections.emptyList());
         final Interest interest = new Interest();
         interest.setName("Golf");
         user.setInterests(Set.of(interest));
         Mockito.when(userRepository.save(Mockito.any(User.class))).thenReturn(user);
         NewUserDTO newUserParams = new NewUserDTO(user.getUserName(), user.getBio(), List.of(interest.getName()), "somelongpassword");
+        Mockito.when(followRepository.findByFollowee(Mockito.any(User.class))).thenReturn(Collections.emptyList());
         UserDTO createdUser = userService.signUp(newUserParams);
         Assertions.assertEquals(createdUser.getId(), user.getId().toString());
     }
@@ -130,5 +129,48 @@ public class UserServiceIntegrationTest {
         final String followedUserId = userService.unfollowUser(userToUnfollow.getId().toString(), currentUser::getUserName);
         Mockito.verify(followRepository).delete(Mockito.any(Follower.class));
         Assertions.assertEquals(userToUnfollow.getId().toString(), followedUserId);
+    }
+
+    @Test
+    public void whenQueriedByName_serviceShouldFind() {
+        final User currentUser = new User();
+        currentUser.setUserName("test_user");
+        currentUser.setId(UUID.randomUUID());
+        currentUser.setFollows(Collections.emptyList());
+
+        final User targetUser = new User();
+        targetUser.setUserName("target_user");
+        targetUser.setId(UUID.randomUUID());
+        targetUser.setFollows(Collections.emptyList());
+        targetUser.setInterests(Collections.emptySet());
+
+        Mockito.when(userRepository.findUserByUserName(currentUser.getUserName())).thenReturn(Optional.of(currentUser));
+        Mockito.when(userRepository.findUserByUserName(targetUser.getUserName())).thenReturn(Optional.of(targetUser));
+        Mockito.when(followRepository.findByFollowee(Mockito.any(User.class))).thenReturn(Collections.emptyList());
+
+        final UserDTO foundUser = userService.fetchUserByUserName(targetUser.getUserName(), currentUser::getUserName);
+        Assertions.assertEquals(foundUser.getId(), targetUser.getId().toString());
+    }
+
+    @Test
+    public void whenQueriedById_serviceShouldFind() {
+        final User currentUser = new User();
+        currentUser.setUserName("test_user");
+        currentUser.setId(UUID.randomUUID());
+        currentUser.setFollows(Collections.emptyList());
+
+        final User targetUser = new User();
+        targetUser.setUserName("target_user");
+        targetUser.setId(UUID.randomUUID());
+        targetUser.setFollows(Collections.emptyList());
+        targetUser.setInterests(Collections.emptySet());
+
+        Mockito.when(userRepository.findUserByUserName(currentUser.getUserName())).thenReturn(Optional.of(currentUser));
+        Mockito.when(userRepository.findById(targetUser.getId())).thenReturn(Optional.of(targetUser));
+        Mockito.when(followRepository.findByFollowee(Mockito.any(User.class))).thenReturn(Collections.emptyList());
+
+        final UserDTO foundUser = userService.fetchUser(targetUser.getId().toString(), currentUser::getUserName);
+
+        Assertions.assertEquals(foundUser.getUserName(), targetUser.getUserName());
     }
 }

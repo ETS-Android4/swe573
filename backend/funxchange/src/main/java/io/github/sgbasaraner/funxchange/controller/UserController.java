@@ -38,6 +38,6 @@ public class UserController {
 
     @GetMapping("/hello")
     public String hello(Principal principal) {
-        return "Hello, " + principal.getName() + ".";
+        return "Hi there, " + principal.getName() + ".";
     }
 }

@@ -11,9 +11,9 @@ import io.github.sgbasaraner.funxchange.repository.FollowerRepository;
 import io.github.sgbasaraner.funxchange.repository.InterestRepository;
 import io.github.sgbasaraner.funxchange.repository.UserRepository;
 import io.github.sgbasaraner.funxchange.util.JwtUtil;
+import io.github.sgbasaraner.funxchange.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -53,6 +53,9 @@ public class UserService {
 
     @Autowired
     private FollowerRepository followerRepository;
+
+    @Autowired
+    private Util util;
 
     @Transactional
     public UserDTO signUp(NewUserDTO params) {
@@ -139,20 +142,13 @@ public class UserService {
         );
     }
 
-    private Pageable makePageable(int offset, int limit, Sort sort) {
-        if (offset < 0 || limit <= 0)
-            throw new IllegalArgumentException("Invalid limit or offset");
-        int currentPage = offset / limit;
-        return PageRequest.of(currentPage, limit, sort);
-    }
-
     public List<UserDTO> fetchFollowed(String id, int offset, int limit, Principal principal) {
         final User requestor = repository.findUserByUserName(principal.getName()).get();
         final Optional<User> targetUserOption = repository.findById(UUID.fromString(id));
         if (targetUserOption.isEmpty())
             throw new IllegalArgumentException("User doesn't exist.");
 
-        final Pageable pageRequest = makePageable(offset, limit, Sort.by("created").descending());
+        final Pageable pageRequest = util.makePageable(offset, limit, Sort.by("created").descending());
 
         return followerRepository
                 .findByFollower(targetUserOption.get(), pageRequest)
@@ -167,7 +163,7 @@ public class UserService {
         if (targetUserOption.isEmpty())
             throw new IllegalArgumentException("User doesn't exist.");
 
-        final Pageable pageRequest = makePageable(offset, limit, Sort.by("created").descending());
+        final Pageable pageRequest = util.makePageable(offset, limit, Sort.by("created").descending());
 
         return followerRepository
                 .findByFollowee(targetUserOption.get(), pageRequest)

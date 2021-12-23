@@ -13,9 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -32,7 +30,21 @@ public class MessageService {
     private Util util;
 
     List<MessageDTO> fetchConversations(Principal principal, int offset, int limit) {
-        return null;
+        final User requestor = userRepository.findUserByUserName(principal.getName()).get();
+        final Set<String> convoIdSet = new HashSet<>();
+        final List<Message> data = repository.findBySenderIdOrReceiverId(requestor.getId(), requestor.getId(), Sort.by("created").descending());
+        final Map<UUID, User> userCache = new HashMap<>();
+
+        return data.stream()
+                .filter(message -> convoIdSet.add(makeConversationId(message.getSenderId(), message.getReceiverId())))
+                .skip(offset)
+                .limit(limit)
+                .map(message -> {
+                    final User senderUser = userCache.computeIfAbsent(message.getSenderId(), uuid -> userRepository.getById(uuid));
+                    final User receiverUser = userCache.computeIfAbsent(message.getReceiverId(), uuid -> userRepository.getById(uuid));
+                    return mapToMessageDTO(message, senderUser, receiverUser);
+                })
+                .collect(Collectors.toUnmodifiableList());
     }
 
     List<MessageDTO> fetchMessages(Principal principal, int offset, int limit, String conversationId) {

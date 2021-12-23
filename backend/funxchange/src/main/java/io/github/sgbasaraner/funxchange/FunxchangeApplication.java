@@ -4,10 +4,12 @@ package io.github.sgbasaraner.funxchange;
 import com.github.javafaker.Faker;
 import io.github.sgbasaraner.funxchange.entity.Follower;
 import io.github.sgbasaraner.funxchange.entity.Interest;
+import io.github.sgbasaraner.funxchange.entity.Message;
 import io.github.sgbasaraner.funxchange.entity.User;
 import io.github.sgbasaraner.funxchange.model.NewUserDTO;
 import io.github.sgbasaraner.funxchange.repository.FollowerRepository;
 import io.github.sgbasaraner.funxchange.repository.InterestRepository;
+import io.github.sgbasaraner.funxchange.repository.MessageRepository;
 import io.github.sgbasaraner.funxchange.repository.UserRepository;
 import io.github.sgbasaraner.funxchange.service.UserService;
 import org.slf4j.Logger;
@@ -22,6 +24,8 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 @SpringBootApplication
 public class FunxchangeApplication {
@@ -37,6 +41,10 @@ public class FunxchangeApplication {
 
 	@Autowired
 	private FollowerRepository followerRepository;
+
+	@Autowired
+	private MessageRepository messageRepository;
+
 
 	Logger logger = LoggerFactory.getLogger(FunxchangeApplication.class);
 
@@ -68,6 +76,23 @@ public class FunxchangeApplication {
 
 		followerRepository.saveAll(followerCandidates);
 
+		List<Message> allMessages = new ArrayList<>();
+		users.forEach(user -> {
+			User randomOther = randomElements(users, user1 -> !user1.getId().equals(user.getId()), 1).get(0);
+			List<Message> msgs = generateList(i -> {
+				boolean randbool = faker.bool().bool();
+
+				return mockMessage(faker, randbool ? user.getId() : randomOther.getId(), randbool ? randomOther.getId() : user.getId() );
+			}, 45);
+
+			allMessages.addAll(msgs);
+		});
+
+		Collections.shuffle(allMessages);
+		allMessages.forEach(msg -> {
+			messageRepository.save(msg);
+		});
+
 		users.stream().limit(5).forEach(u -> logger.info("Sample username: " + u.getUserName()));
 	}
 
@@ -77,6 +102,25 @@ public class FunxchangeApplication {
 
 	private NewUserDTO mockUser(Faker faker) {
 		return new NewUserDTO(faker.name().username(), faker.shakespeare().kingRichardIIIQuote(), randomElements(UserService.allowedInterests, alwaysTruePredicate(), faker.random().nextInt(UserService.allowedInterests.size())), faker.internet().password());
+	}
+
+	private <T> Stream<List<T>> batches(List<T> source, int length) {
+		if (length <= 0)
+			throw new IllegalArgumentException("length = " + length);
+		int size = source.size();
+		if (size <= 0)
+			return Stream.empty();
+		int fullChunks = (size - 1) / length;
+		return IntStream.range(0, fullChunks + 1).mapToObj(
+				n -> source.subList(n * length, n == fullChunks ? size : (n + 1) * length));
+	}
+
+	private Message mockMessage(Faker faker, UUID senderId, UUID receiverId) {
+		Message message = new Message();
+		message.setReceiverId(receiverId);
+		message.setSenderId(senderId);
+		message.setText(faker.backToTheFuture().quote());
+		return message;
 	}
 
 	private List<Interest> generateInterests() {

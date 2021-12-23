@@ -172,6 +172,7 @@ public class UserService {
                 .collect(Collectors.toUnmodifiableList());
     }
 
+    @Transactional
     public String followUser(String userId, Principal principal) {
         final User loggedInUser = repository.findUserByUserName(principal.getName()).get();
         final Optional<User> followeeUserOption = repository.findById(UUID.fromString(userId));
@@ -190,6 +191,7 @@ public class UserService {
         return followeeUser.getId().toString();
     }
 
+    @Transactional
     public String unfollowUser(String userId, Principal principal) {
         final User loggedInUser = repository.findUserByUserName(principal.getName()).get();
         final Optional<User> followeeUserOption = repository.findById(UUID.fromString(userId));

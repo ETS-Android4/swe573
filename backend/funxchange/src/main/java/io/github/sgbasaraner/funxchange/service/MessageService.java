@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Principal;
 import java.util.*;
@@ -68,8 +69,16 @@ public class MessageService {
                 .collect(Collectors.toUnmodifiableList());
     }
 
+    @Transactional
     MessageDTO sendMessage(Principal principal, NewMessageDTO message) {
-        return null;
+        final User requestor = userRepository.findUserByUserName(principal.getName()).get();
+        final User receiver = userRepository.getById(UUID.fromString(message.getReceiverId()));
+        final Message entity = new Message();
+        entity.setText(message.getText());
+        entity.setReceiverId(receiver.getId());
+        entity.setSenderId(requestor.getId());
+        final Message savedEntity = repository.save(entity);
+        return mapToMessageDTO(savedEntity, requestor, receiver);
     }
 
     private MessageDTO mapToMessageDTO(Message message, User senderUser, User receiverUser) {

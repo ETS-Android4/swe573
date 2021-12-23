@@ -11,6 +11,7 @@ import io.github.sgbasaraner.funxchange.repository.UserRepository;
 import io.github.sgbasaraner.funxchange.service.UserDetailsServiceImpl;
 import io.github.sgbasaraner.funxchange.service.UserService;
 import io.github.sgbasaraner.funxchange.util.JwtUtil;
+import io.github.sgbasaraner.funxchange.util.Util;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -55,6 +56,11 @@ public class UserServiceIntegrationTest {
         @Bean
         public UserDetailsService userDetailsService() {
             return new UserDetailsServiceImpl();
+        }
+
+        @Bean
+        public Util util() {
+            return new Util();
         }
     }
 

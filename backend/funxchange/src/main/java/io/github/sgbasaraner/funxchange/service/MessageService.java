@@ -30,7 +30,7 @@ public class MessageService {
     @Autowired
     private Util util;
 
-    List<MessageDTO> fetchConversations(Principal principal, int offset, int limit) {
+    public List<MessageDTO> fetchConversations(Principal principal, int offset, int limit) {
         final User requestor = userRepository.findUserByUserName(principal.getName()).get();
         final Set<String> convoIdSet = new HashSet<>();
         final List<Message> data = repository.findBySenderIdOrReceiverId(requestor.getId(), requestor.getId(), Sort.by("created").descending());
@@ -48,7 +48,7 @@ public class MessageService {
                 .collect(Collectors.toUnmodifiableList());
     }
 
-    List<MessageDTO> fetchMessages(Principal principal, int offset, int limit, String conversationId) {
+    public List<MessageDTO> fetchMessages(Principal principal, int offset, int limit, String conversationId) {
         final Pageable pageRequest = util.makePageable(offset, limit, Sort.by("created").descending());
         final List<UUID> convoIdParsed = parseConversationId(conversationId);
         final User firstUser = userRepository.getById(convoIdParsed.get(0));
@@ -70,7 +70,7 @@ public class MessageService {
     }
 
     @Transactional
-    MessageDTO sendMessage(Principal principal, NewMessageDTO message) {
+    public MessageDTO sendMessage(Principal principal, NewMessageDTO message) {
         final User requestor = userRepository.findUserByUserName(principal.getName()).get();
         final User receiver = userRepository.getById(UUID.fromString(message.getReceiverId()));
         final Message entity = new Message();
@@ -94,7 +94,7 @@ public class MessageService {
     }
 
     private List<UUID> parseConversationId(String conversationId) {
-        final int mid = conversationId.length();
+        final int mid = conversationId.length() / 2;
         return Stream.of(conversationId.substring(0, mid), conversationId.substring(mid))
                 .map(UUID::fromString)
                 .collect(Collectors.toUnmodifiableList());

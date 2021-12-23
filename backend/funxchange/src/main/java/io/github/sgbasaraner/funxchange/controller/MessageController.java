@@ -15,12 +15,12 @@ public class MessageController {
     }
 
     @GetMapping("/conversations/{conversationId}/messages")
-    List<MessageDTO> fetchMessages(Principal principal, @RequestParam int offset, @RequestParam int limit) {
+    List<MessageDTO> fetchMessages(Principal principal, @RequestParam int offset, @RequestParam int limit, @PathVariable String conversationId) {
         return null;
     }
 
     @PostMapping("/conversations")
-    List<MessageDTO> sendMessage(Principal principal, @RequestBody NewMessageDTO message) {
+    MessageDTO sendMessage(Principal principal, @RequestBody NewMessageDTO message) {
         return null;
     }
 }

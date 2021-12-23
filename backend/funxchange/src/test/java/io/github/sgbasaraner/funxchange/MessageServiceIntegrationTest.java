@@ -130,4 +130,35 @@ public class MessageServiceIntegrationTest {
         final List<MessageDTO> foundMessages = messageService.fetchMessages(new MockPrincipal(currentUser.getUserName()), 0, 20, currentUser.getId().toString() + targetUser.getId().toString());
         Assertions.assertEquals(foundMessages.get(0).getText(), mockMessage.getText());
     }
+
+    @Test
+    public void whenAskedConversations_serviceShouldFind() {
+        final User currentUser = new User();
+        currentUser.setUserName("test_user");
+        currentUser.setId(UUID.randomUUID());
+        currentUser.setFollows(Collections.emptyList());
+
+        final User targetUser = new User();
+        targetUser.setUserName("target_user");
+        targetUser.setId(UUID.randomUUID());
+        targetUser.setFollows(Collections.emptyList());
+        targetUser.setInterests(Collections.emptySet());
+
+        Mockito.when(userRepository.findUserByUserName(currentUser.getUserName())).thenReturn(Optional.of(currentUser));
+        Mockito.when(userRepository.findUserByUserName(targetUser.getUserName())).thenReturn(Optional.of(targetUser));
+        Mockito.when(userRepository.getById(targetUser.getId())).thenReturn(targetUser);
+        Mockito.when(userRepository.getById(currentUser.getId())).thenReturn(currentUser);
+
+        final Message mockMessage = new Message();
+        mockMessage.setText("test_text");
+        mockMessage.setSenderId(currentUser.getId());
+        mockMessage.setReceiverId(targetUser.getId());
+        mockMessage.setCreated(LocalDateTime.now());
+
+        Mockito.when(messageRepository.findBySenderIdOrReceiverId(currentUser.getId(), currentUser.getId(), Sort.by("created").descending()))
+                .thenReturn(List.of(mockMessage));
+
+        final List<MessageDTO> foundMessages = messageService.fetchConversations(new MockPrincipal(currentUser.getUserName()), 0, 20);
+        Assertions.assertEquals(foundMessages.get(0).getText(), mockMessage.getText());
+    }
 }

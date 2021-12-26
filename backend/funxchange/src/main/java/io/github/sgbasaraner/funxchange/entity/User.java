@@ -38,7 +38,10 @@ public class User {
     private LocalDateTime created;
 
     @OneToMany(mappedBy = "follower")
-    private List<Follower> follows;
+    private Set<Follower> follows;
+
+    @OneToMany(mappedBy="user")
+    private Set<Event> events;
 
     public UUID getId() {
         return id;
@@ -88,11 +91,19 @@ public class User {
         this.created = created;
     }
 
-    public List<Follower> getFollows() {
+    public Set<Follower> getFollows() {
         return follows;
     }
 
-    public void setFollows(List<Follower> follows) {
+    public void setFollows(Set<Follower> follows) {
         this.follows = follows;
+    }
+
+    public Set<Event> getEvents() {
+        return events;
+    }
+
+    public void setEvents(Set<Event> events) {
+        this.events = events;
     }
 }

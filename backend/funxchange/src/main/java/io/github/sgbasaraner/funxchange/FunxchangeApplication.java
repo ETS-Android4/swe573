@@ -2,15 +2,9 @@ package io.github.sgbasaraner.funxchange;
 
 
 import com.github.javafaker.Faker;
-import io.github.sgbasaraner.funxchange.entity.Follower;
-import io.github.sgbasaraner.funxchange.entity.Interest;
-import io.github.sgbasaraner.funxchange.entity.Message;
-import io.github.sgbasaraner.funxchange.entity.User;
+import io.github.sgbasaraner.funxchange.entity.*;
 import io.github.sgbasaraner.funxchange.model.NewUserDTO;
-import io.github.sgbasaraner.funxchange.repository.FollowerRepository;
-import io.github.sgbasaraner.funxchange.repository.InterestRepository;
-import io.github.sgbasaraner.funxchange.repository.MessageRepository;
-import io.github.sgbasaraner.funxchange.repository.UserRepository;
+import io.github.sgbasaraner.funxchange.repository.*;
 import io.github.sgbasaraner.funxchange.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +14,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -44,6 +40,9 @@ public class FunxchangeApplication {
 
 	@Autowired
 	private MessageRepository messageRepository;
+
+	@Autowired
+	private EventRepository eventRepository;
 
 
 	Logger logger = LoggerFactory.getLogger(FunxchangeApplication.class);
@@ -92,8 +91,6 @@ public class FunxchangeApplication {
 		allMessages.forEach(msg -> {
 			messageRepository.save(msg);
 		});
-
-		users.stream().limit(5).forEach(u -> logger.info("Sample username: " + u.getUserName()));
 	}
 
 	private <T> Predicate<T> alwaysTruePredicate() {
@@ -120,6 +117,7 @@ public class FunxchangeApplication {
 		message.setReceiverId(receiverId);
 		message.setSenderId(senderId);
 		message.setText(faker.backToTheFuture().quote());
+		message.setCreated(LocalDateTime.now().minus(faker.random().nextInt(10000), ChronoUnit.SECONDS));
 		return message;
 	}
 

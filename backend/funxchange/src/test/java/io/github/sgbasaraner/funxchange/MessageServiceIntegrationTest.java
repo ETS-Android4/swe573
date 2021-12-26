@@ -105,12 +105,12 @@ public class MessageServiceIntegrationTest {
         final User currentUser = new User();
         currentUser.setUserName("test_user");
         currentUser.setId(UUID.randomUUID());
-        currentUser.setFollows(Collections.emptyList());
+        currentUser.setFollows(Collections.emptySet());
 
         final User targetUser = new User();
         targetUser.setUserName("target_user");
         targetUser.setId(UUID.randomUUID());
-        targetUser.setFollows(Collections.emptyList());
+        targetUser.setFollows(Collections.emptySet());
         targetUser.setInterests(Collections.emptySet());
 
         Mockito.when(userRepository.findUserByUserName(currentUser.getUserName())).thenReturn(Optional.of(currentUser));
@@ -136,13 +136,12 @@ public class MessageServiceIntegrationTest {
         final User currentUser = new User();
         currentUser.setUserName("test_user");
         currentUser.setId(UUID.randomUUID());
-        currentUser.setFollows(Collections.emptyList());
+        currentUser.setFollows(Collections.emptySet());
 
         final User targetUser = new User();
         targetUser.setUserName("target_user");
         targetUser.setId(UUID.randomUUID());
-        targetUser.setFollows(Collections.emptyList());
-        targetUser.setInterests(Collections.emptySet());
+        targetUser.setFollows(Collections.emptySet());
 
         Mockito.when(userRepository.findUserByUserName(currentUser.getUserName())).thenReturn(Optional.of(currentUser));
         Mockito.when(userRepository.findUserByUserName(targetUser.getUserName())).thenReturn(Optional.of(targetUser));

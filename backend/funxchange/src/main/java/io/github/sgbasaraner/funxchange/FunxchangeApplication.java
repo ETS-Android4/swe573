@@ -14,6 +14,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -91,6 +92,14 @@ public class FunxchangeApplication {
 		allMessages.forEach(msg -> {
 			messageRepository.save(msg);
 		});
+
+		final List<Event> mockEvents = users
+				.stream()
+				.map(u -> generateList(i -> mockEvent(faker, u), 40))
+				.flatMap(List::stream)
+				.collect(Collectors.toUnmodifiableList());
+
+		eventRepository.saveAll(mockEvents);
 	}
 
 	private <T> Predicate<T> alwaysTruePredicate() {
@@ -98,7 +107,24 @@ public class FunxchangeApplication {
 	}
 
 	private NewUserDTO mockUser(Faker faker) {
-		return new NewUserDTO(faker.name().username(), faker.shakespeare().kingRichardIIIQuote(), randomElements(UserService.allowedInterests, alwaysTruePredicate(), faker.random().nextInt(UserService.allowedInterests.size())), faker.internet().password());
+		return new NewUserDTO(faker.name().username() + faker.internet().domainSuffix(), faker.shakespeare().kingRichardIIIQuote(), randomElements(UserService.allowedInterests, alwaysTruePredicate(), faker.random().nextInt(UserService.allowedInterests.size())), faker.internet().password());
+	}
+
+	private Event mockEvent(Faker faker, User user) {
+		final Event event = new Event();
+		event.setTitle(faker.job() + " for " + faker.rockBand().name());
+
+		event.setStartDateTime(LocalDateTime.now().plus(faker.random().nextInt(432000), ChronoUnit.SECONDS));
+		event.setEndDateTime(event.getStartDateTime().plus(faker.random().nextInt(1800, 432000), ChronoUnit.SECONDS));
+		event.setDetails(faker.shakespeare().kingRichardIIIQuote());
+		event.setType(randomElements(UserService.allowedInterests, alwaysTruePredicate(), 1).get(0));
+		event.setLatitude(faker.random().nextDouble() * 42 + 36);
+		event.setLongitude(faker.random().nextDouble() * 50 + 42);
+		event.setCountryName(faker.country().name());
+		event.setCityName(faker.address().cityName());
+		event.setOwner(user);
+		event.setCreated(LocalDateTime.now().plus(faker.random().nextInt(20, 1000), ChronoUnit.MILLIS));
+		return event;
 	}
 
 	private <T> Stream<List<T>> batches(List<T> source, int length) {

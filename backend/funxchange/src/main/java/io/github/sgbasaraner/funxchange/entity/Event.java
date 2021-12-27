@@ -56,6 +56,14 @@ public class Event {
     @Column
     private LocalDateTime created;
 
+    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @JoinTable(
+            name = "event_user",
+            joinColumns = { @JoinColumn(name = "event_id") },
+            inverseJoinColumns = { @JoinColumn(name = "user_id") }
+    )
+    private Set<User> participants;
+
     public UUID getId() {
         return id;
     }
@@ -174,5 +182,13 @@ public class Event {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Set<User> getParticipants() {
+        return participants;
+    }
+
+    public void setParticipants(Set<User> participants) {
+        this.participants = participants;
     }
 }

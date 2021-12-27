@@ -13,6 +13,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -53,6 +54,7 @@ public class FunxchangeApplication {
 	}
 
 	@EventListener(ApplicationReadyEvent.class)
+	@Transactional
 	public void runAfterStartup() {
 		Faker faker = new Faker();
 		Random rand = new Random();
@@ -95,11 +97,13 @@ public class FunxchangeApplication {
 
 		final List<Event> mockEvents = users
 				.stream()
-				.map(u -> generateList(i -> mockEvent(faker, u), 40))
+				.map(u -> generateList(i -> mockEvent(faker, u, randomElements(users, usr -> !usr.getId().equals(u.getId()), faker.random().nextInt(10))), 40))
 				.flatMap(List::stream)
 				.collect(Collectors.toUnmodifiableList());
 
 		eventRepository.saveAll(mockEvents);
+
+		users.stream().limit(10).forEach(u -> System.out.println(u.getUserName()));
 	}
 
 	private <T> Predicate<T> alwaysTruePredicate() {
@@ -110,7 +114,7 @@ public class FunxchangeApplication {
 		return new NewUserDTO(faker.name().username() + faker.internet().domainSuffix(), faker.shakespeare().kingRichardIIIQuote(), randomElements(UserService.allowedInterests, alwaysTruePredicate(), faker.random().nextInt(UserService.allowedInterests.size())), faker.internet().password());
 	}
 
-	private Event mockEvent(Faker faker, User user) {
+	private Event mockEvent(Faker faker, User user, List<User> participants) {
 		final Event event = new Event();
 		event.setTitle(faker.job() + " for " + faker.rockBand().name());
 
@@ -124,6 +128,11 @@ public class FunxchangeApplication {
 		event.setCityName(faker.address().cityName());
 		event.setUser(user);
 		event.setCreated(LocalDateTime.now().plus(faker.random().nextInt(20, 1000), ChronoUnit.MILLIS));
+		participants.forEach(u -> {
+			Set<Event> participatedEvents = Optional.ofNullable(u.getParticipatedEvents()).orElse(new HashSet<>());
+			participatedEvents.add(event);
+		});
+		event.setParticipants(new HashSet<>(participants));
 		return event;
 	}
 

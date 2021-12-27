@@ -46,6 +46,9 @@ public class User {
     @OneToMany(mappedBy="user")
     private Set<JoinRequest> joinRequests;
 
+    @ManyToMany(mappedBy = "participants")
+    private Set<Event> participatedEvents;
+
     public UUID getId() {
         return id;
     }
@@ -116,5 +119,13 @@ public class User {
 
     public void setJoinRequests(Set<JoinRequest> joinRequests) {
         this.joinRequests = joinRequests;
+    }
+
+    public Set<Event> getParticipatedEvents() {
+        return participatedEvents;
+    }
+
+    public void setParticipatedEvents(Set<Event> participatedEvents) {
+        this.participatedEvents = participatedEvents;
     }
 }

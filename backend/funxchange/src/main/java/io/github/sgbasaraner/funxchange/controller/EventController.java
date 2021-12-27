@@ -40,4 +40,14 @@ public class EventController {
     JoinRequestDTO joinEvent(Principal principal, @PathVariable String eventId) {
         return null;
     }
+
+    @PostMapping("/events/{eventId}/requestors/{userId}/accept")
+    JoinRequestDTO acceptJoinRequest(Principal principal, @PathVariable String eventId, @PathVariable String userId) {
+        return null;
+    }
+
+    @PostMapping("/events/{eventId}/requestors/{userId}/reject")
+    JoinRequestDTO rejectJoinRequest(Principal principal, @PathVariable String eventId, @PathVariable String userId) {
+        return null;
+    }
 }

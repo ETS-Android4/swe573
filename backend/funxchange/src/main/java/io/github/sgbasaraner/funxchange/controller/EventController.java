@@ -1,10 +1,9 @@
 package io.github.sgbasaraner.funxchange.controller;
 
 import io.github.sgbasaraner.funxchange.model.EventDTO;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import io.github.sgbasaraner.funxchange.model.NewEventDTO;
+import io.github.sgbasaraner.funxchange.model.UserDTO;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
@@ -18,6 +17,21 @@ public class EventController {
 
     @GetMapping("/events/feed")
     List<EventDTO> fetchFeed(Principal principal, @RequestParam int offset, @RequestParam int limit) {
+        return null;
+    }
+
+    @GetMapping("/user/{userId}/events")
+    List<EventDTO> fetchEventsOfUser(Principal principal, @RequestParam int offset, @RequestParam int limit, @PathVariable String userId) {
+        return null;
+    }
+
+    @GetMapping("/events/{eventId}/participants")
+    List<UserDTO> fetchParticipantsOfEvent(Principal principal, @RequestParam int offset, @RequestParam int limit, @PathVariable String eventId) {
+        return null;
+    }
+
+    @PostMapping("/events")
+    EventDTO createEvent(Principal principal, @RequestBody NewEventDTO params) {
         return null;
     }
 }

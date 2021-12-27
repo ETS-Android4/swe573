@@ -15,10 +15,10 @@ public class EventDTO {
     final double longitude;
     final String cityName;
     final String countryName;
-    final int durationInMinutes;
+    final long durationInMinutes;
     final LocalDateTime dateTime;
 
-    public EventDTO(String id, String ownerId, String type, int capacity, int participantCount, String category, String title, String details, double latitude, double longitude, String cityName, String countryName, int durationInMinutes, LocalDateTime dateTime) {
+    public EventDTO(String id, String ownerId, String type, int capacity, int participantCount, String category, String title, String details, double latitude, double longitude, String cityName, String countryName, long durationInMinutes, LocalDateTime dateTime) {
         this.id = id;
         this.ownerId = ownerId;
         this.type = type;
@@ -83,7 +83,7 @@ public class EventDTO {
         return countryName;
     }
 
-    public int getDurationInMinutes() {
+    public long getDurationInMinutes() {
         return durationInMinutes;
     }
 

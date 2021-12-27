@@ -4,6 +4,9 @@ import io.github.sgbasaraner.funxchange.model.EventDTO;
 import io.github.sgbasaraner.funxchange.model.JoinRequestDTO;
 import io.github.sgbasaraner.funxchange.model.NewEventDTO;
 import io.github.sgbasaraner.funxchange.model.UserDTO;
+import io.github.sgbasaraner.funxchange.service.EventService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -11,6 +14,10 @@ import java.util.List;
 
 @RestController
 public class EventController {
+
+    @Autowired
+    private EventService eventService;
+
     @GetMapping("/events/{eventId}")
     EventDTO fetchEvent(Principal principal, @PathVariable String eventId) {
         return null;
@@ -32,8 +39,12 @@ public class EventController {
     }
 
     @PostMapping("/events")
-    EventDTO createEvent(Principal principal, @RequestBody NewEventDTO params) {
-        return null;
+    ResponseEntity<EventDTO> createEvent(Principal principal, @RequestBody NewEventDTO params) {
+        try {
+            return ResponseEntity.ok(eventService.createEvent(principal, params));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @PostMapping("/events/{eventId}/join")

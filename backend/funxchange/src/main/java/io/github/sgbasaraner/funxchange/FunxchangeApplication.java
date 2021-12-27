@@ -121,7 +121,8 @@ public class FunxchangeApplication {
 		event.setStartDateTime(LocalDateTime.now().plus(faker.random().nextInt(432000), ChronoUnit.SECONDS));
 		event.setEndDateTime(event.getStartDateTime().plus(faker.random().nextInt(1800, 432000), ChronoUnit.SECONDS));
 		event.setDetails(faker.shakespeare().kingRichardIIIQuote());
-		event.setType(randomElements(UserService.allowedInterests, alwaysTruePredicate(), 1).get(0));
+		event.setCategory(randomElements(UserService.allowedInterests, alwaysTruePredicate(), 1).get(0));
+		event.setType(faker.random().nextBoolean() ? "meetup" : "service");
 		event.setLatitude(faker.random().nextDouble() * 42 + 36);
 		event.setLongitude(faker.random().nextDouble() * 50 + 42);
 		event.setCountryName(faker.country().name());

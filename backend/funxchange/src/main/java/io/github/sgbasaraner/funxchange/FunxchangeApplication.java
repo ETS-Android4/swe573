@@ -122,7 +122,7 @@ public class FunxchangeApplication {
 		event.setLongitude(faker.random().nextDouble() * 50 + 42);
 		event.setCountryName(faker.country().name());
 		event.setCityName(faker.address().cityName());
-		event.setOwner(user);
+		event.setUser(user);
 		event.setCreated(LocalDateTime.now().plus(faker.random().nextInt(20, 1000), ChronoUnit.MILLIS));
 		return event;
 	}

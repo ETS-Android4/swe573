@@ -2,6 +2,7 @@ package io.github.sgbasaraner.funxchange.entity;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -15,6 +16,9 @@ public class Event {
     @ManyToOne
     @JoinColumn(name="owner_id", nullable=false)
     private User user;
+
+    @OneToMany(mappedBy="event")
+    private Set<JoinRequest> joinRequests;
 
     @Column
     private String type;
@@ -58,14 +62,6 @@ public class Event {
 
     public void setId(UUID id) {
         this.id = id;
-    }
-
-    public User getOwner() {
-        return user;
-    }
-
-    public void setOwner(User owner) {
-        this.user = owner;
     }
 
     public String getType() {
@@ -162,5 +158,21 @@ public class Event {
 
     public void setCreated(LocalDateTime created) {
         this.created = created;
+    }
+
+    public Set<JoinRequest> getJoinRequests() {
+        return joinRequests;
+    }
+
+    public void setJoinRequests(Set<JoinRequest> joinRequests) {
+        this.joinRequests = joinRequests;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

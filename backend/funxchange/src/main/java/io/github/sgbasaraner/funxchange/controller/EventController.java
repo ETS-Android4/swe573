@@ -1,6 +1,7 @@
 package io.github.sgbasaraner.funxchange.controller;
 
 import io.github.sgbasaraner.funxchange.model.EventDTO;
+import io.github.sgbasaraner.funxchange.model.JoinRequestDTO;
 import io.github.sgbasaraner.funxchange.model.NewEventDTO;
 import io.github.sgbasaraner.funxchange.model.UserDTO;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +33,11 @@ public class EventController {
 
     @PostMapping("/events")
     EventDTO createEvent(Principal principal, @RequestBody NewEventDTO params) {
+        return null;
+    }
+
+    @PostMapping("/events/{eventId}/join")
+    JoinRequestDTO joinEvent(Principal principal, @PathVariable String eventId) {
         return null;
     }
 }

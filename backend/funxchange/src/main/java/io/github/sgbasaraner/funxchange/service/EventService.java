@@ -128,6 +128,16 @@ public class EventService {
         return mapToModel(eventRepository.save(entity));
     }
 
+    public List<JoinRequestDTO> fetchRequests(Principal principal, int offset, int limit) {
+        final User requestor = userRepository.findUserByUserName(principal.getName()).get();
+        final Pageable page = util.makePageable(offset, limit, Sort.by("created").descending());
+        return joinRequestRepository
+                .findRequestsToUsers(requestor.getId(), page)
+                .stream()
+                .map(this::mapToJoinRequestDTO)
+                .collect(Collectors.toUnmodifiableList());
+    }
+
     private Event mapToEntity(NewEventDTO params, User requestor) {
         final Event entity = new Event();
         entity.setParticipants(Collections.emptySet());

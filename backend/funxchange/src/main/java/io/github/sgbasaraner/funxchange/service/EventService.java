@@ -35,6 +35,9 @@ public class EventService {
     private EventRepository eventRepository;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
     private Util util;
 
     EventDTO fetchEvent(String eventId) {
@@ -51,7 +54,12 @@ public class EventService {
     }
 
     List<EventDTO> fetchEventsOfUser(Principal principal, int offset, int limit, String userId) {
-        return null;
+        final Pageable page = util.makePageable(offset, limit, Sort.by("created").descending());
+        final User user = userRepository.getById(UUID.fromString(userId));
+        return eventRepository.findByUser(user, page)
+                .stream()
+                .map(this::mapToModel)
+                .collect(Collectors.toUnmodifiableList());
     }
 
     List<UserDTO> fetchParticipantsOfEvent(Principal principal, int offset, int limit, String eventId) {

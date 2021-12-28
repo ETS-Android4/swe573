@@ -3,7 +3,9 @@ package io.github.sgbasaraner.funxchange.service;
 import io.github.sgbasaraner.funxchange.entity.Event;
 import io.github.sgbasaraner.funxchange.entity.User;
 import io.github.sgbasaraner.funxchange.model.EventDTO;
+import io.github.sgbasaraner.funxchange.model.JoinRequestDTO;
 import io.github.sgbasaraner.funxchange.model.NewEventDTO;
+import io.github.sgbasaraner.funxchange.model.UserDTO;
 import io.github.sgbasaraner.funxchange.repository.EventRepository;
 import io.github.sgbasaraner.funxchange.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,10 +13,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+
 import java.security.Principal;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.List;
 
 @Service
 public class EventService {
@@ -24,6 +28,43 @@ public class EventService {
 
     @Autowired
     private EventRepository eventRepository;
+
+
+    EventDTO fetchEvent(Principal principal, String eventId) {
+        return null;
+    }
+
+
+    List<EventDTO> fetchFeed(Principal principal, int offset, int limit) {
+        return null;
+    }
+
+
+    List<EventDTO> fetchEventsOfUser(Principal principal, int offset, int limit, String userId) {
+        return null;
+    }
+
+
+    List<UserDTO> fetchParticipantsOfEvent(Principal principal, int offset, int limit, String eventId) {
+        return null;
+    }
+
+
+
+
+    JoinRequestDTO joinEvent(Principal principal, String eventId) {
+        return null;
+    }
+
+
+    JoinRequestDTO acceptJoinRequest(Principal principal, String eventId, String userId) {
+        return null;
+    }
+
+
+    JoinRequestDTO rejectJoinRequest(Principal principal, String eventId, String userId) {
+        return null;
+    }
 
     @Transactional
     public EventDTO createEvent(Principal principal, NewEventDTO params) {

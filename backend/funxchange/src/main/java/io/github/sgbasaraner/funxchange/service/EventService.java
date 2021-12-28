@@ -10,6 +10,7 @@ import io.github.sgbasaraner.funxchange.model.UserDTO;
 import io.github.sgbasaraner.funxchange.repository.EventRepository;
 import io.github.sgbasaraner.funxchange.repository.JoinRequestRepository;
 import io.github.sgbasaraner.funxchange.repository.UserRepository;
+import io.github.sgbasaraner.funxchange.util.DeeplinkUtil;
 import io.github.sgbasaraner.funxchange.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -42,6 +43,9 @@ public class EventService {
 
     @Autowired
     private Util util;
+
+    @Autowired
+    private DeeplinkUtil deeplinkUtil;
 
     EventDTO fetchEvent(String eventId) {
         return mapToModel(eventRepository.getById(UUID.fromString(eventId)));
@@ -163,7 +167,10 @@ public class EventService {
     }
 
     private JoinRequestDTO mapToJoinRequestDTO(JoinRequest joinRequest) {
-        return null; // TODO
+        final String textBase = deeplinkUtil.generateUserHtml(joinRequest.getUser()) + " would like to ";
+        final String mid = joinRequest.getEvent().getType().equalsIgnoreCase("meetup") ? "join your meetup" : "join your service";
+        final String end = " " + deeplinkUtil.generateEventHtml(joinRequest.getEvent()) + ".";
+        return new JoinRequestDTO(joinRequest.getEvent().getId().toString(), joinRequest.getUser().getId().toString(), textBase + mid + end);
     }
 
     private void validateNewEventParams(NewEventDTO params) {

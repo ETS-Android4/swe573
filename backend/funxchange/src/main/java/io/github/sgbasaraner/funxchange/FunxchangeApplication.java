@@ -103,7 +103,7 @@ public class FunxchangeApplication {
 
 		eventRepository.saveAll(mockEvents);
 
-		users.stream().limit(10).forEach(u -> System.out.println(u.getUserName()));
+		userDTOS.stream().limit(5).forEach(u -> System.out.println("Username: " + u.getUserName() + " pw: " + u.getPassword()));
 	}
 
 	private <T> Predicate<T> alwaysTruePredicate() {

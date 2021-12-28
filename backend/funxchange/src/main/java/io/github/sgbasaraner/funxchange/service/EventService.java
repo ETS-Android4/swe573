@@ -47,11 +47,11 @@ public class EventService {
     @Autowired
     private DeeplinkUtil deeplinkUtil;
 
-    EventDTO fetchEvent(String eventId) {
+    public EventDTO fetchEvent(String eventId) {
         return mapToModel(eventRepository.getById(UUID.fromString(eventId)));
     }
 
-    List<EventDTO> fetchFeed(int offset, int limit) {
+    public List<EventDTO> fetchFeed(int offset, int limit) {
         final Pageable page = util.makePageable(offset, limit, Sort.by("created").descending());
         return eventRepository
                 .findAll(page)
@@ -60,7 +60,7 @@ public class EventService {
                 .collect(Collectors.toUnmodifiableList());
     }
 
-    List<EventDTO> fetchEventsOfUser(int offset, int limit, String userId) {
+    public List<EventDTO> fetchEventsOfUser(int offset, int limit, String userId) {
         final Pageable page = util.makePageable(offset, limit, Sort.by("created").descending());
         final User user = userRepository.getById(UUID.fromString(userId));
         return eventRepository.findByUser(user, page)
@@ -69,7 +69,7 @@ public class EventService {
                 .collect(Collectors.toUnmodifiableList());
     }
 
-    List<UserDTO> fetchParticipantsOfEvent(Principal principal, String eventId) {
+    public List<UserDTO> fetchParticipantsOfEvent(Principal principal, String eventId) {
         final User requestor = userRepository.findUserByUserName(principal.getName()).get();
         final Event event = eventRepository.getById(UUID.fromString(eventId));
         return event.getParticipants()
@@ -78,7 +78,7 @@ public class EventService {
                 .collect(Collectors.toUnmodifiableList());
     }
 
-    JoinRequestDTO joinEvent(Principal principal, String eventId) {
+    public JoinRequestDTO joinEvent(Principal principal, String eventId) {
         // TODO: credit
         // TODO: notification
         final User requestor = userRepository.findUserByUserName(principal.getName()).get();
@@ -90,7 +90,7 @@ public class EventService {
     }
 
     @Transactional
-    JoinRequestDTO acceptJoinRequest(Principal principal, String eventId, String userId) {
+    public JoinRequestDTO acceptJoinRequest(Principal principal, String eventId, String userId) {
         // TODO: credit
         // TODO: notification
         final User principalUser = userRepository.findUserByUserName(principal.getName()).get();
@@ -108,7 +108,7 @@ public class EventService {
     }
 
     @Transactional
-    JoinRequestDTO rejectJoinRequest(Principal principal, String eventId, String userId) {
+    public JoinRequestDTO rejectJoinRequest(Principal principal, String eventId, String userId) {
         final User principalUser = userRepository.findUserByUserName(principal.getName()).get();
         final Event event = eventRepository.getById(UUID.fromString(eventId));
         if (!event.getUser().getId().equals(principalUser.getId()))

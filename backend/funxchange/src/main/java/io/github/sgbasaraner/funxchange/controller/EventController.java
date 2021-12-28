@@ -19,23 +19,39 @@ public class EventController {
     private EventService eventService;
 
     @GetMapping("/events/{eventId}")
-    EventDTO fetchEvent(Principal principal, @PathVariable String eventId) {
-        return null;
+    ResponseEntity<EventDTO> fetchEvent(Principal principal, @PathVariable String eventId) {
+        try {
+            return ResponseEntity.ok(eventService.fetchEvent(eventId));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @GetMapping("/events/feed")
-    List<EventDTO> fetchFeed(Principal principal, @RequestParam int offset, @RequestParam int limit) {
-        return null;
+    ResponseEntity<List<EventDTO>> fetchFeed(Principal principal, @RequestParam int offset, @RequestParam int limit) {
+        try {
+            return ResponseEntity.ok(eventService.fetchFeed(offset, limit));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @GetMapping("/user/{userId}/events")
-    List<EventDTO> fetchEventsOfUser(Principal principal, @RequestParam int offset, @RequestParam int limit, @PathVariable String userId) {
-        return null;
+    ResponseEntity<List<EventDTO>> fetchEventsOfUser(Principal principal, @RequestParam int offset, @RequestParam int limit, @PathVariable String userId) {
+        try {
+            return ResponseEntity.ok(eventService.fetchEventsOfUser(offset, limit, userId));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @GetMapping("/events/{eventId}/participants")
-    List<UserDTO> fetchParticipantsOfEvent(Principal principal, @PathVariable String eventId) {
-        return null;
+    ResponseEntity<List<UserDTO>> fetchParticipantsOfEvent(Principal principal, @PathVariable String eventId) {
+        try {
+            return ResponseEntity.ok(eventService.fetchParticipantsOfEvent(principal, eventId));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @PostMapping("/events")
@@ -48,17 +64,29 @@ public class EventController {
     }
 
     @PostMapping("/events/{eventId}/join")
-    JoinRequestDTO joinEvent(Principal principal, @PathVariable String eventId) {
-        return null;
+    ResponseEntity<JoinRequestDTO> joinEvent(Principal principal, @PathVariable String eventId) {
+        try {
+            return ResponseEntity.ok(eventService.joinEvent(principal, eventId));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @PostMapping("/events/{eventId}/requestors/{userId}/accept")
-    JoinRequestDTO acceptJoinRequest(Principal principal, @PathVariable String eventId, @PathVariable String userId) {
-        return null;
+    ResponseEntity<JoinRequestDTO> acceptJoinRequest(Principal principal, @PathVariable String eventId, @PathVariable String userId) {
+        try {
+            return ResponseEntity.ok(eventService.acceptJoinRequest(principal, eventId, userId));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @PostMapping("/events/{eventId}/requestors/{userId}/reject")
-    JoinRequestDTO rejectJoinRequest(Principal principal, @PathVariable String eventId, @PathVariable String userId) {
-        return null;
+    ResponseEntity<JoinRequestDTO> rejectJoinRequest(Principal principal, @PathVariable String eventId, @PathVariable String userId) {
+        try {
+            return ResponseEntity.ok(eventService.rejectJoinRequest(principal, eventId, userId));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 }

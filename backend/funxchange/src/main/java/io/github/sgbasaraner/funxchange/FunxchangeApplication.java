@@ -6,6 +6,7 @@ import io.github.sgbasaraner.funxchange.entity.*;
 import io.github.sgbasaraner.funxchange.model.NewUserDTO;
 import io.github.sgbasaraner.funxchange.repository.*;
 import io.github.sgbasaraner.funxchange.service.UserService;
+import org.hibernate.mapping.Join;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,6 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -45,6 +45,9 @@ public class FunxchangeApplication {
 
 	@Autowired
 	private EventRepository eventRepository;
+
+	@Autowired
+	private JoinRequestRepository joinRequestRepository;
 
 
 	Logger logger = LoggerFactory.getLogger(FunxchangeApplication.class);
@@ -103,6 +106,8 @@ public class FunxchangeApplication {
 
 		eventRepository.saveAll(mockEvents);
 
+		joinRequestRepository.saveAll(mockEvents.stream().map(Event::getJoinRequests).flatMap(Set::stream).collect(Collectors.toUnmodifiableList()));
+
 		Timer t = new java.util.Timer();
 		t.schedule(
 				new java.util.TimerTask() {
@@ -146,6 +151,26 @@ public class FunxchangeApplication {
 			participatedEvents.add(event);
 		});
 		event.setParticipants(new HashSet<>(limitedParticipants));
+		final List<JoinRequest> requests = participants.stream().filter(u -> !limitedParticipants
+				.stream()
+				.map(User::getId)
+				.collect(Collectors.toUnmodifiableList())
+				.contains(u.getId()))
+				.map(u -> {
+					final JoinRequest request = new JoinRequest();
+					request.setEvent(event);
+					request.setUser(u);
+					return request;
+				})
+				.collect(Collectors.toUnmodifiableList());
+
+
+		requests.forEach(rq -> {
+			Set<JoinRequest> requestedEvents = Optional.ofNullable(rq.getUser().getJoinRequests()).orElse(new HashSet<>());
+			requestedEvents.add(rq);
+		});
+		event.setJoinRequests(new HashSet<>(requests));
+
 		return event;
 	}
 

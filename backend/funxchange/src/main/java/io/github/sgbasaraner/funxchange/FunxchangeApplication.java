@@ -138,12 +138,14 @@ public class FunxchangeApplication {
 		event.setCountryName(faker.country().name());
 		event.setCityName(faker.address().cityName());
 		event.setUser(user);
+		event.setCapacity(faker.random().nextInt(1, 12));
 		event.setCreated(LocalDateTime.now().plus(faker.random().nextInt(20, 1000), ChronoUnit.MILLIS));
-		participants.forEach(u -> {
+		final List<User> limitedParticipants = participants.stream().limit(event.getCapacity()).collect(Collectors.toUnmodifiableList());
+		limitedParticipants.forEach(u -> {
 			Set<Event> participatedEvents = Optional.ofNullable(u.getParticipatedEvents()).orElse(new HashSet<>());
 			participatedEvents.add(event);
 		});
-		event.setParticipants(new HashSet<>(participants));
+		event.setParticipants(new HashSet<>(limitedParticipants));
 		return event;
 	}
 

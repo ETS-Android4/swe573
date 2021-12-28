@@ -103,7 +103,17 @@ public class FunxchangeApplication {
 
 		eventRepository.saveAll(mockEvents);
 
-		userDTOS.stream().limit(5).forEach(u -> System.out.println("Username: " + u.getUserName() + " pw: " + u.getPassword()));
+		Timer t = new java.util.Timer();
+		t.schedule(
+				new java.util.TimerTask() {
+					@Override
+					public void run() {
+						userDTOS.stream().limit(5).forEach(u -> System.out.println("Username: " + u.getUserName() + " pw: " + u.getPassword()));
+						t.cancel();
+					}
+				},
+				5000
+		);
 	}
 
 	private <T> Predicate<T> alwaysTruePredicate() {
@@ -116,7 +126,7 @@ public class FunxchangeApplication {
 
 	private Event mockEvent(Faker faker, User user, List<User> participants) {
 		final Event event = new Event();
-		event.setTitle(faker.job() + " for " + faker.rockBand().name());
+		event.setTitle(faker.job().position()+ ", " + faker.job().seniority() + " for " + faker.rockBand().name());
 
 		event.setStartDateTime(LocalDateTime.now().plus(faker.random().nextInt(432000), ChronoUnit.SECONDS));
 		event.setEndDateTime(event.getStartDateTime().plus(faker.random().nextInt(1800, 432000), ChronoUnit.SECONDS));

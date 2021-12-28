@@ -8,7 +8,10 @@ import io.github.sgbasaraner.funxchange.model.NewEventDTO;
 import io.github.sgbasaraner.funxchange.model.UserDTO;
 import io.github.sgbasaraner.funxchange.repository.EventRepository;
 import io.github.sgbasaraner.funxchange.repository.UserRepository;
+import io.github.sgbasaraner.funxchange.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -19,6 +22,8 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class EventService {
@@ -29,38 +34,37 @@ public class EventService {
     @Autowired
     private EventRepository eventRepository;
 
+    @Autowired
+    private Util util;
 
-    EventDTO fetchEvent(Principal principal, String eventId) {
-        return null;
+    EventDTO fetchEvent(String eventId) {
+        return mapToModel(eventRepository.getById(UUID.fromString(eventId)));
     }
-
 
     List<EventDTO> fetchFeed(Principal principal, int offset, int limit) {
-        return null;
+        final Pageable page = util.makePageable(offset, limit, Sort.by("created").descending());
+        return eventRepository
+                .findAll(page)
+                .stream()
+                .map(this::mapToModel)
+                .collect(Collectors.toUnmodifiableList());
     }
-
 
     List<EventDTO> fetchEventsOfUser(Principal principal, int offset, int limit, String userId) {
         return null;
     }
 
-
     List<UserDTO> fetchParticipantsOfEvent(Principal principal, int offset, int limit, String eventId) {
         return null;
     }
-
-
-
 
     JoinRequestDTO joinEvent(Principal principal, String eventId) {
         return null;
     }
 
-
     JoinRequestDTO acceptJoinRequest(Principal principal, String eventId, String userId) {
         return null;
     }
-
 
     JoinRequestDTO rejectJoinRequest(Principal principal, String eventId, String userId) {
         return null;

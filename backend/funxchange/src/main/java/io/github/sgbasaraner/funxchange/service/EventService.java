@@ -1,12 +1,14 @@
 package io.github.sgbasaraner.funxchange.service;
 
 import io.github.sgbasaraner.funxchange.entity.Event;
+import io.github.sgbasaraner.funxchange.entity.JoinRequest;
 import io.github.sgbasaraner.funxchange.entity.User;
 import io.github.sgbasaraner.funxchange.model.EventDTO;
 import io.github.sgbasaraner.funxchange.model.JoinRequestDTO;
 import io.github.sgbasaraner.funxchange.model.NewEventDTO;
 import io.github.sgbasaraner.funxchange.model.UserDTO;
 import io.github.sgbasaraner.funxchange.repository.EventRepository;
+import io.github.sgbasaraner.funxchange.repository.JoinRequestRepository;
 import io.github.sgbasaraner.funxchange.repository.UserRepository;
 import io.github.sgbasaraner.funxchange.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +22,7 @@ import org.springframework.util.Assert;
 import java.security.Principal;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,6 +36,9 @@ public class EventService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private JoinRequestRepository joinRequestRepository;
 
     @Autowired
     private Util util;
@@ -72,15 +75,45 @@ public class EventService {
     }
 
     JoinRequestDTO joinEvent(Principal principal, String eventId) {
-        return null;
+        // TODO: credit
+        // TODO: notification
+        final User requestor = userRepository.findUserByUserName(principal.getName()).get();
+        final Event event = eventRepository.getById(UUID.fromString(eventId));
+        final JoinRequest request = new JoinRequest();
+        request.setEvent(event);
+        request.setUser(requestor);
+        return mapToJoinRequestDTO(joinRequestRepository.save(request));
     }
 
+    @Transactional
     JoinRequestDTO acceptJoinRequest(Principal principal, String eventId, String userId) {
-        return null;
+        // TODO: credit
+        // TODO: notification
+        final User principalUser = userRepository.findUserByUserName(principal.getName()).get();
+        final Event event = eventRepository.getById(UUID.fromString(eventId));
+        if (!event.getUser().getId().equals(principalUser.getId()))
+            throw new IllegalArgumentException("Invalid event id.");
+
+        final User requestor = userRepository.getById(UUID.fromString(userId));
+        final JoinRequest request = joinRequestRepository.findFirstByEventAndUser(event, requestor);
+        joinRequestRepository.delete(request);
+        Set<Event> participatedEvents = Optional.ofNullable(requestor.getParticipatedEvents()).orElse(new HashSet<>());
+        participatedEvents.add(event);
+        event.getParticipants().add(requestor);
+        return mapToJoinRequestDTO(request);
     }
 
+    @Transactional
     JoinRequestDTO rejectJoinRequest(Principal principal, String eventId, String userId) {
-        return null;
+        final User principalUser = userRepository.findUserByUserName(principal.getName()).get();
+        final Event event = eventRepository.getById(UUID.fromString(eventId));
+        if (!event.getUser().getId().equals(principalUser.getId()))
+            throw new IllegalArgumentException("Invalid event id.");
+
+        final User requestor = userRepository.getById(UUID.fromString(userId));
+        final JoinRequest request = joinRequestRepository.findFirstByEventAndUser(event, requestor);
+        joinRequestRepository.delete(request);
+        return mapToJoinRequestDTO(request);
     }
 
     @Transactional
@@ -129,7 +162,11 @@ public class EventService {
         );
     }
 
-    void validateNewEventParams(NewEventDTO params) {
+    private JoinRequestDTO mapToJoinRequestDTO(JoinRequest joinRequest) {
+        return null; // TODO
+    }
+
+    private void validateNewEventParams(NewEventDTO params) {
         Assert.isTrue(params.getEndDateTime().isAfter(params.getStartDateTime()), "End date time should be after the start.");
         Assert.isTrue(params.getStartDateTime().isAfter(LocalDateTime.now()), "Start date time should be after now.");
         Assert.hasLength(params.getTitle(), "Title shouldn't be empty.");

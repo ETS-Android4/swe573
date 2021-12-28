@@ -34,7 +34,7 @@ public class EventController {
     }
 
     @GetMapping("/events/{eventId}/participants")
-    List<UserDTO> fetchParticipantsOfEvent(Principal principal, @RequestParam int offset, @RequestParam int limit, @PathVariable String eventId) {
+    List<UserDTO> fetchParticipantsOfEvent(Principal principal, @PathVariable String eventId) {
         return null;
     }
 

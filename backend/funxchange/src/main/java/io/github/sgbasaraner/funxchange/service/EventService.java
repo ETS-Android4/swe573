@@ -44,7 +44,7 @@ public class EventService {
         return mapToModel(eventRepository.getById(UUID.fromString(eventId)));
     }
 
-    List<EventDTO> fetchFeed(Principal principal, int offset, int limit) {
+    List<EventDTO> fetchFeed(int offset, int limit) {
         final Pageable page = util.makePageable(offset, limit, Sort.by("created").descending());
         return eventRepository
                 .findAll(page)
@@ -53,7 +53,7 @@ public class EventService {
                 .collect(Collectors.toUnmodifiableList());
     }
 
-    List<EventDTO> fetchEventsOfUser(Principal principal, int offset, int limit, String userId) {
+    List<EventDTO> fetchEventsOfUser(int offset, int limit, String userId) {
         final Pageable page = util.makePageable(offset, limit, Sort.by("created").descending());
         final User user = userRepository.getById(UUID.fromString(userId));
         return eventRepository.findByUser(user, page)
@@ -62,8 +62,13 @@ public class EventService {
                 .collect(Collectors.toUnmodifiableList());
     }
 
-    List<UserDTO> fetchParticipantsOfEvent(Principal principal, int offset, int limit, String eventId) {
-        return null;
+    List<UserDTO> fetchParticipantsOfEvent(Principal principal, String eventId) {
+        final User requestor = userRepository.findUserByUserName(principal.getName()).get();
+        final Event event = eventRepository.getById(UUID.fromString(eventId));
+        return event.getParticipants()
+                .stream()
+                .map(u -> userService.mapUserToDTO(u, requestor))
+                .collect(Collectors.toUnmodifiableList());
     }
 
     JoinRequestDTO joinEvent(Principal principal, String eventId) {

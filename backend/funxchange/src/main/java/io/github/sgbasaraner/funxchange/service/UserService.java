@@ -120,7 +120,7 @@ public class UserService {
         return mapUserToDTO(userOption.get(), loggedInUser);
     }
 
-    private UserDTO mapUserToDTO(User user, User requestor) {
+    UserDTO mapUserToDTO(User user, User requestor) {
 
         Optional<Boolean> isFollowed;
         if (user.getId().equals(requestor.getId())) {

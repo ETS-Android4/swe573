@@ -1,6 +1,7 @@
 package io.github.sgbasaraner.funxchange.entity;
 
 import javax.persistence.*;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Iterator;
 import java.util.Set;
@@ -232,5 +233,9 @@ public class Event {
 
     public boolean isInFuture() {
         return getStartDateTime().isAfter(LocalDateTime.now());
+    }
+
+    public int getCreditValue() {
+        return (int) Math.abs(Duration.between(getStartDateTime(), getEndDateTime()).toHours());
     }
 }

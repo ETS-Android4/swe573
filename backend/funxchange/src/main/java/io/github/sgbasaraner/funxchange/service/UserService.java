@@ -1,12 +1,7 @@
 package io.github.sgbasaraner.funxchange.service;
 
-import io.github.sgbasaraner.funxchange.entity.Follower;
-import io.github.sgbasaraner.funxchange.entity.Interest;
-import io.github.sgbasaraner.funxchange.entity.User;
-import io.github.sgbasaraner.funxchange.model.AuthRequest;
-import io.github.sgbasaraner.funxchange.model.AuthResponse;
-import io.github.sgbasaraner.funxchange.model.NewUserDTO;
-import io.github.sgbasaraner.funxchange.model.UserDTO;
+import io.github.sgbasaraner.funxchange.entity.*;
+import io.github.sgbasaraner.funxchange.model.*;
 import io.github.sgbasaraner.funxchange.repository.FollowerRepository;
 import io.github.sgbasaraner.funxchange.repository.InterestRepository;
 import io.github.sgbasaraner.funxchange.repository.UserRepository;
@@ -206,6 +201,45 @@ public class UserService {
         }
         followerRepository.delete(f.get());
         return f.get().getFollowee().getId().toString();
+    }
+
+    @Transactional
+    public CreditScore calculateCredits(User user) {
+        final int handshakenHostedServices = user
+                .getEvents()
+                .stream()
+                .filter(e -> e.getType().equals("service"))
+                .filter(Event::isHandshaken)
+                .map(Event::getCreditValue)
+                .reduce(0, Integer::sum);
+
+        final int handshakenReceivedServices = user
+                .getParticipatedEvents()
+                .stream()
+                .filter(e -> e.getType().equals("service"))
+                .filter(Event::isHandshaken)
+                .map(Event::getCreditValue)
+                .reduce(0, Integer::sum);
+
+        final int appliedScore = Math.max(5 + handshakenHostedServices - handshakenReceivedServices, 0);
+
+        final int pendingJoinRequests = user
+                .getJoinRequests()
+                .stream()
+                .map(JoinRequest::getEvent)
+                .filter(e -> e.getType().equals("service"))
+                .map(Event::getCreditValue)
+                .reduce(0, Integer::sum);
+
+        final int nonHandshakenReceivedServices = user
+                .getParticipatedEvents()
+                .stream()
+                .filter(e -> e.getType().equals("service"))
+                .filter(e -> !e.isHandshaken())
+                .map(Event::getCreditValue)
+                .reduce(0, Integer::sum);
+
+        return new CreditScore(appliedScore, pendingJoinRequests + nonHandshakenReceivedServices);
     }
 
     public UserDTO fetchUserByUserName(String userName, Principal principal) {

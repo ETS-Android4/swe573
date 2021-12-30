@@ -2,6 +2,7 @@ package io.github.sgbasaraner.funxchange.service;
 
 import io.github.sgbasaraner.funxchange.entity.Event;
 import io.github.sgbasaraner.funxchange.entity.JoinRequest;
+import io.github.sgbasaraner.funxchange.entity.Rating;
 import io.github.sgbasaraner.funxchange.entity.User;
 import io.github.sgbasaraner.funxchange.model.EventDTO;
 import io.github.sgbasaraner.funxchange.model.JoinRequestDTO;
@@ -9,6 +10,7 @@ import io.github.sgbasaraner.funxchange.model.NewEventDTO;
 import io.github.sgbasaraner.funxchange.model.UserDTO;
 import io.github.sgbasaraner.funxchange.repository.EventRepository;
 import io.github.sgbasaraner.funxchange.repository.JoinRequestRepository;
+import io.github.sgbasaraner.funxchange.repository.RatingRepository;
 import io.github.sgbasaraner.funxchange.repository.UserRepository;
 import io.github.sgbasaraner.funxchange.util.DeeplinkUtil;
 import io.github.sgbasaraner.funxchange.util.Util;
@@ -40,6 +42,9 @@ public class EventService {
 
     @Autowired
     private JoinRequestRepository joinRequestRepository;
+
+    @Autowired
+    private RatingRepository ratingRepository;
 
     @Autowired
     private Util util;
@@ -100,6 +105,19 @@ public class EventService {
             throw new IllegalArgumentException("Invalid event id.");
 
         final User requestor = userRepository.getById(UUID.fromString(userId));
+
+        final Rating participantRating = new Rating();
+        participantRating.setRater(requestor);
+        participantRating.setService(event);
+        participantRating.setRated(principalUser);
+
+        final Rating organizerRating = new Rating();
+        organizerRating.setRater(principalUser);
+        organizerRating.setService(event);
+        organizerRating.setRated(requestor);
+
+        ratingRepository.saveAll(List.of(participantRating, organizerRating));
+
         final JoinRequest request = joinRequestRepository.findFirstByEventAndUser(event, requestor);
         joinRequestRepository.delete(request);
         Set<Event> participatedEvents = Optional.ofNullable(requestor.getParticipatedEvents()).orElse(new HashSet<>());

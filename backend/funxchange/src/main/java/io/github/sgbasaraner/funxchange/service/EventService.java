@@ -89,7 +89,7 @@ public class EventService {
         final Event event = eventRepository.getById(UUID.fromString(eventId));
         if (!event.isInFuture()) throw new IllegalArgumentException("Can't join an event that's already started");
 
-        if (!userService.calculateCredits(requestor).canAfford(event.getCreditValue()))
+        if (event.getType().equals("service") && !userService.calculateCredits(requestor).canAfford(event.getCreditValue()))
             throw new IllegalArgumentException("Insufficient credits.");
 
         final JoinRequest request = new JoinRequest();

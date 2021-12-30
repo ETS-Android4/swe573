@@ -41,6 +41,9 @@ public class EventService {
     private UserService userService;
 
     @Autowired
+    private NotificationService notificationService;
+
+    @Autowired
     private JoinRequestRepository joinRequestRepository;
 
     @Autowired
@@ -84,7 +87,6 @@ public class EventService {
     }
 
     public JoinRequestDTO joinEvent(Principal principal, String eventId) {
-        // TODO: notification
         final User requestor = userRepository.findUserByUserName(principal.getName()).get();
         final Event event = eventRepository.getById(UUID.fromString(eventId));
         if (!event.isInFuture()) throw new IllegalArgumentException("Can't join an event that's already started");
@@ -95,12 +97,12 @@ public class EventService {
         final JoinRequest request = new JoinRequest();
         request.setEvent(event);
         request.setUser(requestor);
+        notificationService.sendJoinRequestedNotification(request);
         return mapToJoinRequestDTO(joinRequestRepository.save(request));
     }
 
     @Transactional
     public JoinRequestDTO acceptJoinRequest(Principal principal, String eventId, String userId) {
-        // TODO: notification
         final User principalUser = userRepository.findUserByUserName(principal.getName()).get();
         final Event event = eventRepository.getById(UUID.fromString(eventId));
         if (!event.getUser().getId().equals(principalUser.getId()))
@@ -121,6 +123,7 @@ public class EventService {
         ratingRepository.saveAll(List.of(participantRating, organizerRating));
 
         final JoinRequest request = joinRequestRepository.findFirstByEventAndUser(event, requestor);
+        notificationService.sendJoinRequestApprovedNotification(request);
         joinRequestRepository.delete(request);
         Set<Event> participatedEvents = Optional.ofNullable(requestor.getParticipatedEvents()).orElse(new HashSet<>());
         participatedEvents.add(event);

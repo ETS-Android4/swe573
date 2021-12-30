@@ -52,6 +52,9 @@ public class UserService {
     @Autowired
     private Util util;
 
+    @Autowired
+    private NotificationService notificationService;
+
     @Transactional
     public UserDTO signUp(NewUserDTO params) {
         if (!isUserNameValid(params.getUserName()))
@@ -187,6 +190,7 @@ public class UserService {
         final Follower f = new Follower();
         f.setFollower(loggedInUser);
         f.setFollowee(followeeUser);
+        notificationService.sendNewFollowerNotification(f);
         followerRepository.save(f);
         return followeeUser.getId().toString();
     }

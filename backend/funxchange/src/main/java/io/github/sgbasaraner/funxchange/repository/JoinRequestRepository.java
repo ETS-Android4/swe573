@@ -13,6 +13,6 @@ import java.util.UUID;
 public interface JoinRequestRepository extends JpaRepository<JoinRequest, UUID> {
     JoinRequest findFirstByEventAndUser(Event event, User user);
 
-    @Query("select jr from JoinRequest jr where jr.event.user.id = ?1")
+    @Query("select jr from JoinRequest jr where jr.event.user.id = ?1 and jr.event.startDateTime > current_timestamp")
     List<JoinRequest> findRequestsToUsers(UUID userId, Pageable page);
 }

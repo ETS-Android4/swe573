@@ -46,6 +46,9 @@ public class User {
     @OneToMany(mappedBy="user")
     private Set<JoinRequest> joinRequests;
 
+    @OneToMany(mappedBy="rater")
+    private Set<Rating> ratings;
+
     @ManyToMany(mappedBy = "participants")
     private Set<Event> participatedEvents;
 
@@ -127,5 +130,13 @@ public class User {
 
     public void setParticipatedEvents(Set<Event> participatedEvents) {
         this.participatedEvents = participatedEvents;
+    }
+
+    public Set<Rating> getRatings() {
+        return ratings;
+    }
+
+    public void setRatings(Set<Rating> ratings) {
+        this.ratings = ratings;
     }
 }

@@ -20,6 +20,9 @@ public class Event {
     @OneToMany(mappedBy="event")
     private Set<JoinRequest> joinRequests;
 
+    @OneToMany(mappedBy="service")
+    private Set<Rating> ratings;
+
     @Column
     private String type;
 
@@ -190,5 +193,13 @@ public class Event {
 
     public void setParticipants(Set<User> participants) {
         this.participants = participants;
+    }
+
+    public Set<Rating> getRatings() {
+        return ratings;
+    }
+
+    public void setRatings(Set<Rating> ratings) {
+        this.ratings = ratings;
     }
 }

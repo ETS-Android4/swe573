@@ -33,6 +33,10 @@ public class DeeplinkUtil {
     }
 
     public String generateJoinRequestText(JoinRequest request) {
+        return generateUserHtml(request.getEvent().getUser()) + " just approved your request to join " + generateEventHtml(request.getEvent()) + ".";
+    }
+
+    public String generateJoinRequestApprovedText(JoinRequest request) {
         final String textBase = generateUserHtml(request.getUser()) + " would like to ";
         final String mid = request.getEvent().getType().equalsIgnoreCase("meetup") ? "join your meetup" : "join your service";
         final String end = " " + generateEventHtml(request.getEvent()) + ".";

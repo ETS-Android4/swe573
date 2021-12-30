@@ -3,13 +3,22 @@ package io.github.sgbasaraner.funxchange.service;
 import io.github.sgbasaraner.funxchange.entity.Follower;
 import io.github.sgbasaraner.funxchange.entity.JoinRequest;
 import io.github.sgbasaraner.funxchange.entity.Notification;
+import io.github.sgbasaraner.funxchange.entity.User;
+import io.github.sgbasaraner.funxchange.model.JoinRequestDTO;
+import io.github.sgbasaraner.funxchange.model.NotificationDTO;
 import io.github.sgbasaraner.funxchange.repository.NotificationRepository;
+import io.github.sgbasaraner.funxchange.repository.UserRepository;
 import io.github.sgbasaraner.funxchange.util.DeeplinkUtil;
+import io.github.sgbasaraner.funxchange.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.security.Principal;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class NotificationService {
@@ -18,7 +27,23 @@ public class NotificationService {
     private NotificationRepository repository;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private DeeplinkUtil deeplinkUtil;
+
+    @Autowired
+    private Util util;
+
+    public List<NotificationDTO> fetchNotifications(Principal principal, int offset, int limit) {
+        final User requestor = userRepository.findUserByUserName(principal.getName()).get();
+        final Pageable page = util.makePageable(offset, limit, Sort.by("created").descending());
+        return repository
+                .findByUser(requestor, page)
+                .stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toUnmodifiableList());
+    }
 
     @Transactional
     public void sendJoinRequestedNotification(JoinRequest request) {
@@ -50,5 +75,9 @@ public class NotificationService {
         notification.setHtmlText(deeplinkUtil.generateFollowText(follower));
         notification.setDeeplink(deeplinkUtil.generateUserDeeplink(follower.getFollower().getId()));
         repository.save(notification);
+    }
+
+    private NotificationDTO mapToDTO(Notification notification) {
+        return new NotificationDTO(notification.getHtmlText(), notification.getDeeplink());
     }
 }

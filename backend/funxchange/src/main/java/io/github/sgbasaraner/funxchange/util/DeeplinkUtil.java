@@ -1,6 +1,8 @@
 package io.github.sgbasaraner.funxchange.util;
 
 import io.github.sgbasaraner.funxchange.entity.Event;
+import io.github.sgbasaraner.funxchange.entity.Follower;
+import io.github.sgbasaraner.funxchange.entity.JoinRequest;
 import io.github.sgbasaraner.funxchange.entity.User;
 import org.springframework.stereotype.Component;
 
@@ -28,5 +30,16 @@ public class DeeplinkUtil {
     public String generateEventHtml(Event event) {
         final String deeplink = generateEventDeeplink(event.getId());
         return "<a href=\"" + deeplink + "\">" + event.getTitle() + "</a>";
+    }
+
+    public String generateJoinRequestText(JoinRequest request) {
+        final String textBase = generateUserHtml(request.getUser()) + " would like to ";
+        final String mid = request.getEvent().getType().equalsIgnoreCase("meetup") ? "join your meetup" : "join your service";
+        final String end = " " + generateEventHtml(request.getEvent()) + ".";
+        return textBase + mid + end;
+    }
+
+    public String generateFollowText(Follower follower) {
+        return generateUserHtml(follower.getFollower()) + " has just started to follow you.";
     }
 }

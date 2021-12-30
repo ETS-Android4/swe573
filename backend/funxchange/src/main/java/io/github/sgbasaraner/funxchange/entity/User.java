@@ -49,6 +49,9 @@ public class User {
     @OneToMany(mappedBy="rater")
     private Set<Rating> ratings;
 
+    @OneToMany(mappedBy="rated")
+    private Set<Rating> rateds;
+
     @ManyToMany(mappedBy = "participants")
     private Set<Event> participatedEvents;
 
@@ -138,5 +141,13 @@ public class User {
 
     public void setRatings(Set<Rating> ratings) {
         this.ratings = ratings;
+    }
+
+    public Set<Rating> getRateds() {
+        return rateds;
+    }
+
+    public void setRateds(Set<Rating> rateds) {
+        this.rateds = rateds;
     }
 }

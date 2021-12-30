@@ -205,6 +205,9 @@ public class Event {
     }
 
     public boolean isHandshaken() {
+        if (!getType().equals("service"))
+            return false;
+
         final Set<Rating> ratings = getRatings();
         if (ratings == null) return false;
         boolean participantVoted = false;
@@ -225,5 +228,9 @@ public class Event {
         }
 
         return participantVoted && ownerVoted;
+    }
+
+    public boolean isInFuture() {
+        return getStartDateTime().isAfter(LocalDateTime.now());
     }
 }

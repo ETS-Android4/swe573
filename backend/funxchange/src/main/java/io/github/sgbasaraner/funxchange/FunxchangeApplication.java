@@ -6,6 +6,9 @@ import io.github.sgbasaraner.funxchange.entity.*;
 import io.github.sgbasaraner.funxchange.model.NewUserDTO;
 import io.github.sgbasaraner.funxchange.repository.*;
 import io.github.sgbasaraner.funxchange.service.UserService;
+import io.github.sgbasaraner.funxchange.util.DeeplinkUtil;
+import org.apache.commons.lang3.tuple.Pair;
+import org.aspectj.weaver.ast.Not;
 import org.hibernate.mapping.Join;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +51,15 @@ public class FunxchangeApplication {
 
 	@Autowired
 	private JoinRequestRepository joinRequestRepository;
+
+	@Autowired
+	private RatingRepository ratingRepository;
+
+	@Autowired
+	private DeeplinkUtil deeplinkUtil;
+
+	@Autowired
+	private NotificationRepository notificationRepository;
 
 
 	Logger logger = LoggerFactory.getLogger(FunxchangeApplication.class);
@@ -106,7 +118,55 @@ public class FunxchangeApplication {
 
 		eventRepository.saveAll(mockEvents);
 
-		joinRequestRepository.saveAll(mockEvents.stream().map(Event::getJoinRequests).flatMap(Set::stream).collect(Collectors.toUnmodifiableList()));
+		List<JoinRequest> joinRequests = mockEvents.stream().map(Event::getJoinRequests).flatMap(Set::stream).collect(Collectors.toUnmodifiableList());
+		joinRequestRepository.saveAll(joinRequests);
+
+		final List<Rating> allRatings = mockEvents.stream()
+				.map(e -> Pair.of(Optional.of(e.getParticipants()).orElse(new HashSet<>()), e))
+				.flatMap(pair -> pair.getLeft().stream().map(participant -> {
+					final Rating participantRating = new Rating();
+					participantRating.setRater(participant);
+					participantRating.setService(pair.getRight());
+					participantRating.setRated(pair.getRight().getUser());
+
+					final Rating organizerRating = new Rating();
+					organizerRating.setRater(pair.getRight().getUser());
+					organizerRating.setService(pair.getRight());
+					organizerRating.setRated(participant);
+					if (!pair.getRight().isInFuture()) {
+						participantRating.setRating(faker.random().nextInt(1, 5));
+						organizerRating.setRating(faker.random().nextInt(1, 5));
+					}
+					return Stream.of(participantRating, organizerRating);
+				}))
+				.flatMap(s -> s)
+				.collect(Collectors.toUnmodifiableList());
+
+		ratingRepository.saveAll(allRatings);
+
+		List<Notification> joinReqNotifs = joinRequests.stream().map(jr -> {
+			final String text = deeplinkUtil.generateJoinRequestText(jr);
+			final String deeplink = DeeplinkUtil.requestsDeeplink;
+			Notification notification = new Notification();
+			notification.setCreated(jr.getCreated());
+			notification.setUser(jr.getEvent().getUser());
+			notification.setHtmlText(text);
+			notification.setDeeplink(deeplink);
+			return notification;
+		}).collect(Collectors.toList());
+
+		List<Notification> followNotifs = followerCandidates.stream().map(f -> {
+			Notification notification = new Notification();
+			notification.setCreated(LocalDateTime.now().minusHours(faker.random().nextInt(5000)));
+			notification.setUser(f.getFollowee());
+			notification.setHtmlText(deeplinkUtil.generateFollowText(f));
+			notification.setDeeplink(deeplinkUtil.generateUserDeeplink(f.getFollower().getId()));
+			return notification;
+		}).collect(Collectors.toUnmodifiableList());
+
+		joinReqNotifs.addAll(followNotifs);
+
+		notificationRepository.saveAll(joinReqNotifs);
 
 		Timer t = new java.util.Timer();
 		t.schedule(
@@ -117,7 +177,7 @@ public class FunxchangeApplication {
 						t.cancel();
 					}
 				},
-				5000
+				10000
 		);
 	}
 
@@ -133,7 +193,7 @@ public class FunxchangeApplication {
 		final Event event = new Event();
 		event.setTitle(faker.job().position()+ ", " + faker.job().seniority() + " for " + faker.rockBand().name());
 
-		event.setStartDateTime(LocalDateTime.now().plus(faker.random().nextInt(432000), ChronoUnit.SECONDS));
+		event.setStartDateTime(LocalDateTime.now().plus(faker.random().nextInt(-432000, 432000), ChronoUnit.SECONDS));
 		event.setEndDateTime(event.getStartDateTime().plus(faker.random().nextInt(1800, 432000), ChronoUnit.SECONDS));
 		event.setDetails(faker.shakespeare().kingRichardIIIQuote());
 		event.setCategory(randomElements(UserService.allowedInterests, alwaysTruePredicate(), 1).get(0));
@@ -160,6 +220,7 @@ public class FunxchangeApplication {
 					final JoinRequest request = new JoinRequest();
 					request.setEvent(event);
 					request.setUser(u);
+					request.setCreated(event.getStartDateTime().minusHours(faker.random().nextInt(500)));
 					return request;
 				})
 				.collect(Collectors.toUnmodifiableList());

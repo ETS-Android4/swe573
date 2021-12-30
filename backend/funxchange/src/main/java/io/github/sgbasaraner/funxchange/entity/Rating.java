@@ -18,6 +18,10 @@ public class Rating {
     private User rater;
 
     @ManyToOne
+    @JoinColumn(name = "rated")
+    private User rated;
+
+    @ManyToOne
     @JoinColumn(name = "service")
     private Event service;
 
@@ -66,5 +70,13 @@ public class Rating {
 
     public void setCreated(LocalDateTime created) {
         this.created = created;
+    }
+
+    public User getRated() {
+        return rated;
+    }
+
+    public void setRated(User rated) {
+        this.rated = rated;
     }
 }

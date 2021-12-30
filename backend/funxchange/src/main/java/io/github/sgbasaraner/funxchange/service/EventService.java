@@ -177,10 +177,7 @@ public class EventService {
     }
 
     private JoinRequestDTO mapToJoinRequestDTO(JoinRequest joinRequest) {
-        final String textBase = deeplinkUtil.generateUserHtml(joinRequest.getUser()) + " would like to ";
-        final String mid = joinRequest.getEvent().getType().equalsIgnoreCase("meetup") ? "join your meetup" : "join your service";
-        final String end = " " + deeplinkUtil.generateEventHtml(joinRequest.getEvent()) + ".";
-        return new JoinRequestDTO(joinRequest.getEvent().getId().toString(), joinRequest.getUser().getId().toString(), textBase + mid + end);
+        return new JoinRequestDTO(joinRequest.getEvent().getId().toString(), joinRequest.getUser().getId().toString(), deeplinkUtil.generateJoinRequestText(joinRequest));
     }
 
     private void validateNewEventParams(NewEventDTO params) {

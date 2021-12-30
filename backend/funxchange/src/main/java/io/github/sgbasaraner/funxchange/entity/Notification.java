@@ -7,22 +7,21 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "rating")
-public class Rating {
+@Table(name = "notification")
+public class Notification {
     @Id
     @GeneratedValue
     private UUID id;
 
     @ManyToOne
-    @JoinColumn(name = "rater")
-    private User rater;
+    @JoinColumn(name = "user")
+    private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "service")
-    private Event service;
+    @Column(columnDefinition = "TEXT")
+    private String htmlText;
 
-    @Column
-    private Integer rating;
+    @Column(columnDefinition = "TEXT")
+    private String deeplink;
 
     @Column
     @CreationTimestamp
@@ -36,28 +35,28 @@ public class Rating {
         this.id = id;
     }
 
-    public User getRater() {
-        return rater;
+    public User getUser() {
+        return user;
     }
 
-    public void setRater(User rater) {
-        this.rater = rater;
+    public void setUser(User user) {
+        this.user = user;
     }
 
-    public Event getService() {
-        return service;
+    public String getHtmlText() {
+        return htmlText;
     }
 
-    public void setService(Event service) {
-        this.service = service;
+    public void setHtmlText(String htmlText) {
+        this.htmlText = htmlText;
     }
 
-    public Integer getRating() {
-        return rating;
+    public String getDeeplink() {
+        return deeplink;
     }
 
-    public void setRating(Integer rating) {
-        this.rating = rating;
+    public void setDeeplink(String deeplink) {
+        this.deeplink = deeplink;
     }
 
     public LocalDateTime getCreated() {

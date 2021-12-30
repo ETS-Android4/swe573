@@ -2,6 +2,7 @@ package io.github.sgbasaraner.funxchange.entity;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
 
@@ -201,5 +202,28 @@ public class Event {
 
     public void setRatings(Set<Rating> ratings) {
         this.ratings = ratings;
+    }
+
+    public boolean isHandshaken() {
+        final Set<Rating> ratings = getRatings();
+        if (ratings == null) return false;
+        boolean participantVoted = false;
+        boolean ownerVoted = false;
+        final Iterator<Rating> setIterator = ratings.iterator();
+        while(setIterator.hasNext()){
+            Rating rating = setIterator.next();
+
+            final boolean isValidRating = rating.getRating() != null && rating.getRating() > 0;
+            if (!isValidRating) continue;
+
+            if (rating.getRater().getId().equals(getUser().getId())) {
+                ownerVoted = true;
+                continue;
+            }
+
+            participantVoted = true;
+        }
+
+        return participantVoted && ownerVoted;
     }
 }

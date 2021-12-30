@@ -84,11 +84,14 @@ public class EventService {
     }
 
     public JoinRequestDTO joinEvent(Principal principal, String eventId) {
-        // TODO: credit
         // TODO: notification
         final User requestor = userRepository.findUserByUserName(principal.getName()).get();
         final Event event = eventRepository.getById(UUID.fromString(eventId));
         if (!event.isInFuture()) throw new IllegalArgumentException("Can't join an event that's already started");
+
+        if (!userService.calculateCredits(requestor).canAfford(event.getCreditValue()))
+            throw new IllegalArgumentException("Insufficient credits.");
+
         final JoinRequest request = new JoinRequest();
         request.setEvent(event);
         request.setUser(requestor);
@@ -97,7 +100,6 @@ public class EventService {
 
     @Transactional
     public JoinRequestDTO acceptJoinRequest(Principal principal, String eventId, String userId) {
-        // TODO: credit
         // TODO: notification
         final User principalUser = userRepository.findUserByUserName(principal.getName()).get();
         final Event event = eventRepository.getById(UUID.fromString(eventId));

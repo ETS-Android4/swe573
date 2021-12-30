@@ -83,6 +83,7 @@ public class EventService {
         // TODO: notification
         final User requestor = userRepository.findUserByUserName(principal.getName()).get();
         final Event event = eventRepository.getById(UUID.fromString(eventId));
+        if (!event.isInFuture()) throw new IllegalArgumentException("Can't join an event that's already started");
         final JoinRequest request = new JoinRequest();
         request.setEvent(event);
         request.setUser(requestor);

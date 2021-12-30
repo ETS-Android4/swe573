@@ -54,7 +54,7 @@ public class EventService {
     public List<EventDTO> fetchFeed(int offset, int limit) {
         final Pageable page = util.makePageable(offset, limit, Sort.by("created").descending());
         return eventRepository
-                .findAll(page)
+                .findFeed(page)
                 .stream()
                 .map(this::mapToModel)
                 .collect(Collectors.toUnmodifiableList());

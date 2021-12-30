@@ -118,13 +118,17 @@ public class UserService {
     UserDTO mapUserToDTO(User user, User requestor) {
 
         Optional<Boolean> isFollowed;
+        CreditScore score = null;
         if (user.getId().equals(requestor.getId())) {
             isFollowed = Optional.empty();
+            score = calculateCredits(user);
         } else if (requestor.getFollows().stream().anyMatch(f -> f.getFollowee().getId().equals(user.getId()))) {
             isFollowed = Optional.of(true);
         } else {
             isFollowed = Optional.of(false);
         }
+
+        double ratingAvg = user.getRateds().stream().mapToDouble(Rating::getRating).average().orElse(0);
 
         return new UserDTO(
                 user.getId().toString(),
@@ -133,8 +137,9 @@ public class UserService {
                 followerRepository.findByFollowee(user).size(),
                 followerRepository.findByFollower(user).size(),
                 user.getInterests().stream().map(Interest::getName).collect(Collectors.toUnmodifiableList()),
-                isFollowed
-        );
+                isFollowed,
+                score,
+                ratingAvg);
     }
 
     public List<UserDTO> fetchFollowed(String id, int offset, int limit, Principal principal) {

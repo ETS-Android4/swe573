@@ -37,6 +37,8 @@ class MockUtils {
         _randomElems(Interest.values,
             random.nextInt(Interest.values.length - 1) + 1, (_) => true),
         false,
+        null,
+        0,
       ),
     );
 
@@ -99,6 +101,8 @@ class MockUtils {
               : getFollowedUsers(MockUserDataSource.currentUserId)
                   .map((e) => e.id)
                   .contains(u.id),
+          null,
+          0,
         )));
 
     final currentUserEvents = MockEventDataSource.data.values

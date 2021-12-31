@@ -8,7 +8,7 @@ class User {
   final int followerCount;
   final int followedCount;
   final List<Interest> interests;
-  final CreditScore creditScore;
+  final CreditScore? creditScore;
   final double ratingAvg;
   bool? isFollowed;
 

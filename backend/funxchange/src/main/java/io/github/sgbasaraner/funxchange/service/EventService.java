@@ -184,7 +184,7 @@ public class EventService {
         return entity;
     }
 
-    private EventDTO mapToModel(Event entity) {
+    public EventDTO mapToModel(Event entity) {
         return new EventDTO(
                 entity.getId().toString(),
                 entity.getUser().getId().toString(),

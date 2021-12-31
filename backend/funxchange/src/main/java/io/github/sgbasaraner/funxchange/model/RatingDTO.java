@@ -1,11 +1,13 @@
 package io.github.sgbasaraner.funxchange.model;
 
 public class RatingDTO {
+    private final String id;
     private final UserDTO user;
     private final Integer rating;
     private final EventDTO event;
 
-    public RatingDTO(UserDTO user, Integer rating, EventDTO event) {
+    public RatingDTO(String id, UserDTO user, Integer rating, EventDTO event) {
+        this.id = id;
         this.user = user;
         this.rating = rating;
         this.event = event;
@@ -21,5 +23,9 @@ public class RatingDTO {
 
     public EventDTO getEvent() {
         return event;
+    }
+
+    public String getId() {
+        return id;
     }
 }

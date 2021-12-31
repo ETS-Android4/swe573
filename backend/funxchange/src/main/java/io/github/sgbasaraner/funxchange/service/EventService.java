@@ -110,6 +110,18 @@ public class EventService {
 
         final User requestor = userRepository.getById(UUID.fromString(userId));
 
+        ratingRepository.saveAll(makeRatingRequests(principalUser, requestor, event));
+
+        final JoinRequest request = joinRequestRepository.findFirstByEventAndUser(event, requestor);
+        notificationService.sendJoinRequestApprovedNotification(request);
+        joinRequestRepository.delete(request);
+        Set<Event> participatedEvents = Optional.ofNullable(requestor.getParticipatedEvents()).orElse(new HashSet<>());
+        participatedEvents.add(event);
+        event.getParticipants().add(requestor);
+        return mapToJoinRequestDTO(request);
+    }
+
+    private List<Rating> makeRatingRequests(User principalUser, User requestor, Event event) {
         final Rating participantRating = new Rating();
         participantRating.setRater(requestor);
         participantRating.setService(event);
@@ -119,16 +131,7 @@ public class EventService {
         organizerRating.setRater(principalUser);
         organizerRating.setService(event);
         organizerRating.setRated(requestor);
-
-        ratingRepository.saveAll(List.of(participantRating, organizerRating));
-
-        final JoinRequest request = joinRequestRepository.findFirstByEventAndUser(event, requestor);
-        notificationService.sendJoinRequestApprovedNotification(request);
-        joinRequestRepository.delete(request);
-        Set<Event> participatedEvents = Optional.ofNullable(requestor.getParticipatedEvents()).orElse(new HashSet<>());
-        participatedEvents.add(event);
-        event.getParticipants().add(requestor);
-        return mapToJoinRequestDTO(request);
+        return List.of(participantRating, organizerRating);
     }
 
     @Transactional

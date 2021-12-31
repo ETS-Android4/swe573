@@ -43,6 +43,18 @@ public class User {
     @OneToMany(mappedBy="user")
     private Set<Event> events;
 
+    @OneToMany(mappedBy="user")
+    private Set<JoinRequest> joinRequests;
+
+    @OneToMany(mappedBy="rater")
+    private Set<Rating> ratings;
+
+    @OneToMany(mappedBy="rated")
+    private Set<Rating> rateds;
+
+    @ManyToMany(mappedBy = "participants")
+    private Set<Event> participatedEvents;
+
     public UUID getId() {
         return id;
     }
@@ -105,5 +117,37 @@ public class User {
 
     public void setEvents(Set<Event> events) {
         this.events = events;
+    }
+
+    public Set<JoinRequest> getJoinRequests() {
+        return joinRequests;
+    }
+
+    public void setJoinRequests(Set<JoinRequest> joinRequests) {
+        this.joinRequests = joinRequests;
+    }
+
+    public Set<Event> getParticipatedEvents() {
+        return participatedEvents;
+    }
+
+    public void setParticipatedEvents(Set<Event> participatedEvents) {
+        this.participatedEvents = participatedEvents;
+    }
+
+    public Set<Rating> getRatings() {
+        return ratings;
+    }
+
+    public void setRatings(Set<Rating> ratings) {
+        this.ratings = ratings;
+    }
+
+    public Set<Rating> getRateds() {
+        return rateds;
+    }
+
+    public void setRateds(Set<Rating> rateds) {
+        this.rateds = rateds;
     }
 }

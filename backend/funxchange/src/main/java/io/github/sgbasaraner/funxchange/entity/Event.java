@@ -1,7 +1,10 @@
 package io.github.sgbasaraner.funxchange.entity;
 
 import javax.persistence.*;
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Iterator;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -15,6 +18,12 @@ public class Event {
     @ManyToOne
     @JoinColumn(name="owner_id", nullable=false)
     private User user;
+
+    @OneToMany(mappedBy="event")
+    private Set<JoinRequest> joinRequests;
+
+    @OneToMany(mappedBy="service")
+    private Set<Rating> ratings;
 
     @Column
     private String type;
@@ -52,20 +61,20 @@ public class Event {
     @Column
     private LocalDateTime created;
 
+    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @JoinTable(
+            name = "event_user",
+            joinColumns = { @JoinColumn(name = "event_id") },
+            inverseJoinColumns = { @JoinColumn(name = "user_id") }
+    )
+    private Set<User> participants;
+
     public UUID getId() {
         return id;
     }
 
     public void setId(UUID id) {
         this.id = id;
-    }
-
-    public User getOwner() {
-        return user;
-    }
-
-    public void setOwner(User owner) {
-        this.user = owner;
     }
 
     public String getType() {
@@ -162,5 +171,71 @@ public class Event {
 
     public void setCreated(LocalDateTime created) {
         this.created = created;
+    }
+
+    public Set<JoinRequest> getJoinRequests() {
+        return joinRequests;
+    }
+
+    public void setJoinRequests(Set<JoinRequest> joinRequests) {
+        this.joinRequests = joinRequests;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Set<User> getParticipants() {
+        return participants;
+    }
+
+    public void setParticipants(Set<User> participants) {
+        this.participants = participants;
+    }
+
+    public Set<Rating> getRatings() {
+        return ratings;
+    }
+
+    public void setRatings(Set<Rating> ratings) {
+        this.ratings = ratings;
+    }
+
+    public boolean isHandshaken() {
+        if (!getType().equals("service"))
+            return false;
+
+        final Set<Rating> ratings = getRatings();
+        if (ratings == null) return false;
+        boolean participantVoted = false;
+        boolean ownerVoted = false;
+        final Iterator<Rating> setIterator = ratings.iterator();
+        while(setIterator.hasNext()){
+            Rating rating = setIterator.next();
+
+            final boolean isValidRating = rating.getRating() != null && rating.getRating() > 0;
+            if (!isValidRating) continue;
+
+            if (rating.getRater().getId().equals(getUser().getId())) {
+                ownerVoted = true;
+                continue;
+            }
+
+            participantVoted = true;
+        }
+
+        return participantVoted && ownerVoted;
+    }
+
+    public boolean isInFuture() {
+        return getStartDateTime().isAfter(LocalDateTime.now());
+    }
+
+    public int getCreditValue() {
+        return (int) Math.abs(Duration.between(getStartDateTime(), getEndDateTime()).toHours());
     }
 }

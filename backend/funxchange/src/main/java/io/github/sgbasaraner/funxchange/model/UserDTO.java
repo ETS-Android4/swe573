@@ -11,8 +11,10 @@ public class UserDTO {
     private final int followedCount;
     private final List<String> interests;
     private final Optional<Boolean> isFollowed;
+    private final CreditScore creditAmount;
+    private final double ratingAvg;
 
-    public UserDTO(String id, String userName, String bio, int followerCount, int followedCount, List<String> interests, Optional<Boolean> isFollowed) {
+    public UserDTO(String id, String userName, String bio, int followerCount, int followedCount, List<String> interests, Optional<Boolean> isFollowed, CreditScore creditAmount, double ratingAvg) {
         this.id = id;
         this.userName = userName;
         this.bio = bio;
@@ -20,6 +22,8 @@ public class UserDTO {
         this.followedCount = followedCount;
         this.interests = interests;
         this.isFollowed = isFollowed;
+        this.creditAmount = creditAmount;
+        this.ratingAvg = ratingAvg;
     }
 
     public String getId() {
@@ -48,5 +52,13 @@ public class UserDTO {
 
     public Optional<Boolean> getIsFollowed() {
         return isFollowed;
+    }
+
+    public CreditScore getCreditAmount() {
+        return creditAmount;
+    }
+
+    public double getRatingAvg() {
+        return ratingAvg;
     }
 }

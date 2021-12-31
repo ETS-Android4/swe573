@@ -65,11 +65,7 @@ extension PrettyNameExtension on Interest {
     }
   }
 }
-    
-    // "History",
-    // "Foreign Languages",
-    // "Cars",
-    // "Dancing",
-    // "Sewing",
-    // "Politics",
-    // "Partying"
+
+Interest? parseInterest(String value) {
+  return Interest.values.firstWhere((element) => element.toString() == value);
+}

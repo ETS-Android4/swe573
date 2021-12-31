@@ -16,7 +16,7 @@ public class NotificationController {
     @Autowired
     private NotificationService notificationService;
 
-    @GetMapping("/requests")
+    @GetMapping("/notifications")
     List<NotificationDTO> fetchNotifications(Principal principal, @RequestParam int offset, @RequestParam int limit) {
         return notificationService.fetchNotifications(principal, offset, limit);
     }

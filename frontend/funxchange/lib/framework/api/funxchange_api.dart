@@ -27,6 +27,7 @@ class FunxchangeApiDataSource
         AuthDataSource {
   static const String _baseUrl = "http://20.107.24.75:8080";
   String? authToken = null;
+  String? currentUserId = null;
 
   @override
   Future<JoinRequest> acceptJoinRequest(JoinRequest request) {
@@ -171,8 +172,7 @@ class FunxchangeApiDataSource
 
   @override
   String getCurrentUserId() {
-    // TODO: implement getCurrentUserId
-    throw UnimplementedError();
+    return currentUserId!;
   }
 
   @override

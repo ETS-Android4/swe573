@@ -5,6 +5,8 @@ import 'package:funxchange/mockds/utils.dart';
 import 'package:funxchange/screens/feed.dart';
 import 'package:funxchange/screens/notification.dart';
 import 'package:funxchange/screens/profile.dart';
+import 'package:funxchange/screens/signup.dart';
+import 'package:funxchange/screens/welcome.dart';
 
 void main() {
   MockUtils.populateData();
@@ -28,10 +30,24 @@ class ContainerPage extends StatefulWidget {
   const ContainerPage({Key? key}) : super(key: key);
 
   @override
-  State<ContainerPage> createState() => _ContainerPageState();
+  _ContainerPageState createState() => _ContainerPageState();
 }
 
 class _ContainerPageState extends State<ContainerPage> {
+  @override
+  Widget build(BuildContext context) {
+    return WelcomePage();
+  }
+}
+
+class LoggedInPage extends StatefulWidget {
+  const LoggedInPage({Key? key}) : super(key: key);
+
+  @override
+  State<LoggedInPage> createState() => _LoggedInPageState();
+}
+
+class _LoggedInPageState extends State<LoggedInPage> {
   int _selectedIndex = 0;
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);

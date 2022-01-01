@@ -24,16 +24,6 @@ class MockUtils {
   }
 
   static void populateData() {
-    final api = FunxchangeApiDataSource();
-    final String username = "sarp12346";
-    api
-        .signUp(NewUserParams(
-            username, "deneme", [Interest.computers], "deneme123"))
-        .then((value) {
-      api.authToken = value.jwt;
-      api.fetchUserByUserName(username).then((value) => print(value.id));
-    });
-
     var faker = Faker();
     var uuid = const Uuid();
     var random = Random();

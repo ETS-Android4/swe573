@@ -131,7 +131,13 @@ public class UserService {
             isFollowed = Optional.of(false);
         }
 
-        double ratingAvg = user.getRateds().stream().mapToDouble(Rating::getRating).average().orElse(0);
+        double ratingAvg = Optional
+                .ofNullable(user.getRateds())
+                .orElse(Collections.emptySet())
+                .stream()
+                .mapToDouble(Rating::getRating)
+                .average()
+                .orElse(0);
 
         return new UserDTO(
                 user.getId().toString(),

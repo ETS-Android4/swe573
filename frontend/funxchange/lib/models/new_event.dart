@@ -32,9 +32,9 @@ class NewEventParams {
 
   Map<String, dynamic> toMap() {
     return {
-      'type': type.toString(),
+      'type': type.toJsonString,
       'capacity': capacity,
-      'category': category.toString(),
+      'category': category.toJsonString,
       'title': title,
       'details': details,
       'latitude': latitude,

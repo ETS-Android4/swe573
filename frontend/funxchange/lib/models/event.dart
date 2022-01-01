@@ -38,10 +38,10 @@ class Event {
     return {
       'id': id,
       'ownerId': ownerId,
-      'type': type.toString(),
+      'type': type.toJsonString,
       'capacity': capacity,
       'participantCount': participantCount,
-      'category': category.toString(),
+      'category': category.toJsonString,
       'title': title,
       'details': details,
       'latitude': latitude,
@@ -83,7 +83,7 @@ enum EventType {
 }
 
 EventType? parseEventType(String value) {
-  return EventType.values.firstWhere((element) => element.toString() == value);
+  return EventType.values.firstWhere((element) => element.toJsonString == value);
 }
 
 extension PrettyString on EventType {
@@ -94,5 +94,9 @@ extension PrettyString on EventType {
       case EventType.service:
         return "SERVICE";
     }
+  }
+
+  String get toJsonString {
+    return toString().replaceAll("EventType.", "");
   }
 }

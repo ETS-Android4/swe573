@@ -24,7 +24,7 @@ class User {
       'bio': bio,
       'followerCount': followerCount,
       'followedCount': followedCount,
-      'interests': interests.map((x) => x.toString()).toList(),
+      'interests': interests.map((x) => x.toJsonString).toList(),
       'creditScore': creditScore?.toMap(),
       'ratingAvg': ratingAvg,
       'isFollowed': isFollowed,

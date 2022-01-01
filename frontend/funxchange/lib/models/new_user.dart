@@ -14,7 +14,7 @@ class NewUserParams {
     return {
       'userName': userName,
       'bio': bio,
-      'interests': interests.map((x) => x.toString()).toList(),
+      'interests': interests.map((x) => x.toJsonString).toList(),
       'password': password,
     };
   }

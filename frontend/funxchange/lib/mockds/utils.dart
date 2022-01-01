@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:faker/faker.dart';
 import 'package:funxchange/data_source/request.dart';
+import 'package:funxchange/framework/api/funxchange_api.dart';
 import 'package:funxchange/mockds/event.dart';
 import 'package:funxchange/mockds/message.dart';
 import 'package:funxchange/mockds/notification.dart';
@@ -11,6 +12,7 @@ import 'package:funxchange/mockds/user.dart';
 import 'package:funxchange/models/event.dart';
 import 'package:funxchange/models/interest.dart';
 import 'package:funxchange/models/message.dart';
+import 'package:funxchange/models/new_user.dart';
 import 'package:funxchange/models/notification.dart';
 import 'package:funxchange/models/request.dart';
 import 'package:funxchange/models/user.dart';
@@ -22,6 +24,16 @@ class MockUtils {
   }
 
   static void populateData() {
+    final api = FunxchangeApiDataSource();
+    final String username = "sarp12346";
+    api
+        .signUp(NewUserParams(
+            username, "deneme", [Interest.computers], "deneme123"))
+        .then((value) {
+      api.authToken = value.jwt;
+      api.fetchUserByUserName(username).then((value) => print(value.id));
+    });
+
     var faker = Faker();
     var uuid = const Uuid();
     var random = Random();

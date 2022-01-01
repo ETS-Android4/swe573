@@ -64,8 +64,12 @@ extension PrettyNameExtension on Interest {
         return "Gaming";
     }
   }
+
+  String get toJsonString {
+    return prettyName;
+  }
 }
 
 Interest? parseInterest(String value) {
-  return Interest.values.firstWhere((element) => element.toString() == value);
+  return Interest.values.firstWhere((element) => element.toJsonString == value);
 }

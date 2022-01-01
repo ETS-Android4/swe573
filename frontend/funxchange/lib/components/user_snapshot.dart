@@ -22,7 +22,7 @@ class _UserSnapshotState extends State<UserSnapshot> {
   Widget build(BuildContext context) {
     return widget.userFetcher.fold(
       (str) => FutureBuilder<User>(
-        future: DIContainer.mockSingleton.userRepo.fetchUser(str),
+        future: DIContainer.activeSingleton.userRepo.fetchUser(str),
         builder: (ctx, ss) {
           if (!ss.hasData) {
             return const CupertinoActivityIndicator();
@@ -78,10 +78,10 @@ class _UserSnapshotState extends State<UserSnapshot> {
                     setState(() {
                       if (_currentModel != null) {
                         if (_currentModel!.isFollowed!) {
-                          DIContainer.mockSingleton.userRepo
+                          DIContainer.activeSingleton.userRepo
                               .unfollowUser(_currentModel!.id);
                         } else {
-                          DIContainer.mockSingleton.userRepo
+                          DIContainer.activeSingleton.userRepo
                               .followUser(_currentModel!.id);
                         }
                         _currentModel!.isFollowed = !_currentModel!.isFollowed!;
@@ -126,7 +126,7 @@ class _UserSnapshotState extends State<UserSnapshot> {
 
                 isSending = true;
 
-                DIContainer.mockSingleton.messageRepo
+                DIContainer.activeSingleton.messageRepo
                     .sendMessage(text, _currentModel!.id);
 
                 Navigator.pop(context);

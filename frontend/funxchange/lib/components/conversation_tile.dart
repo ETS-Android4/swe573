@@ -41,7 +41,7 @@ class ConversationTile extends StatelessWidget {
   }
 
   String _determineUserName() {
-    if (DIContainer.mockSingleton.userRepo.getCurrentUserId() == message.senderId) {
+    if (DIContainer.activeSingleton.userRepo.getCurrentUserId() == message.senderId) {
       return message.receiverUserName;
     } else {
       return message.senderUserName;

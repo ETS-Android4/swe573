@@ -18,7 +18,7 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<User>(
-        future: DIContainer.mockSingleton.userRepo.fetchUser(userId),
+        future: DIContainer.activeSingleton.userRepo.fetchUser(userId),
         builder: (context, ss) {
           var user = ss.hasData ? ss.requireData : null;
           return Scaffold(
@@ -131,7 +131,7 @@ class ProfilePage extends StatelessWidget {
                           physics: ClampingScrollPhysics(),
                           shrinkWrap: true,
                           eventFetcher: (limit, offset) => DIContainer
-                              .mockSingleton.eventRepo
+                              .activeSingleton.eventRepo
                               .fetchEventsOfUser(limit, offset, userId)),
                     ],
                   ),
@@ -143,7 +143,7 @@ class ProfilePage extends StatelessWidget {
     Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
       return UserListPage(
           userFetcher: (limit, offset) {
-            var repo = DIContainer.mockSingleton.userRepo;
+            var repo = DIContainer.activeSingleton.userRepo;
 
             return followed
                 ? repo.fetchFollowed(limit, offset, userId)

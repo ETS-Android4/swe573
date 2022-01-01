@@ -35,6 +35,8 @@ class DIContainer {
   static final _geocodingApiDataSource = GeocodingApiDataSource();
   static final _apiDataSource = FunxchangeApiDataSource.singleton;
 
+  static final activeSingleton = singleton;
+
   static final mockSingleton = DIContainer._internal(
     EventRepository(MockEventDataSource()),
     UserRepository(MockUserDataSource()),

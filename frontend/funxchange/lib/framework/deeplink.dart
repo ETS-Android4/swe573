@@ -23,7 +23,7 @@ class DeeplinkNavigator {
         break;
       case _DeeplinkType.Event:
         final imgMap = await Cache.interestImageMap();
-        final event = await DIContainer.mockSingleton.eventRepo
+        final event = await DIContainer.activeSingleton.eventRepo
             .fetchEvent(parsedDeeplink.value!);
         Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
           return EventPage(event: event, image: imgMap[event.category]!);

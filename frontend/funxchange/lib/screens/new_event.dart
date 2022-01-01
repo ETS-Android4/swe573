@@ -78,8 +78,8 @@ class _NewEventScreenState extends State<NewEventScreen> {
             _startDateTime!,
           );
 
-          final userId = DIContainer.mockSingleton.userRepo.getCurrentUserId();
-          DIContainer.mockSingleton.eventRepo.createEvent(model, userId).then((_) {
+          final userId = DIContainer.activeSingleton.userRepo.getCurrentUserId();
+          DIContainer.activeSingleton.eventRepo.createEvent(model, userId).then((_) {
             final messenger = ScaffoldMessenger.of(context);
             messenger.hideCurrentSnackBar();
             messenger.showSnackBar(

@@ -39,12 +39,12 @@ class FeedPage extends StatelessWidget {
           children: [
             EventList(
               eventFetcher: (limit, offset) => DIContainer
-                  .mockSingleton.eventRepo
+                  .activeSingleton.eventRepo
                   .fetchFeed(limit, offset, false),
             ),
             EventList(
               eventFetcher: (limit, offset) => DIContainer
-                  .mockSingleton.eventRepo
+                  .activeSingleton.eventRepo
                   .fetchFeed(limit, offset, true),
             ),
           ],

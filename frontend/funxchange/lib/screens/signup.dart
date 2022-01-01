@@ -41,6 +41,8 @@ class _SignUpPageState extends State<SignUpPage> {
                       decoration: const InputDecoration(
                           border: UnderlineInputBorder(),
                           labelText: 'Enter your email address'),
+                      enableSuggestions: false,
+                      autocorrect: false,
                       controller: _emailController,
                       validator: (s) {
                         if (s == null || s.isEmpty || !s.isValidEmail()) {
@@ -52,6 +54,8 @@ class _SignUpPageState extends State<SignUpPage> {
                         decoration: const InputDecoration(
                             border: UnderlineInputBorder(),
                             labelText: 'Enter your username'),
+                        enableSuggestions: false,
+                        autocorrect: false,
                         controller: _userNameController,
                         validator: (s) {
                           if (s == null || s.isEmpty) {
@@ -117,7 +121,9 @@ class _SignUpPageState extends State<SignUpPage> {
                     _passwordController.text,
                   );
 
-                  DIContainer.mockSingleton.authRepo.signUp(model).then((resp) {
+                  DIContainer.activeSingleton.authRepo
+                      .signUp(model)
+                      .then((resp) {
                     final messenger = ScaffoldMessenger.of(context);
                     messenger.hideCurrentSnackBar();
                     messenger.showSnackBar(

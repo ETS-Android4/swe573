@@ -40,6 +40,8 @@ class _WelcomePageState extends State<WelcomePage> {
                       decoration: const InputDecoration(
                           border: UnderlineInputBorder(),
                           labelText: 'Enter your username'),
+                      enableSuggestions: false,
+                      autocorrect: false,
                       controller: _usernameController,
                       validator: (s) {
                         if (s == null || s.isEmpty) {
@@ -80,7 +82,7 @@ class _WelcomePageState extends State<WelcomePage> {
 
                   final model = AuthParams(
                       _usernameController.text, _passController.text);
-                  DIContainer.mockSingleton.authRepo
+                  DIContainer.activeSingleton.authRepo
                       .authenticate(model)
                       .then((resp) {
                     final messenger = ScaffoldMessenger.of(context);

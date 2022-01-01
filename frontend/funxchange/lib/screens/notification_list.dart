@@ -27,7 +27,7 @@ class _NotificationListState extends State<NotificationList> {
 
   Future<void> _fetchPage(int pageKey) async {
     try {
-      final newItems = await DIContainer.mockSingleton.notifRepo
+      final newItems = await DIContainer.activeSingleton.notifRepo
           .fetchNotifications(_pageSize, pageKey);
       final isLastPage = newItems.length < _pageSize;
       if (isLastPage) {

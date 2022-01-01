@@ -36,7 +36,7 @@ class _MessageListPageState extends State<MessageListPage> {
 
   Future<void> _fetchPage(int pageKey) async {
     try {
-      final newItems = await DIContainer.mockSingleton.messageRepo
+      final newItems = await DIContainer.activeSingleton.messageRepo
           .fetchMessages(_pageSize, pageKey, widget.conversationId);
       final isLastPage = newItems.length < _pageSize;
       if (isLastPage) {
@@ -88,7 +88,7 @@ class _MessageListPageState extends State<MessageListPage> {
                           setState(() {
                             _isLoading = true;
                           });
-                          DIContainer.mockSingleton.messageRepo
+                          DIContainer.activeSingleton.messageRepo
                               .sendMessage(text, widget.receiverId)
                               .then((value) {
                             setState(() {

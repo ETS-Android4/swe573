@@ -1,3 +1,4 @@
+import 'package:funxchange/framework/api/funxchange_api.dart';
 import 'package:funxchange/framework/api/geocoding.dart';
 import 'package:funxchange/mockds/event.dart';
 import 'package:funxchange/mockds/message.dart';
@@ -28,12 +29,24 @@ class DIContainer {
     this.messageRepo,
   );
 
+  static final _geocodingApiDataSource = GeocodingApiDataSource();
+  static final _apiDataSource = FunxchangeApiDataSource();
+
   static final mockSingleton = DIContainer._internal(
     EventRepository(MockEventDataSource()),
     UserRepository(MockUserDataSource()),
     NotificationRepository(MockNotificationDataSource()),
     JoinRequestRepository(MockJoinRequestDataSource()),
-    GeocodingRepository(GeocodingApiDataSource()),
+    GeocodingRepository(_geocodingApiDataSource),
     MessageRepository(MockMessageDataSource()),
+  );
+
+  static final singleton = DIContainer._internal(
+    EventRepository(_apiDataSource),
+    UserRepository(_apiDataSource),
+    NotificationRepository(_apiDataSource),
+    JoinRequestRepository(_apiDataSource),
+    GeocodingRepository(_geocodingApiDataSource),
+    MessageRepository(_apiDataSource),
   );
 }

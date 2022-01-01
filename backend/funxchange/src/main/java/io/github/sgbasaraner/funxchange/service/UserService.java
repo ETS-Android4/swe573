@@ -214,16 +214,20 @@ public class UserService {
 
     @Transactional
     public CreditScore calculateCredits(User user) {
-        final int handshakenHostedServices = user
-                .getEvents()
+        final int handshakenHostedServices = Optional
+                .ofNullable(user.getEvents())
+                .orElse(Collections.emptySet())
                 .stream()
                 .filter(e -> e.getType().equals("service"))
                 .filter(Event::isHandshaken)
                 .map(Event::getCreditValue)
                 .reduce(0, Integer::sum);
 
-        final int handshakenReceivedServices = user
-                .getParticipatedEvents()
+        final Set<Event> participatedEvents = Optional
+                .ofNullable(user.getParticipatedEvents())
+                .orElse(Collections.emptySet());
+
+        final int handshakenReceivedServices = participatedEvents
                 .stream()
                 .filter(e -> e.getType().equals("service"))
                 .filter(Event::isHandshaken)
@@ -232,16 +236,16 @@ public class UserService {
 
         final int appliedScore = Math.max(5 + handshakenHostedServices - handshakenReceivedServices, 0);
 
-        final int pendingJoinRequests = user
-                .getJoinRequests()
+        final int pendingJoinRequests = Optional
+                .ofNullable(user.getJoinRequests())
+                .orElse(Collections.emptySet())
                 .stream()
                 .map(JoinRequest::getEvent)
                 .filter(e -> e.getType().equals("service"))
                 .map(Event::getCreditValue)
                 .reduce(0, Integer::sum);
 
-        final int nonHandshakenReceivedServices = user
-                .getParticipatedEvents()
+        final int nonHandshakenReceivedServices = participatedEvents
                 .stream()
                 .filter(e -> e.getType().equals("service"))
                 .filter(e -> !e.isHandshaken())

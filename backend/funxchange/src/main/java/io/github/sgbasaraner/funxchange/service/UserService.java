@@ -68,13 +68,7 @@ public class UserService {
 
         if (!areInterestsValid(params.getInterests()))
             throw new IllegalArgumentException("Invalid interest list.");
-
-        interestRepository.saveAll(params.getInterests().stream().map(i -> {
-            final Interest interest = new Interest();
-            interest.setName(i);
-            return interest;
-        }).collect(Collectors.toSet()));
-
+        
         final Set<Interest> interests = new HashSet<>(interestRepository.findByNameIn(params.getInterests()));
 
         final String passwordHash = passwordEncoder.encode(params.getPassword());

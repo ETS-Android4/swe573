@@ -123,7 +123,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     messenger.showSnackBar(
                       const SnackBar(content: Text('Successfully signed up.')),
                     );
-                    Navigator.of(context).pop(resp);
+                    Navigator.of(context).pop([resp.jwt, model.userName]);
                   }).onError((error, _) {
                     final messenger = ScaffoldMessenger.of(context);
                     messenger.hideCurrentSnackBar();

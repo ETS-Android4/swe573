@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:funxchange/framework/api/funxchange_api.dart';
 import 'package:funxchange/framework/colors.dart';
+import 'package:funxchange/framework/di.dart';
 import 'package:funxchange/mockds/user.dart';
 import 'package:funxchange/mockds/utils.dart';
 import 'package:funxchange/screens/feed.dart';
@@ -34,9 +36,29 @@ class ContainerPage extends StatefulWidget {
 }
 
 class _ContainerPageState extends State<ContainerPage> {
+  bool _isAuthenticated = false;
+
+  @override
+  void initState() {
+    FunxchangeApiDataSource.singleton.onAuthStatusChanged = (status) {
+      setState(() {
+        _isAuthenticated = status != null;
+      });
+    };
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return WelcomePage();
+    if (_isAuthenticated) {
+      return const LoggedInPage();
+    }
+    return WelcomePage(
+      onAuth: (response) async {
+        await FunxchangeApiDataSource.singleton
+            .addAuthToken(response[0], response[1]);
+      },
+    );
   }
 }
 

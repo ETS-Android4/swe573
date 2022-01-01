@@ -6,7 +6,9 @@ import 'package:funxchange/models/auth_response.dart';
 import 'package:funxchange/screens/signup.dart';
 
 class WelcomePage extends StatefulWidget {
-  const WelcomePage({Key? key}) : super(key: key);
+  const WelcomePage({Key? key, required this.onAuth}) : super(key: key);
+
+  final Function(List<String>) onAuth;
 
   @override
   State<WelcomePage> createState() => _WelcomePageState();
@@ -86,7 +88,7 @@ class _WelcomePageState extends State<WelcomePage> {
                     messenger.showSnackBar(
                       const SnackBar(content: Text('Logged in successfully.')),
                     );
-                    Navigator.of(context).pop(resp);
+                    widget.onAuth([resp.jwt, model.userName]);
                   }).onError((error, _) {
                     final messenger = ScaffoldMessenger.of(context);
                     messenger.hideCurrentSnackBar();
@@ -113,7 +115,7 @@ class _WelcomePageState extends State<WelcomePage> {
                   Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
                     return const SignUpPage();
                   })).then((value) {
-                    if (value is AuthResponse) Navigator.of(context).pop(value);
+                    if (value is List<String>) widget.onAuth(value);
                   });
                 },
               ),

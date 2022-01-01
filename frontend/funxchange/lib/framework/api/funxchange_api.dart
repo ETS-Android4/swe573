@@ -26,8 +26,20 @@ class FunxchangeApiDataSource
         UserDataSource,
         AuthDataSource {
   static const String _baseUrl = "http://20.107.24.75:8080";
-  String? authToken = null;
-  String? currentUserId = null;
+  String? _authToken = null;
+  String? _currentUserId = null;
+
+  FunxchangeApiDataSource._internal();
+
+  static final singleton = FunxchangeApiDataSource._internal();
+
+  Function(String?)? onAuthStatusChanged;
+
+  Future<void> addAuthToken(String token, String username) async {
+    _authToken = token;
+    _currentUserId = (await fetchUserByUserName(username)).id;
+    onAuthStatusChanged?.call(token);
+  }
 
   @override
   Future<JoinRequest> acceptJoinRequest(JoinRequest request) {
@@ -151,13 +163,13 @@ class FunxchangeApiDataSource
   @override
   Future<User> fetchUser(String id) {
     return _jsonGetRequest("/user/" + id, (p0) => User.fromJson(p0),
-        authentication: authToken);
+        authentication: _authToken);
   }
 
   @override
   Future<User> fetchUserByUserName(String userName) {
     return _jsonGetRequest("/user/" + userName, (p0) => User.fromJson(p0),
-        authentication: authToken);
+        authentication: _authToken);
   }
 
   @override
@@ -172,7 +184,7 @@ class FunxchangeApiDataSource
 
   @override
   String getCurrentUserId() {
-    return currentUserId!;
+    return _currentUserId!;
   }
 
   @override
@@ -240,6 +252,7 @@ class FunxchangeApiDataSource
     String Function(P) serializer,
     T Function(String) deserializer,
   ) async {
+    print("POST " + path);
     final String urlStr = _baseUrl + path;
     final url = Uri.parse(urlStr);
     final response = await http.post(
@@ -247,8 +260,10 @@ class FunxchangeApiDataSource
       headers: {"Content-Type": "application/json"},
       body: serializer(body),
     );
+    print("POST " + path + " " + response.statusCode.toString());
     if (response.statusCode == 401) {
-      authToken = null;
+      _authToken = null;
+      onAuthStatusChanged?.call(null);
     }
     return deserializer(response.body);
   }
@@ -258,6 +273,7 @@ class FunxchangeApiDataSource
     T Function(String) deserializer, {
     String? authentication,
   }) async {
+    print("GET " + path);
     final String urlStr = _baseUrl + path;
     final url = Uri.parse(urlStr);
     final response = await http.get(
@@ -267,8 +283,10 @@ class FunxchangeApiDataSource
         if (authentication != null) "Authorization": "Bearer " + authentication
       },
     );
+    print("GET " + path + " " + response.statusCode.toString());
     if (response.statusCode == 401) {
-      authToken = null;
+      _authToken = null;
+      onAuthStatusChanged?.call(null);
     }
     return deserializer(response.body);
   }
@@ -278,6 +296,7 @@ class FunxchangeApiDataSource
     T Function(String) deserializer, {
     String? authentication,
   }) async {
+    print("DELETE " + path);
     final String urlStr = _baseUrl + path;
     final url = Uri.parse(urlStr);
     final response = await http.delete(
@@ -287,8 +306,10 @@ class FunxchangeApiDataSource
         if (authentication != null) "Authorization": "Bearer " + authentication
       },
     );
+    print("DELETE " + path + " " + response.statusCode.toString());
     if (response.statusCode == 401) {
-      authToken = null;
+      _authToken = null;
+      onAuthStatusChanged?.call(null);
     }
     return deserializer(response.body);
   }

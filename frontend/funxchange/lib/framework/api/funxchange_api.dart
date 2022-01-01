@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:funxchange/data_source/auth.dart';
 import 'package:funxchange/data_source/event.dart';
 import 'package:funxchange/data_source/message.dart';
@@ -28,87 +30,127 @@ class FunxchangeApiDataSource
 
   @override
   Future<JoinRequest> acceptJoinRequest(JoinRequest request) {
-    // TODO: implement acceptJoinRequest
-    throw UnimplementedError();
+    final String path = "/events/" +
+        request.eventId +
+        "/requestors/" +
+        request.userId +
+        "/accept";
+
+    return _jsonPostRequest(
+        path, "", (p0) => "", (p0) => JoinRequest.fromJson(p0));
   }
 
   @override
   Future<Event> createEvent(NewEventParams params, String userId) {
-    // TODO: implement createEvent
-    throw UnimplementedError();
+    return _jsonPostRequest(
+      "/events",
+      params,
+      (p0) => p0.toString(),
+      (p0) => Event.fromJson(p0),
+    );
   }
 
   @override
   Future<JoinRequest> createJoinRequest(String eventId, String userId) {
-    // TODO: implement createJoinRequest
-    throw UnimplementedError();
+    final String path = "/events/" + eventId + "/join";
+
+    return _jsonPostRequest(
+      path,
+      "",
+      (p0) => "",
+      (p0) => JoinRequest.fromJson(p0),
+    );
   }
 
   @override
   Future<List<Message>> fetchConversations(int limit, int offset) {
-    // TODO: implement fetchConversations
-    throw UnimplementedError();
+    return _jsonGetRequest(
+      _makePaginatedPath("/conversations", offset, limit),
+      (p0) => parseList((p1) => Message.fromMap(p1), p0),
+    );
   }
 
   @override
   Future<Event> fetchEvent(String id) {
-    // TODO: implement fetchEvent
-    throw UnimplementedError();
+    return _jsonGetRequest(
+      "/events/" + id,
+      (p0) => Event.fromJson(p0),
+    );
   }
 
   @override
   Future<List<Event>> fetchEventsOfUser(int limit, int offset, String userId) {
-    // TODO: implement fetchEventsOfUser
-    throw UnimplementedError();
+    return _jsonGetRequest(
+      _makePaginatedPath("/user/" + userId + "/events", offset, limit),
+      (p0) => parseList((p1) => Event.fromMap(p1), p0),
+    );
   }
 
   @override
   Future<List<Event>> fetchFeed(int limit, int offset, bool followed) {
-    // TODO: implement fetchFeed
-    throw UnimplementedError();
+    return _jsonGetRequest(
+      _makePaginatedPath("/events/feed", offset, limit),
+      (p0) => parseList((p1) => Event.fromMap(p1), p0),
+    );
   }
 
   @override
   Future<List<User>> fetchFollowed(int limit, int offset, String userId) {
-    // TODO: implement fetchFollowed
-    throw UnimplementedError();
+    return _jsonGetRequest(
+      _makePaginatedPath("/user/" + userId + "/followees", offset, limit),
+      (p0) => parseList((p1) => User.fromMap(p1), p0),
+    );
   }
 
   @override
   Future<List<User>> fetchFollowers(int limit, int offset, String userId) {
-    // TODO: implement fetchFollowers
-    throw UnimplementedError();
+    return _jsonGetRequest(
+      _makePaginatedPath("/user/" + userId + "/followers", offset, limit),
+      (p0) => parseList((p1) => User.fromMap(p1), p0),
+    );
   }
 
   @override
   Future<List<JoinRequest>> fetchJoinRequests(int limit, int offset) {
-    // TODO: implement fetchJoinRequests
-    throw UnimplementedError();
+    return _jsonGetRequest(
+      _makePaginatedPath("/requests", offset, limit),
+      (p0) => parseList((p1) => JoinRequest.fromMap(p1), p0),
+    );
   }
 
   @override
   Future<List<Message>> fetchMessages(
       int limit, int offset, String conversationId) {
-    // TODO: implement fetchMessages
-    throw UnimplementedError();
+    return _jsonGetRequest(
+      _makePaginatedPath(
+        "/conversations/" + conversationId + "/messages",
+        offset,
+        limit,
+      ),
+      (p0) => parseList((p1) => Message.fromMap(p1), p0),
+    );
   }
 
   @override
   Future<List<NotificationModel>> fetchNotifications(int limit, int offset) {
-    // TODO: implement fetchNotifications
-    throw UnimplementedError();
+    return _jsonGetRequest(
+      _makePaginatedPath("/notifications", offset, limit),
+      (p0) => parseList((p1) => NotificationModel.fromMap(p1), p0),
+    );
   }
 
   @override
   Future<List<User>> fetchParticipants(String eventId, int limit, int offset) {
-    // TODO: implement fetchParticipants
-    throw UnimplementedError();
+    return _jsonGetRequest(
+      _makePaginatedPath("/events/" + eventId + "/participants", offset, limit),
+      (p0) => parseList((p1) => User.fromMap(p1), p0),
+    );
   }
 
   @override
   Future<User> fetchUser(String id) {
-    // TODO: implement fetchUser
-    throw UnimplementedError();
+    return _jsonGetRequest("/user/" + id, (p0) => User.fromJson(p0),
+        authentication: authToken);
   }
 
   @override
@@ -119,8 +161,12 @@ class FunxchangeApiDataSource
 
   @override
   Future<String> followUser(String userId) {
-    // TODO: implement followUser
-    throw UnimplementedError();
+    return _jsonPostRequest(
+      "/user/${userId}/followers",
+      "",
+      (p0) => "",
+      (p0) => p0,
+    );
   }
 
   @override
@@ -131,20 +177,32 @@ class FunxchangeApiDataSource
 
   @override
   Future<JoinRequest> rejectJoinRequest(JoinRequest request) {
-    // TODO: implement rejectJoinRequest
-    throw UnimplementedError();
+    final String path = "/events/" +
+        request.eventId +
+        "/requestors/" +
+        request.userId +
+        "/reject";
+
+    return _jsonPostRequest(
+        path, "", (p0) => "", (p0) => JoinRequest.fromJson(p0));
   }
 
   @override
   Future<Message> sendMessage(String text, String receiverId) {
-    // TODO: implement sendMessage
-    throw UnimplementedError();
+    return _jsonPostRequest(
+      "/conversations",
+      {"text": text, "receiverId": receiverId},
+      (p0) => json.encode(p0),
+      (p0) => Message.fromJson(p0),
+    );
   }
 
   @override
   Future<String> unfollowUser(String userId) {
-    // TODO: implement unfollowUser
-    throw UnimplementedError();
+    return _jsonDeleteRequest(
+      "/user/$userId/followers",
+      (p0) => p0,
+    );
   }
 
   @override
@@ -165,6 +223,15 @@ class FunxchangeApiDataSource
       (p0) => p0.toJson(),
       (p0) => AuthResponse.fromJson(p0),
     );
+  }
+
+  List<T> parseList<T>(
+      T Function(Map<String, dynamic>) deserializer, String source) {
+    return List<T>.from(json.decode(source).map((i) => deserializer(i)));
+  }
+
+  String _makePaginatedPath(String base, int offset, int limit) {
+    return base + "?limit=" + limit.toString() + "&offset=" + offset.toString();
   }
 
   Future<T> _jsonPostRequest<P, T>(
@@ -194,6 +261,26 @@ class FunxchangeApiDataSource
     final String urlStr = _baseUrl + path;
     final url = Uri.parse(urlStr);
     final response = await http.get(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        if (authentication != null) "Authorization": "Bearer " + authentication
+      },
+    );
+    if (response.statusCode == 401) {
+      authToken = null;
+    }
+    return deserializer(response.body);
+  }
+
+  Future<T> _jsonDeleteRequest<P, T>(
+    String path,
+    T Function(String) deserializer, {
+    String? authentication,
+  }) async {
+    final String urlStr = _baseUrl + path;
+    final url = Uri.parse(urlStr);
+    final response = await http.delete(
       url,
       headers: {
         "Content-Type": "application/json",

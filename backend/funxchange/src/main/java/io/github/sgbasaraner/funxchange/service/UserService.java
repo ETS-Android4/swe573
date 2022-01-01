@@ -129,7 +129,9 @@ public class UserService {
                 .ofNullable(user.getRateds())
                 .orElse(Collections.emptySet())
                 .stream()
-                .mapToDouble(Rating::getRating)
+                .map(Rating::getRating)
+                .filter(Objects::nonNull)
+                .mapToDouble(r -> r)
                 .average()
                 .orElse(0);
 

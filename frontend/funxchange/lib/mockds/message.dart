@@ -31,7 +31,7 @@ class MockMessageDataSource implements MessageDataSource {
 
   @override
   Future<Message> sendMessage(String text, String receiverId) async {
-    final userRepo = DIContainer.singleton.userRepo;
+    final userRepo = DIContainer.mockSingleton.userRepo;
     final currentUserId = userRepo.getCurrentUserId();
     final currentUser = await userRepo.fetchUser(currentUserId);
     final receiverUser = await userRepo.fetchUser(receiverId);

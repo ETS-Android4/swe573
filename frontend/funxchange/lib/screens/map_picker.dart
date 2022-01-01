@@ -62,7 +62,7 @@ class _MapPickerState extends State<MapPicker> {
                 setState(() {
                   _isLoading = true;
                 });
-                final location = await DIContainer.singleton.geocodingRepo
+                final location = await DIContainer.mockSingleton.geocodingRepo
                     .reverseGeocode(center.latitude, center.longitude);
                 Navigator.pop(
                   context,

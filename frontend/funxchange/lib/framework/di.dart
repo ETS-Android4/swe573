@@ -28,7 +28,7 @@ class DIContainer {
     this.messageRepo,
   );
 
-  static final singleton = DIContainer._internal(
+  static final mockSingleton = DIContainer._internal(
     EventRepository(MockEventDataSource()),
     UserRepository(MockUserDataSource()),
     NotificationRepository(MockNotificationDataSource()),

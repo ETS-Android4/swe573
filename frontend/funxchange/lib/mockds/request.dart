@@ -37,7 +37,7 @@ class MockJoinRequestDataSource implements JoinRequestDataSource {
 
   @override
   Future<JoinRequest> createJoinRequest(String eventId, String userId) async {
-    final eventRepo = DIContainer.singleton.eventRepo;
+    final eventRepo = DIContainer.mockSingleton.eventRepo;
     final event = await eventRepo.fetchEvent(eventId);
     if (event.participantCount >= event.capacity) {
       throw Exception("Event is already full.");

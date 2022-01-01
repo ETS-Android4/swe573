@@ -12,7 +12,7 @@ class MessageTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final messageIsMine =
-        message.senderId == DIContainer.singleton.userRepo.getCurrentUserId();
+        message.senderId == DIContainer.mockSingleton.userRepo.getCurrentUserId();
     return MessageBubble(
         message: message,
         child: Column(
@@ -57,7 +57,7 @@ class MessageBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final messageIsMine =
-        message.senderId == DIContainer.singleton.userRepo.getCurrentUserId();
+        message.senderId == DIContainer.mockSingleton.userRepo.getCurrentUserId();
     final messageAlignment =
         messageIsMine ? Alignment.topLeft : Alignment.topRight;
 

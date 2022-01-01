@@ -38,11 +38,13 @@ class FeedPage extends StatelessWidget {
         body: TabBarView(
           children: [
             EventList(
-              eventFetcher: (limit, offset) => DIContainer.singleton.eventRepo
+              eventFetcher: (limit, offset) => DIContainer
+                  .mockSingleton.eventRepo
                   .fetchFeed(limit, offset, false),
             ),
             EventList(
-              eventFetcher: (limit, offset) => DIContainer.singleton.eventRepo
+              eventFetcher: (limit, offset) => DIContainer
+                  .mockSingleton.eventRepo
                   .fetchFeed(limit, offset, true),
             ),
           ],

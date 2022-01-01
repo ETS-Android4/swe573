@@ -19,7 +19,7 @@ class GeocodingApiDataSource implements GeocodingDataSource {
 }
 
 class _Response {
-    final List<Location> data;
+  final List<Location> data;
 
   _Response(this.data);
 
@@ -37,5 +37,6 @@ class _Response {
 
   String toJson() => json.encode(toMap());
 
-  factory _Response.fromJson(String source) => _Response.fromMap(json.decode(source));
+  factory _Response.fromJson(String source) =>
+      _Response.fromMap(json.decode(source));
 }

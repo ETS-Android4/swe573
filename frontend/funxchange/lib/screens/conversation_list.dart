@@ -28,7 +28,7 @@ class _ConversationListState extends State<ConversationList> {
 
   Future<void> _fetchPage(int pageKey) async {
     try {
-      final newItems = await DIContainer.singleton.messageRepo
+      final newItems = await DIContainer.mockSingleton.messageRepo
           .fetchConversations(_pageSize, pageKey);
       final isLastPage = newItems.length < _pageSize;
       if (isLastPage) {
@@ -54,7 +54,7 @@ class _ConversationListState extends State<ConversationList> {
                 builder: (ctx) => MessageListPage(
                     conversationId: m.conversationId,
                     receiverId: m.senderId ==
-                            DIContainer.singleton.userRepo.getCurrentUserId()
+                            DIContainer.mockSingleton.userRepo.getCurrentUserId()
                         ? m.receiverId
                         : m.senderId)));
           },

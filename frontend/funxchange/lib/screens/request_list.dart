@@ -27,7 +27,7 @@ class _RequestListState extends State<RequestList> {
 
   Future<void> _fetchPage(int pageKey) async {
     try {
-      final newItems = await DIContainer.singleton.joinRequestRepo
+      final newItems = await DIContainer.mockSingleton.joinRequestRepo
           .fetchJoinRequests(_pageSize, pageKey);
       final isLastPage = newItems.length < _pageSize;
       if (isLastPage) {
@@ -51,7 +51,7 @@ class _RequestListState extends State<RequestList> {
           onAcceptTapped: (m) {
             ScaffoldMessenger.of(context)
                 .showSnackBar(const SnackBar(content: Text("Accepting...")));
-            DIContainer.singleton.joinRequestRepo
+            DIContainer.mockSingleton.joinRequestRepo
                 .acceptJoinRequest(m)
                 .then((_) {
               _pagingController.refresh();
@@ -64,7 +64,7 @@ class _RequestListState extends State<RequestList> {
           onRejectTapped: (m) {
             ScaffoldMessenger.of(context)
                 .showSnackBar(const SnackBar(content: Text("Rejecting...")));
-            DIContainer.singleton.joinRequestRepo
+            DIContainer.mockSingleton.joinRequestRepo
                 .rejectJoinRequest(m)
                 .then((_) {
               _pagingController.refresh();

@@ -17,7 +17,8 @@ class EventPage extends StatelessWidget {
       : super(key: key);
 
   bool _isJoinable() {
-    return event.ownerId != DIContainer.singleton.userRepo.getCurrentUserId() &&
+    return event.ownerId !=
+            DIContainer.mockSingleton.userRepo.getCurrentUserId() &&
         event.participantCount < event.capacity;
   }
 
@@ -99,7 +100,7 @@ class EventPage extends StatelessWidget {
                     Navigator.of(context).push(MaterialPageRoute(
                       builder: (ctx) => UserListPage(
                           userFetcher: (limit, offset) => DIContainer
-                              .singleton.eventRepo
+                              .mockSingleton.eventRepo
                               .fetchParticipants(event.id, limit, offset),
                           title: "Participants"),
                     ));
@@ -120,9 +121,11 @@ class EventPage extends StatelessWidget {
                         const SnackBar(
                             content: Text('Creating join request...')),
                       );
-                      DIContainer.singleton.joinRequestRepo
-                          .createJoinRequest(event.id,
-                              DIContainer.singleton.userRepo.getCurrentUserId())
+                      DIContainer.mockSingleton.joinRequestRepo
+                          .createJoinRequest(
+                              event.id,
+                              DIContainer.mockSingleton.userRepo
+                                  .getCurrentUserId())
                           .then((value) {
                         messenger.hideCurrentSnackBar();
                         messenger.showSnackBar(

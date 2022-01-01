@@ -39,7 +39,7 @@ class Message {
       map['senderUserName'] ?? '',
       map['receiverUserName'] ?? '',
       map['text'] ?? '',
-      DateTime.fromMillisecondsSinceEpoch(map['created']),
+      DateTime.parse(map['created']),
     );
   }
 

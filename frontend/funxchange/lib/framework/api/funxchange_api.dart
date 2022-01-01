@@ -50,17 +50,15 @@ class FunxchangeApiDataSource
         "/accept";
 
     return _jsonPostRequest(
-        path, "", (p0) => "", (p0) => JoinRequest.fromJson(p0));
+        path, "", (p0) => "", (p0) => JoinRequest.fromJson(p0),
+        authentication: _authToken);
   }
 
   @override
   Future<Event> createEvent(NewEventParams params, String userId) {
     return _jsonPostRequest(
-      "/events",
-      params,
-      (p0) => p0.toString(),
-      (p0) => Event.fromJson(p0),
-    );
+        "/events", params, (p0) => p0.toString(), (p0) => Event.fromJson(p0),
+        authentication: _authToken);
   }
 
   @override
@@ -68,96 +66,88 @@ class FunxchangeApiDataSource
     final String path = "/events/" + eventId + "/join";
 
     return _jsonPostRequest(
-      path,
-      "",
-      (p0) => "",
-      (p0) => JoinRequest.fromJson(p0),
-    );
+        path, "", (p0) => "", (p0) => JoinRequest.fromJson(p0),
+        authentication: _authToken);
   }
 
   @override
   Future<List<Message>> fetchConversations(int limit, int offset) {
-    return _jsonGetRequest(
-      _makePaginatedPath("/conversations", offset, limit),
-      (p0) => parseList((p1) => Message.fromMap(p1), p0),
-    );
+    return _jsonGetRequest(_makePaginatedPath("/conversations", offset, limit),
+        (p0) => parseList((p1) => Message.fromMap(p1), p0),
+        authentication: _authToken);
   }
 
   @override
   Future<Event> fetchEvent(String id) {
-    return _jsonGetRequest(
-      "/events/" + id,
-      (p0) => Event.fromJson(p0),
-    );
+    return _jsonGetRequest("/events/" + id, (p0) => Event.fromJson(p0),
+        authentication: _authToken);
   }
 
   @override
   Future<List<Event>> fetchEventsOfUser(int limit, int offset, String userId) {
     return _jsonGetRequest(
-      _makePaginatedPath("/user/" + userId + "/events", offset, limit),
-      (p0) => parseList((p1) => Event.fromMap(p1), p0),
-    );
+        _makePaginatedPath("/user/" + userId + "/events", offset, limit),
+        (p0) => parseList((p1) => Event.fromMap(p1), p0),
+        authentication: _authToken);
   }
 
   @override
   Future<List<Event>> fetchFeed(int limit, int offset, bool followed) {
-    return _jsonGetRequest(
-      _makePaginatedPath("/events/feed", offset, limit),
-      (p0) => parseList((p1) => Event.fromMap(p1), p0),
-    );
+    return _jsonGetRequest(_makePaginatedPath("/events/feed", offset, limit),
+        (p0) => parseList((p1) => Event.fromMap(p1), p0),
+        authentication: _authToken);
   }
 
   @override
   Future<List<User>> fetchFollowed(int limit, int offset, String userId) {
     return _jsonGetRequest(
-      _makePaginatedPath("/user/" + userId + "/followees", offset, limit),
-      (p0) => parseList((p1) => User.fromMap(p1), p0),
-    );
+        _makePaginatedPath("/user/" + userId + "/followees", offset, limit),
+        (p0) => parseList((p1) => User.fromMap(p1), p0),
+        authentication: _authToken);
   }
 
   @override
   Future<List<User>> fetchFollowers(int limit, int offset, String userId) {
     return _jsonGetRequest(
-      _makePaginatedPath("/user/" + userId + "/followers", offset, limit),
-      (p0) => parseList((p1) => User.fromMap(p1), p0),
-    );
+        _makePaginatedPath("/user/" + userId + "/followers", offset, limit),
+        (p0) => parseList((p1) => User.fromMap(p1), p0),
+        authentication: _authToken);
   }
 
   @override
   Future<List<JoinRequest>> fetchJoinRequests(int limit, int offset) {
-    return _jsonGetRequest(
-      _makePaginatedPath("/requests", offset, limit),
-      (p0) => parseList((p1) => JoinRequest.fromMap(p1), p0),
-    );
+    return _jsonGetRequest(_makePaginatedPath("/requests", offset, limit),
+        (p0) => parseList((p1) => JoinRequest.fromMap(p1), p0),
+        authentication: _authToken);
   }
 
   @override
   Future<List<Message>> fetchMessages(
       int limit, int offset, String conversationId) {
     return _jsonGetRequest(
-      _makePaginatedPath(
-        "/conversations/" + conversationId + "/messages",
-        offset,
-        limit,
-      ),
-      (p0) => parseList((p1) => Message.fromMap(p1), p0),
-    );
+        _makePaginatedPath(
+          "/conversations/" + conversationId + "/messages",
+          offset,
+          limit,
+        ),
+        (p0) => parseList((p1) => Message.fromMap(p1), p0),
+        authentication: _authToken);
   }
 
   @override
   Future<List<NotificationModel>> fetchNotifications(int limit, int offset) {
-    return _jsonGetRequest(
-      _makePaginatedPath("/notifications", offset, limit),
-      (p0) => parseList((p1) => NotificationModel.fromMap(p1), p0),
-    );
+    return _jsonGetRequest(_makePaginatedPath("/notifications", offset, limit),
+        (p0) => parseList((p1) => NotificationModel.fromMap(p1), p0),
+        authentication: _authToken);
   }
 
   @override
   Future<List<User>> fetchParticipants(String eventId, int limit, int offset) {
     return _jsonGetRequest(
-      _makePaginatedPath("/events/" + eventId + "/participants", offset, limit),
-      (p0) => parseList((p1) => User.fromMap(p1), p0),
-    );
+        _makePaginatedPath(
+            "/events/" + eventId + "/participants", offset, limit),
+        (p0) => parseList((p1) => User.fromMap(p1), p0),
+        authentication: _authToken);
   }
 
   @override
@@ -175,11 +165,8 @@ class FunxchangeApiDataSource
   @override
   Future<String> followUser(String userId) {
     return _jsonPostRequest(
-      "/user/${userId}/followers",
-      "",
-      (p0) => "",
-      (p0) => p0,
-    );
+        "/user/${userId}/followers", "", (p0) => "", (p0) => p0,
+        authentication: _authToken);
   }
 
   @override
@@ -196,25 +183,24 @@ class FunxchangeApiDataSource
         "/reject";
 
     return _jsonPostRequest(
-        path, "", (p0) => "", (p0) => JoinRequest.fromJson(p0));
+        path, "", (p0) => "", (p0) => JoinRequest.fromJson(p0),
+        authentication: _authToken);
   }
 
   @override
   Future<Message> sendMessage(String text, String receiverId) {
     return _jsonPostRequest(
-      "/conversations",
-      {"text": text, "receiverId": receiverId},
-      (p0) => json.encode(p0),
-      (p0) => Message.fromJson(p0),
-    );
+        "/conversations",
+        {"text": text, "receiverId": receiverId},
+        (p0) => json.encode(p0),
+        (p0) => Message.fromJson(p0),
+        authentication: _authToken);
   }
 
   @override
   Future<String> unfollowUser(String userId) {
-    return _jsonDeleteRequest(
-      "/user/$userId/followers",
-      (p0) => p0,
-    );
+    return _jsonDeleteRequest("/user/$userId/followers", (p0) => p0,
+        authentication: _authToken);
   }
 
   @override
@@ -250,14 +236,18 @@ class FunxchangeApiDataSource
     String path,
     P body,
     String Function(P) serializer,
-    T Function(String) deserializer,
-  ) async {
+    T Function(String) deserializer, {
+    String? authentication,
+  }) async {
     print("POST " + path);
     final String urlStr = _baseUrl + path;
     final url = Uri.parse(urlStr);
     final response = await http.post(
       url,
-      headers: {"Content-Type": "application/json"},
+      headers: {
+        "Content-Type": "application/json",
+        if (authentication != null) "Authorization": "Bearer " + authentication
+      },
       body: serializer(body),
     );
     print("POST " + path + " " + response.statusCode.toString());

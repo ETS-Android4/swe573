@@ -77,7 +77,7 @@ class _WelcomePageState extends State<WelcomePage> {
                 onPressed: () {
                   if (!(_formKey.currentState?.validate() ?? false)) return;
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Creating event...')),
+                    const SnackBar(content: Text('Logging in...')),
                   );
 
                   final model = AuthParams(

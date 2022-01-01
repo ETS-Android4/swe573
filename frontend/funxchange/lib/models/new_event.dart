@@ -58,7 +58,7 @@ class NewEventParams {
       map['cityName'] ?? '',
       map['countryName'] ?? '',
       map['durationInMinutes']?.toInt() ?? 0,
-      DateTime.fromMillisecondsSinceEpoch(map['dateTime']),
+      DateTime.parse(map['dateTime']),
     );
   }
 

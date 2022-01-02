@@ -60,6 +60,15 @@ class _UserSnapshotState extends State<UserSnapshot> {
           const SizedBox(
             width: 10,
           ),
+          Row(
+            children: [
+              const Icon(Icons.star),
+              Text(_currentModel!.ratingAvg.toStringAsFixed(1)),
+            ],
+          ),
+          const SizedBox(
+            width: 10,
+          ),
           (followed != null)
               ? GestureDetector(
                   child: const Icon(Icons.message),

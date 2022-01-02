@@ -196,7 +196,7 @@ public class EventService {
 
     boolean isJoinable(Event entity, User requestor) {
         return !entity.getUser().getId().equals(requestor.getId())
-                && !entity.isInFuture()
+                && entity.isInFuture()
                 && entity.getParticipants().size() < entity.getCapacity()
                 && Optional.ofNullable(requestor.getJoinRequests())
                 .orElse(Collections.emptySet())

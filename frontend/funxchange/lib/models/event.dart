@@ -17,22 +17,25 @@ class Event {
   final String countryName;
   final int durationInMinutes;
   final DateTime dateTime;
+  bool joinable;
 
   Event(
-      this.id,
-      this.ownerId,
-      this.type,
-      this.capacity,
-      this.participantCount,
-      this.category,
-      this.title,
-      this.details,
-      this.latitude,
-      this.longitude,
-      this.cityName,
-      this.countryName,
-      this.durationInMinutes,
-      this.dateTime);
+    this.id,
+    this.ownerId,
+    this.type,
+    this.capacity,
+    this.participantCount,
+    this.category,
+    this.title,
+    this.details,
+    this.latitude,
+    this.longitude,
+    this.cityName,
+    this.countryName,
+    this.durationInMinutes,
+    this.dateTime,
+    this.joinable,
+  );
 
   Map<String, dynamic> toMap() {
     return {
@@ -50,6 +53,7 @@ class Event {
       'countryName': countryName,
       'durationInMinutes': durationInMinutes,
       'dateTime': dateTime.toIso8601String(),
+      'joinable': joinable,
     };
   }
 
@@ -69,6 +73,7 @@ class Event {
       map['countryName'] ?? '',
       map['durationInMinutes']?.toInt() ?? 0,
       DateTime.parse(map['dateTime']),
+      map['joinable'],
     );
   }
 
@@ -83,7 +88,8 @@ enum EventType {
 }
 
 EventType? parseEventType(String value) {
-  return EventType.values.firstWhere((element) => element.toJsonString == value);
+  return EventType.values
+      .firstWhere((element) => element.toJsonString == value);
 }
 
 extension PrettyString on EventType {

@@ -4,6 +4,7 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:funxchange/components/user_snapshot.dart';
+import 'package:funxchange/framework/api/funxchange_api.dart';
 import 'package:funxchange/framework/di.dart';
 import 'package:funxchange/models/interest.dart';
 import 'package:funxchange/models/user.dart';
@@ -24,6 +25,13 @@ class ProfilePage extends StatelessWidget {
           return Scaffold(
             appBar: AppBar(
               title: Text(user != null ? user.userName : "Loading"),
+              actions: [
+                IconButton(
+                    onPressed: () {
+                      FunxchangeApiDataSource.singleton.logOut();
+                    },
+                    icon: Icon(Icons.logout))
+              ],
             ),
             body: user == null
                 ? Center(child: const CupertinoActivityIndicator())
@@ -32,6 +40,14 @@ class ProfilePage extends StatelessWidget {
                       SizedBox(height: 6),
                       UserSnapshot(userFetcher: Right(user)),
                       SizedBox(height: 6),
+                      if (user.creditScore != null)
+                        Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: Text("Credits available: " +
+                              user.creditScore!.creditScore.toString() +
+                              ", on hold: " +
+                              user.creditScore!.creditOnHold.toString()),
+                        ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [

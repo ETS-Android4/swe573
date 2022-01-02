@@ -6,7 +6,7 @@ import 'package:funxchange/models/user.dart';
 class Rating {
   final String id;
   final User user;
-  final int? rating;
+  int? rating;
   final Event event;
 
   Rating(this.id, this.user, this.rating, this.event);

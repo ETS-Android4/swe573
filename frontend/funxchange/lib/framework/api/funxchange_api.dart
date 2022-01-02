@@ -4,11 +4,13 @@ import 'package:funxchange/data_source/auth.dart';
 import 'package:funxchange/data_source/event.dart';
 import 'package:funxchange/data_source/message.dart';
 import 'package:funxchange/data_source/notification.dart';
+import 'package:funxchange/data_source/rating.dart';
 import 'package:funxchange/data_source/request.dart';
 import 'package:funxchange/data_source/user.dart';
 import 'package:funxchange/models/new_user.dart';
 import 'package:funxchange/models/auth_response.dart';
 import 'package:funxchange/models/auth_params.dart';
+import 'package:funxchange/models/rating.dart';
 import 'package:funxchange/models/user.dart';
 import 'package:funxchange/models/request.dart';
 import 'package:funxchange/models/notification.dart';
@@ -24,7 +26,8 @@ class FunxchangeApiDataSource
         NotificationDataSource,
         JoinRequestDataSource,
         UserDataSource,
-        AuthDataSource {
+        AuthDataSource,
+        RatingDataSource {
   static const String _baseUrl = "http://20.107.24.75:8080";
   String? _authToken = null;
   String? _currentUserId = null;
@@ -39,6 +42,12 @@ class FunxchangeApiDataSource
     _authToken = token;
     _currentUserId = (await fetchUserByUserName(username)).id;
     onAuthStatusChanged?.call(token);
+  }
+
+  void logOut() {
+    _authToken = null;
+    _currentUserId = null;
+    onAuthStatusChanged?.call(null);
   }
 
   @override
@@ -93,7 +102,12 @@ class FunxchangeApiDataSource
 
   @override
   Future<List<Event>> fetchFeed(int limit, int offset, bool followed) {
-    return _jsonGetRequest(_makePaginatedPath("/events/feed", offset, limit),
+    return _jsonGetRequest(
+        _makePaginatedPath(
+          "/events/feed" + ((followed) ? "/followed" : ""),
+          offset,
+          limit,
+        ),
         (p0) => parseList((p1) => Event.fromMap(p1), p0),
         authentication: _authToken);
   }
@@ -200,6 +214,20 @@ class FunxchangeApiDataSource
   @override
   Future<String> unfollowUser(String userId) {
     return _jsonDeleteRequest("/user/$userId/followers", (p0) => p0,
+        authentication: _authToken);
+  }
+
+  @override
+  Future<List<Rating>> fetchRatings(int limit, int offset) {
+    return _jsonGetRequest(_makePaginatedPath("/ratings", offset, limit),
+        (p0) => parseList((p1) => Rating.fromMap(p1), p0),
+        authentication: _authToken);
+  }
+
+  @override
+  Future<Rating> updateRating(Rating rating) {
+    return _jsonPostRequest<Rating, Rating>(
+        "/ratings", rating, (p0) => p0.toJson(), (p0) => Rating.fromJson(p0),
         authentication: _authToken);
   }
 

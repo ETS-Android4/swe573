@@ -49,7 +49,7 @@ class Event {
       'cityName': cityName,
       'countryName': countryName,
       'durationInMinutes': durationInMinutes,
-      'dateTime': dateTime.millisecondsSinceEpoch,
+      'dateTime': dateTime.toIso8601String(),
     };
   }
 

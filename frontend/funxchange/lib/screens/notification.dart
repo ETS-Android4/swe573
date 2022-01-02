@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:funxchange/framework/colors.dart';
 import 'package:funxchange/screens/conversation_list.dart';
 import 'package:funxchange/screens/notification_list.dart';
+import 'package:funxchange/screens/rating_list.dart';
 import 'package:funxchange/screens/request_list.dart';
 
 class NotificationPage extends StatelessWidget {
@@ -10,7 +11,7 @@ class NotificationPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 4,
       child: Scaffold(
         appBar: AppBar(
           bottom: const TabBar(
@@ -25,6 +26,9 @@ class NotificationPage extends StatelessWidget {
               Tab(
                 text: "Messages",
               ),
+              Tab(
+                text: "Rate",
+              ),
             ],
           ),
           title: const Text('Notifications'),
@@ -34,6 +38,7 @@ class NotificationPage extends StatelessWidget {
             NotificationList(),
             RequestList(),
             ConversationList(),
+            RatingList(),
           ],
         ),
       ),

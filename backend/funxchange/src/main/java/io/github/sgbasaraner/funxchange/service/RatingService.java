@@ -62,6 +62,6 @@ public class RatingService {
                 entity.getId().toString(),
                 userService.mapUserToDTO(entity.getRated(), requestor),
                 entity.getRating(),
-                eventService.mapToModel(entity.getService()));
+                eventService.mapToModel(entity.getService(), requestor));
     }
 }

@@ -1,5 +1,6 @@
 package io.github.sgbasaraner.funxchange.service;
 
+import io.github.sgbasaraner.funxchange.controller.UserController;
 import io.github.sgbasaraner.funxchange.entity.*;
 import io.github.sgbasaraner.funxchange.model.*;
 import io.github.sgbasaraner.funxchange.repository.FollowerRepository;
@@ -7,6 +8,8 @@ import io.github.sgbasaraner.funxchange.repository.InterestRepository;
 import io.github.sgbasaraner.funxchange.repository.UserRepository;
 import io.github.sgbasaraner.funxchange.util.JwtUtil;
 import io.github.sgbasaraner.funxchange.util.Util;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Pageable;
@@ -55,6 +58,8 @@ public class UserService {
     @Autowired
     private NotificationService notificationService;
 
+    Logger logger = LoggerFactory.getLogger(UserController.class);
+
     @Transactional
     public UserDTO signUp(NewUserDTO params) {
         if (!isUserNameValid(params.getUserName()))
@@ -68,13 +73,7 @@ public class UserService {
 
         if (!areInterestsValid(params.getInterests()))
             throw new IllegalArgumentException("Invalid interest list.");
-
-        interestRepository.saveAll(params.getInterests().stream().map(i -> {
-            final Interest interest = new Interest();
-            interest.setName(i);
-            return interest;
-        }).collect(Collectors.toSet()));
-
+        
         final Set<Interest> interests = new HashSet<>(interestRepository.findByNameIn(params.getInterests()));
 
         final String passwordHash = passwordEncoder.encode(params.getPassword());
@@ -111,10 +110,15 @@ public class UserService {
     }
 
     public UserDTO fetchUser(String id, Principal principal) {
+        logger.info("Fetching user by id: " + id);
         final User loggedInUser = repository.findUserByUserName(principal.getName()).get();
+        logger.info("Fetched logged in user.");
         final Optional<User> userOption = repository.findById(UUID.fromString(id));
-        if (userOption.isEmpty())
+        if (userOption.isEmpty()) {
+            logger.info("User doesn't exist");
             throw new IllegalArgumentException("User doesn't exist.");
+        }
+        logger.info("Mapping User to DTO...");
         return mapUserToDTO(userOption.get(), loggedInUser);
     }
 
@@ -130,8 +134,19 @@ public class UserService {
         } else {
             isFollowed = Optional.of(false);
         }
+        logger.info("Mapped score.");
 
-        double ratingAvg = user.getRateds().stream().mapToDouble(Rating::getRating).average().orElse(0);
+        double ratingAvg = Optional
+                .ofNullable(user.getRateds())
+                .orElse(Collections.emptySet())
+                .stream()
+                .map(Rating::getRating)
+                .filter(Objects::nonNull)
+                .mapToDouble(r -> r)
+                .average()
+                .orElse(0);
+
+        logger.info("Mapped rating average.");
 
         return new UserDTO(
                 user.getId().toString(),
@@ -214,16 +229,20 @@ public class UserService {
 
     @Transactional
     public CreditScore calculateCredits(User user) {
-        final int handshakenHostedServices = user
-                .getEvents()
+        final int handshakenHostedServices = Optional
+                .ofNullable(user.getEvents())
+                .orElse(Collections.emptySet())
                 .stream()
                 .filter(e -> e.getType().equals("service"))
                 .filter(Event::isHandshaken)
                 .map(Event::getCreditValue)
                 .reduce(0, Integer::sum);
 
-        final int handshakenReceivedServices = user
-                .getParticipatedEvents()
+        final Set<Event> participatedEvents = Optional
+                .ofNullable(user.getParticipatedEvents())
+                .orElse(Collections.emptySet());
+
+        final int handshakenReceivedServices = participatedEvents
                 .stream()
                 .filter(e -> e.getType().equals("service"))
                 .filter(Event::isHandshaken)
@@ -232,16 +251,16 @@ public class UserService {
 
         final int appliedScore = Math.max(5 + handshakenHostedServices - handshakenReceivedServices, 0);
 
-        final int pendingJoinRequests = user
-                .getJoinRequests()
+        final int pendingJoinRequests = Optional
+                .ofNullable(user.getJoinRequests())
+                .orElse(Collections.emptySet())
                 .stream()
                 .map(JoinRequest::getEvent)
                 .filter(e -> e.getType().equals("service"))
                 .map(Event::getCreditValue)
                 .reduce(0, Integer::sum);
 
-        final int nonHandshakenReceivedServices = user
-                .getParticipatedEvents()
+        final int nonHandshakenReceivedServices = participatedEvents
                 .stream()
                 .filter(e -> e.getType().equals("service"))
                 .filter(e -> !e.isHandshaken())

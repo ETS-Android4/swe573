@@ -14,7 +14,7 @@ public class Notification {
     private UUID id;
 
     @ManyToOne
-    @JoinColumn(name = "user")
+    @JoinColumn(name = "recipient_id")
     private User user;
 
     @Column(columnDefinition = "TEXT")

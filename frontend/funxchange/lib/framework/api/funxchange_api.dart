@@ -44,6 +44,12 @@ class FunxchangeApiDataSource
     onAuthStatusChanged?.call(token);
   }
 
+  void logOut() {
+    _authToken = null;
+    _currentUserId = null;
+    onAuthStatusChanged?.call(null);
+  }
+
   @override
   Future<JoinRequest> acceptJoinRequest(JoinRequest request) {
     final String path = "/events/" +

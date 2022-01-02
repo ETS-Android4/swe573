@@ -4,6 +4,7 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:funxchange/components/user_snapshot.dart';
+import 'package:funxchange/framework/api/funxchange_api.dart';
 import 'package:funxchange/framework/di.dart';
 import 'package:funxchange/models/interest.dart';
 import 'package:funxchange/models/user.dart';
@@ -27,7 +28,7 @@ class ProfilePage extends StatelessWidget {
               actions: [
                 IconButton(
                     onPressed: () {
-                      print("logout");
+                      FunxchangeApiDataSource.singleton.logOut();
                     },
                     icon: Icon(Icons.logout))
               ],

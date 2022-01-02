@@ -61,7 +61,6 @@ public class FunxchangeApplication {
 		SpringApplication.run(FunxchangeApplication.class, args);
 	}
 
-	@Transactional
 	void generateMocks() {
 		Faker faker = new Faker();
 		Random rand = new Random();
@@ -174,6 +173,7 @@ public class FunxchangeApplication {
 	}
 
 	@EventListener(ApplicationReadyEvent.class)
+	@Transactional
 	public void runAfterStartup() {
 		generateMocks();
 	}

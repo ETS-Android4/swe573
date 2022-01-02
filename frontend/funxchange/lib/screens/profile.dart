@@ -33,7 +33,13 @@ class ProfilePage extends StatelessWidget {
                       UserSnapshot(userFetcher: Right(user)),
                       SizedBox(height: 6),
                       if (user.creditScore != null)
-                        Text("CS: " + user.creditScore!.creditScore.toString()),
+                        Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: Text("Credits available: " +
+                              user.creditScore!.creditScore.toString() +
+                              ", on hold: " +
+                              user.creditScore!.creditOnHold.toString()),
+                        ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [

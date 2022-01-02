@@ -21,14 +21,6 @@ class EventPage extends StatefulWidget {
 }
 
 class _EventPageState extends State<EventPage> {
-  late bool _isJoinableEvent;
-
-  @override
-  void initState() {
-    _isJoinableEvent = widget.event.joinable;
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -122,7 +114,7 @@ class _EventPageState extends State<EventPage> {
                         ")",
                   ),
                 ),
-                if (_isJoinableEvent)
+                if (widget.event.joinable)
                   MaterialButton(
                     height: 50,
                     minWidth: MediaQuery.of(context).size.width,
@@ -130,7 +122,7 @@ class _EventPageState extends State<EventPage> {
                     child: const Text("JOIN EVENT"),
                     onPressed: () {
                       setState(() {
-                        _isJoinableEvent = false;
+                        widget.event.joinable = false;
                       });
                       final messenger = ScaffoldMessenger.of(context);
                       messenger.showSnackBar(
@@ -149,14 +141,14 @@ class _EventPageState extends State<EventPage> {
                               content: Text('Created join request.')),
                         );
                         setState(() {
-                          _isJoinableEvent = true;
+                          widget.event.joinable = true;
                         });
                       }).onError((error, _) {
                         messenger.hideCurrentSnackBar();
                         messenger.showSnackBar(
                             SnackBar(content: Text(error.toString())));
                         setState(() {
-                          _isJoinableEvent = true;
+                          widget.event.joinable = true;
                         });
                       });
                     },

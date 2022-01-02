@@ -306,7 +306,11 @@ class FunxchangeApiDataSource
       _authToken = null;
       onAuthStatusChanged?.call(null);
     }
-    return deserializer(response.body);
+    if (response.statusCode > 199 && response.statusCode < 300) {
+      return deserializer(response.body);
+    }
+
+    throw Exception("Something went wrong.");
   }
 
   Future<T> _jsonDeleteRequest<P, T>(

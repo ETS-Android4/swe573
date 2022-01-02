@@ -208,7 +208,7 @@ public class EventService {
                 .stream()
                 .map(Event::getId)
                 .noneMatch(id -> entity.getId().equals(id))
-                && (!entity.getType().equals("service") || !userService.calculateCredits(requestor).canAfford(entity.getCreditValue()));
+                && (!entity.getType().equals("service") || userService.calculateCredits(requestor).canAfford(entity.getCreditValue()));
     }
 
     public EventDTO mapToModel(Event entity, User requestor) {

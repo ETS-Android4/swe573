@@ -77,7 +77,7 @@ public class MessageService {
         entity.setText(message.getText());
         entity.setReceiverId(receiver.getId());
         entity.setSenderId(requestor.getId());
-        final Message savedEntity = repository.save(entity);
+        final Message savedEntity = repository.saveAndFlush(entity);
         return mapToMessageDTO(savedEntity, requestor, receiver);
     }
 

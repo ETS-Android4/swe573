@@ -175,11 +175,11 @@ public class FunxchangeApplication {
 		);
 	}
 
-	@EventListener(ApplicationReadyEvent.class)
-	@Transactional
-	public void runAfterStartup() {
-		generateMocks();
-	}
+//	@EventListener(ApplicationReadyEvent.class)
+//	@Transactional
+//	public void runAfterStartup() {
+//		generateMocks();
+//	}
 
 	private <T> Predicate<T> alwaysTruePredicate() {
 		return x -> true;

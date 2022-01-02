@@ -32,6 +32,8 @@ class ProfilePage extends StatelessWidget {
                       SizedBox(height: 6),
                       UserSnapshot(userFetcher: Right(user)),
                       SizedBox(height: 6),
+                      if (user.creditScore != null)
+                        Text("CS: " + user.creditScore!.creditScore.toString()),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [

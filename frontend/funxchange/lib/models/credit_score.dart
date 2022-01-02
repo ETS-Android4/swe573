@@ -8,14 +8,14 @@ class CreditScore {
 
   Map<String, dynamic> toMap() {
     return {
-      'creditScore': creditScore,
+      'credit': creditScore,
       'creditOnHold': creditOnHold,
     };
   }
 
   factory CreditScore.fromMap(Map<String, dynamic> map) {
     return CreditScore(
-      map['creditScore']?.toInt() ?? 0,
+      map['credit']?.toInt() ?? 0,
       map['creditOnHold']?.toInt() ?? 0,
     );
   }

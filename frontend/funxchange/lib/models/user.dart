@@ -25,7 +25,7 @@ class User {
       'followerCount': followerCount,
       'followedCount': followedCount,
       'interests': interests.map((x) => x.toJsonString).toList(),
-      'creditScore': creditScore?.toMap(),
+      'creditAmount': creditScore?.toMap(),
       'ratingAvg': ratingAvg,
       'isFollowed': isFollowed,
     };
@@ -40,8 +40,8 @@ class User {
       map['followedCount']?.toInt() ?? 0,
       List<Interest>.from(map['interests']?.map((x) => parseInterest(x)!)),
       map['isFollowed'],
-      map['creditScore'] != null
-          ? CreditScore.fromMap(map['creditScore'])
+      map['creditAmount'] != null
+          ? CreditScore.fromMap(map['creditAmount'])
           : null,
       map['ratingAvg']?.toDouble() ?? 0.0,
     );

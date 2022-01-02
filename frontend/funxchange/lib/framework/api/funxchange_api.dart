@@ -251,7 +251,7 @@ class FunxchangeApiDataSource
       body: serializer(body),
     );
     print("POST " + path + " " + response.statusCode.toString());
-    if (response.statusCode == 401) {
+    if (response.statusCode == 401 || response.statusCode == 403) {
       _authToken = null;
       onAuthStatusChanged?.call(null);
     }
@@ -274,7 +274,7 @@ class FunxchangeApiDataSource
       },
     );
     print("GET " + path + " " + response.statusCode.toString());
-    if (response.statusCode == 401) {
+    if (response.statusCode == 401 || response.statusCode == 403) {
       _authToken = null;
       onAuthStatusChanged?.call(null);
     }
@@ -297,7 +297,7 @@ class FunxchangeApiDataSource
       },
     );
     print("DELETE " + path + " " + response.statusCode.toString());
-    if (response.statusCode == 401) {
+    if (response.statusCode == 401 || response.statusCode == 403) {
       _authToken = null;
       onAuthStatusChanged?.call(null);
     }

@@ -186,15 +186,41 @@ public class FunxchangeApplication {
 		return new NewUserDTO(faker.name().username() + faker.internet().domainSuffix(), faker.shakespeare().kingRichardIIIQuote(), randomElements(UserService.allowedInterests, alwaysTruePredicate(), faker.random().nextInt(UserService.allowedInterests.size())), "imamockuser");
 	}
 
+	private String fakeEventTitle(Faker faker, String eventType) {
+		List<String> options;
+		if (eventType.equals("service")) {
+			options = List.of(
+					faker.esports().event(),
+					faker.programmingLanguage() + " Lessons",
+					faker.ancient().titan() + " History Lessons",
+					faker.nation().language() + " Lessons",
+					"Pokemon Go: " + faker.pokemon().name() + " Catching",
+					faker.university().name() + " Prep",
+					faker.music().genre() + " " + faker.music().instrument() + " Lessons",
+					faker.job().position() + " for " + faker.rockBand().name()
+			);
+		} else {
+			options = List.of(
+					faker.esports().event(),
+					faker.programmingLanguage() + " Meetup",
+					faker.ancient().hero() + " Festival",
+					faker.country().name() + " Citizens Meetup",
+					faker.pokemon().name() + " Appreciation Group",
+					faker.university().name() + " Alumni Meeting",
+					faker.music().genre() + " Session"
+			);
+		}
+		return randomElements(options, alwaysTruePredicate(), 1).get(0);
+	}
+
 	private Event mockEvent(Faker faker, User user, List<User> participants) {
 		final Event event = new Event();
-		event.setTitle(faker.job().position()+ ", " + faker.job().seniority() + " for " + faker.rockBand().name());
-
+		event.setType(faker.random().nextBoolean() ? "meetup" : "service");
+		event.setTitle(fakeEventTitle(faker, event.getType()));
 		event.setStartDateTime(LocalDateTime.now().plus(1, ChronoUnit.DAYS).plus(faker.random().nextInt(-432000, 432000), ChronoUnit.SECONDS));
 		event.setEndDateTime(event.getStartDateTime().plus(faker.random().nextInt(60, 60 * 6), ChronoUnit.MINUTES));
 		event.setDetails(faker.shakespeare().kingRichardIIIQuote());
 		event.setCategory(randomElements(UserService.allowedInterests, alwaysTruePredicate(), 1).get(0));
-		event.setType(faker.random().nextBoolean() ? "meetup" : "service");
 		event.setLatitude(faker.random().nextDouble() * 42 + 36);
 		event.setLongitude(faker.random().nextDouble() * 50 + 42);
 		event.setCountryName(faker.country().name());

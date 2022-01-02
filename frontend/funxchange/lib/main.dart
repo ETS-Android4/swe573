@@ -2,16 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:funxchange/framework/api/funxchange_api.dart';
 import 'package:funxchange/framework/colors.dart';
 import 'package:funxchange/framework/di.dart';
-import 'package:funxchange/mockds/user.dart';
-import 'package:funxchange/mockds/utils.dart';
 import 'package:funxchange/screens/feed.dart';
 import 'package:funxchange/screens/notification.dart';
 import 'package:funxchange/screens/profile.dart';
-import 'package:funxchange/screens/signup.dart';
 import 'package:funxchange/screens/welcome.dart';
 
 void main() {
-  MockUtils.populateData();
   runApp(const MyApp());
 }
 

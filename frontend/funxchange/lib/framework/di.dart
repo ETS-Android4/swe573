@@ -1,10 +1,5 @@
 import 'package:funxchange/framework/api/funxchange_api.dart';
 import 'package:funxchange/framework/api/geocoding.dart';
-import 'package:funxchange/mockds/event.dart';
-import 'package:funxchange/mockds/message.dart';
-import 'package:funxchange/mockds/notification.dart';
-import 'package:funxchange/mockds/request.dart';
-import 'package:funxchange/mockds/user.dart';
 import 'package:funxchange/repository/auth.dart';
 import 'package:funxchange/repository/event.dart';
 import 'package:funxchange/repository/geocoding.dart';
@@ -39,17 +34,6 @@ class DIContainer {
   static final _apiDataSource = FunxchangeApiDataSource.singleton;
 
   static final activeSingleton = singleton;
-
-  static final mockSingleton = DIContainer._internal(
-    EventRepository(MockEventDataSource()),
-    UserRepository(MockUserDataSource()),
-    NotificationRepository(MockNotificationDataSource()),
-    JoinRequestRepository(MockJoinRequestDataSource()),
-    GeocodingRepository(_geocodingApiDataSource),
-    MessageRepository(MockMessageDataSource()),
-    AuthRepository(_apiDataSource),
-    RatingRepository(_apiDataSource),
-  );
 
   static final singleton = DIContainer._internal(
     EventRepository(_apiDataSource),

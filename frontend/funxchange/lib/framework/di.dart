@@ -10,6 +10,7 @@ import 'package:funxchange/repository/event.dart';
 import 'package:funxchange/repository/geocoding.dart';
 import 'package:funxchange/repository/message.dart';
 import 'package:funxchange/repository/notification.dart';
+import 'package:funxchange/repository/rating.dart';
 import 'package:funxchange/repository/request.dart';
 import 'package:funxchange/repository/user.dart';
 
@@ -21,6 +22,7 @@ class DIContainer {
   final GeocodingRepository geocodingRepo;
   final MessageRepository messageRepo;
   final AuthRepository authRepo;
+  final RatingRepository ratingRepo;
 
   DIContainer._internal(
     this.eventRepo,
@@ -30,6 +32,7 @@ class DIContainer {
     this.geocodingRepo,
     this.messageRepo,
     this.authRepo,
+    this.ratingRepo,
   );
 
   static final _geocodingApiDataSource = GeocodingApiDataSource();
@@ -45,6 +48,7 @@ class DIContainer {
     GeocodingRepository(_geocodingApiDataSource),
     MessageRepository(MockMessageDataSource()),
     AuthRepository(_apiDataSource),
+    RatingRepository(_apiDataSource),
   );
 
   static final singleton = DIContainer._internal(
@@ -55,5 +59,6 @@ class DIContainer {
     GeocodingRepository(_geocodingApiDataSource),
     MessageRepository(_apiDataSource),
     AuthRepository(_apiDataSource),
+    RatingRepository(_apiDataSource),
   );
 }

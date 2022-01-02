@@ -17,8 +17,9 @@ public class EventDTO {
     final String countryName;
     final long durationInMinutes;
     final LocalDateTime dateTime;
+    final boolean joinable;
 
-    public EventDTO(String id, String ownerId, String type, int capacity, int participantCount, String category, String title, String details, double latitude, double longitude, String cityName, String countryName, long durationInMinutes, LocalDateTime dateTime) {
+    public EventDTO(String id, String ownerId, String type, int capacity, int participantCount, String category, String title, String details, double latitude, double longitude, String cityName, String countryName, long durationInMinutes, LocalDateTime dateTime, boolean joinable) {
         this.id = id;
         this.ownerId = ownerId;
         this.type = type;
@@ -33,6 +34,7 @@ public class EventDTO {
         this.countryName = countryName;
         this.durationInMinutes = durationInMinutes;
         this.dateTime = dateTime;
+        this.joinable = joinable;
     }
 
     public String getId() {
@@ -89,5 +91,9 @@ public class EventDTO {
 
     public LocalDateTime getDateTime() {
         return dateTime;
+    }
+
+    public boolean isJoinable() {
+        return joinable;
     }
 }

@@ -21,7 +21,7 @@ public class EventController {
     @GetMapping("/events/{eventId}")
     ResponseEntity<EventDTO> fetchEvent(Principal principal, @PathVariable String eventId) {
         try {
-            return ResponseEntity.ok(eventService.fetchEvent(eventId));
+            return ResponseEntity.ok(eventService.fetchEvent(principal, eventId));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
         }
@@ -30,7 +30,7 @@ public class EventController {
     @GetMapping("/events/feed")
     ResponseEntity<List<EventDTO>> fetchFeed(Principal principal, @RequestParam int offset, @RequestParam int limit) {
         try {
-            return ResponseEntity.ok(eventService.fetchFeed(offset, limit));
+            return ResponseEntity.ok(eventService.fetchFeed(principal, offset, limit));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
         }
@@ -48,7 +48,7 @@ public class EventController {
     @GetMapping("/user/{userId}/events")
     ResponseEntity<List<EventDTO>> fetchEventsOfUser(Principal principal, @RequestParam int offset, @RequestParam int limit, @PathVariable String userId) {
         try {
-            return ResponseEntity.ok(eventService.fetchEventsOfUser(offset, limit, userId));
+            return ResponseEntity.ok(eventService.fetchEventsOfUser(principal, offset, limit, userId));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
         }

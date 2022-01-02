@@ -55,16 +55,18 @@ public class EventService {
     @Autowired
     private DeeplinkUtil deeplinkUtil;
 
-    public EventDTO fetchEvent(String eventId) {
-        return mapToModel(eventRepository.getById(UUID.fromString(eventId)));
+    public EventDTO fetchEvent(Principal principal, String eventId) {
+        final User requestor = userRepository.findUserByUserName(principal.getName()).get();
+        return mapToModel(eventRepository.getById(UUID.fromString(eventId)), requestor);
     }
 
-    public List<EventDTO> fetchFeed(int offset, int limit) {
+    public List<EventDTO> fetchFeed(Principal principal, int offset, int limit) {
+        final User requestor = userRepository.findUserByUserName(principal.getName()).get();
         final Pageable page = util.makePageable(offset, limit, Sort.by("created").descending());
         return eventRepository
                 .findFeed(page)
                 .stream()
-                .map(this::mapToModel)
+                .map(e -> mapToModel(e, requestor))
                 .collect(Collectors.toUnmodifiableList());
     }
 
@@ -74,16 +76,17 @@ public class EventService {
         return eventRepository
                 .findFollowedFeed(requestor, page)
                 .stream()
-                .map(this::mapToModel)
+                .map(e -> mapToModel(e, requestor))
                 .collect(Collectors.toUnmodifiableList());
     }
 
-    public List<EventDTO> fetchEventsOfUser(int offset, int limit, String userId) {
+    public List<EventDTO> fetchEventsOfUser(Principal principal, int offset, int limit, String userId) {
+        final User requestor = userRepository.findUserByUserName(principal.getName()).get();
         final Pageable page = util.makePageable(offset, limit, Sort.by("created").descending());
         final User user = userRepository.getById(UUID.fromString(userId));
         return eventRepository.findByUser(user, page)
                 .stream()
-                .map(this::mapToModel)
+                .map(e -> mapToModel(e, requestor))
                 .collect(Collectors.toUnmodifiableList());
     }
 
@@ -162,7 +165,7 @@ public class EventService {
         validateNewEventParams(params);
         final User requestor = userRepository.findUserByUserName(principal.getName()).get();
         final Event entity = mapToEntity(params, requestor);
-        return mapToModel(eventRepository.save(entity));
+        return mapToModel(eventRepository.save(entity), requestor);
     }
 
     public List<JoinRequestDTO> fetchRequests(Principal principal, int offset, int limit) {
@@ -194,13 +197,29 @@ public class EventService {
         return entity;
     }
 
-    public EventDTO mapToModel(Event entity) {
+    public EventDTO mapToModel(Event entity, User requestor) {
+        final int participantCount = entity.getParticipants().size();
+        final boolean isJoinable =
+                !entity.getUser().getId().equals(requestor.getId())
+                        && participantCount < entity.getCapacity()
+                        && Optional.ofNullable(requestor.getJoinRequests())
+                            .orElse(Collections.emptySet())
+                            .stream()
+                            .map(r -> r.getEvent().getId())
+                            .noneMatch(id -> entity.getId().equals(id))
+                        && Optional.ofNullable(requestor.getParticipatedEvents())
+                            .orElse(Collections.emptySet())
+                            .stream()
+                            .map(Event::getId)
+                            .noneMatch(id -> entity.getId().equals(id));
+
+
         return new EventDTO(
                 entity.getId().toString(),
                 entity.getUser().getId().toString(),
                 entity.getType(),
                 entity.getCapacity(),
-                entity.getParticipants().size(),
+                participantCount,
                 entity.getCategory(),
                 entity.getTitle(),
                 entity.getDetails(),
@@ -209,8 +228,8 @@ public class EventService {
                 entity.getCityName(),
                 entity.getCountryName(),
                 Duration.between(entity.getStartDateTime(), entity.getEndDateTime()).toMinutes(),
-                entity.getStartDateTime()
-        );
+                entity.getStartDateTime(),
+                isJoinable);
     }
 
     private JoinRequestDTO mapToJoinRequestDTO(JoinRequest joinRequest) {

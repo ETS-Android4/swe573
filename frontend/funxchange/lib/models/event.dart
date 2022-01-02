@@ -17,7 +17,7 @@ class Event {
   final String countryName;
   final int durationInMinutes;
   final DateTime dateTime;
-  bool joinable;
+  final bool joinable;
 
   Event(
     this.id,

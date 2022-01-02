@@ -62,16 +62,23 @@ class _MapPickerState extends State<MapPicker> {
                 setState(() {
                   _isLoading = true;
                 });
-                final location = await DIContainer.activeSingleton.geocodingRepo
-                    .reverseGeocode(center.latitude, center.longitude);
-                Navigator.pop(
-                  context,
-                  DetailedLocation(
-                    location,
-                    center.latitude,
-                    center.longitude,
-                  ),
-                );
+                try {
+                  final location = await DIContainer
+                      .activeSingleton.geocodingRepo
+                      .reverseGeocode(center.latitude, center.longitude);
+                  Navigator.pop(
+                    context,
+                    DetailedLocation(
+                      location,
+                      center.latitude,
+                      center.longitude,
+                    ),
+                  );
+                } catch (e) {
+                  setState(() {
+                    _isLoading = false;
+                  });
+                }
               })
         ],
       ),

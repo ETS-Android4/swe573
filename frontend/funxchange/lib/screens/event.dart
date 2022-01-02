@@ -21,6 +21,14 @@ class EventPage extends StatefulWidget {
 }
 
 class _EventPageState extends State<EventPage> {
+  var _joinable = false;
+
+  @override
+  void initState() {
+    _joinable = widget.event.joinable;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -114,7 +122,7 @@ class _EventPageState extends State<EventPage> {
                         ")",
                   ),
                 ),
-                if (widget.event.joinable)
+                if (_joinable)
                   MaterialButton(
                     height: 50,
                     minWidth: MediaQuery.of(context).size.width,
@@ -122,13 +130,14 @@ class _EventPageState extends State<EventPage> {
                     child: const Text("JOIN EVENT"),
                     onPressed: () {
                       setState(() {
-                        widget.event.joinable = false;
+                        _joinable = false;
                       });
                       final messenger = ScaffoldMessenger.of(context);
                       messenger.showSnackBar(
                         const SnackBar(
                             content: Text('Creating join request...')),
                       );
+
                       DIContainer.activeSingleton.joinRequestRepo
                           .createJoinRequest(
                               widget.event.id,
@@ -141,14 +150,14 @@ class _EventPageState extends State<EventPage> {
                               content: Text('Created join request.')),
                         );
                         setState(() {
-                          widget.event.joinable = true;
+                          _joinable = false;
                         });
                       }).onError((error, _) {
                         messenger.hideCurrentSnackBar();
                         messenger.showSnackBar(
                             SnackBar(content: Text(error.toString())));
                         setState(() {
-                          widget.event.joinable = true;
+                          _joinable = true;
                         });
                       });
                     },

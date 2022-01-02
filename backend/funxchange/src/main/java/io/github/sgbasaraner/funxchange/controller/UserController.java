@@ -1,34 +1,26 @@
 package io.github.sgbasaraner.funxchange.controller;
 
-import io.github.sgbasaraner.funxchange.FunxchangeApplication;
 import io.github.sgbasaraner.funxchange.model.AuthRequest;
 import io.github.sgbasaraner.funxchange.model.AuthResponse;
 import io.github.sgbasaraner.funxchange.model.NewUserDTO;
 import io.github.sgbasaraner.funxchange.model.UserDTO;
 import io.github.sgbasaraner.funxchange.service.UserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.security.sasl.AuthenticationException;
 import java.security.Principal;
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 public class UserController {
 
     @Autowired
     private UserService service;
-
-    Logger logger = LoggerFactory.getLogger(FunxchangeApplication.class);
 
     @PostMapping("/signup")
     public ResponseEntity<AuthResponse> signUp(@RequestBody NewUserDTO params) {

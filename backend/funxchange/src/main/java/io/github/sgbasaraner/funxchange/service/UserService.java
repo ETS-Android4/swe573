@@ -58,8 +58,6 @@ public class UserService {
     @Autowired
     private NotificationService notificationService;
 
-    Logger logger = LoggerFactory.getLogger(UserController.class);
-
     @Transactional
     public UserDTO signUp(NewUserDTO params) {
         if (!isUserNameValid(params.getUserName()))
@@ -110,15 +108,11 @@ public class UserService {
     }
 
     public UserDTO fetchUser(String id, Principal principal) {
-        logger.info("Fetching user by id: " + id);
         final User loggedInUser = repository.findUserByUserName(principal.getName()).get();
-        logger.info("Fetched logged in user.");
         final Optional<User> userOption = repository.findById(UUID.fromString(id));
         if (userOption.isEmpty()) {
-            logger.info("User doesn't exist");
             throw new IllegalArgumentException("User doesn't exist.");
         }
-        logger.info("Mapping User to DTO...");
         return mapUserToDTO(userOption.get(), loggedInUser);
     }
 
@@ -134,7 +128,6 @@ public class UserService {
         } else {
             isFollowed = Optional.of(false);
         }
-        logger.info("Mapped score.");
 
         double ratingAvg = Optional
                 .ofNullable(user.getRateds())
@@ -145,8 +138,6 @@ public class UserService {
                 .mapToDouble(r -> r)
                 .average()
                 .orElse(0);
-
-        logger.info("Mapped rating average.");
 
         return new UserDTO(
                 user.getId().toString(),

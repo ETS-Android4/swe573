@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:dartz/dartz.dart';
+import 'package:dartz/dartz.dart' as dz;
 import 'package:flutter/material.dart';
 import 'package:funxchange/components/user_snapshot.dart';
 import 'package:funxchange/framework/colors.dart';
@@ -9,24 +9,31 @@ import 'package:funxchange/framework/utils.dart';
 import 'package:funxchange/models/event.dart';
 import 'package:funxchange/screens/user_list.dart';
 
-class EventPage extends StatelessWidget {
+class EventPage extends StatefulWidget {
   final Event event;
   final Uint8List image;
 
   const EventPage({Key? key, required this.event, required this.image})
       : super(key: key);
 
-  bool _isJoinable() {
-    return event.ownerId !=
-            DIContainer.activeSingleton.userRepo.getCurrentUserId() &&
-        event.participantCount < event.capacity;
+  @override
+  State<EventPage> createState() => _EventPageState();
+}
+
+class _EventPageState extends State<EventPage> {
+  late bool _isJoinableEvent;
+
+  @override
+  void initState() {
+    _isJoinableEvent = widget.event.joinable;
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(event.title),
+        title: Text(widget.event.title),
       ),
       body: ListView(
         children: [
@@ -34,7 +41,7 @@ class EventPage extends StatelessWidget {
             height: MediaQuery.of(context).size.height / 4,
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: MemoryImage(image),
+                image: MemoryImage(widget.image),
                 fit: BoxFit.cover,
               ),
             ),
@@ -45,22 +52,22 @@ class EventPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  event.title,
+                  widget.event.title,
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 30,
                   ),
                 ),
                 const SizedBox(height: 6),
-                Text(event.type.prettyString),
+                Text(widget.event.type.prettyString),
                 const SizedBox(height: 6),
                 const Text("Created by: "),
                 const SizedBox(height: 6),
-                UserSnapshot(userFetcher: Left(event.ownerId)),
+                UserSnapshot(userFetcher: dz.Left(widget.event.ownerId)),
                 const SizedBox(height: 6),
-                Text(event.cityName + " - " + event.countryName),
+                Text(widget.event.cityName + " - " + widget.event.countryName),
                 const SizedBox(height: 6),
-                Text(event.details),
+                Text(widget.event.details),
                 const SizedBox(height: 6),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -73,7 +80,7 @@ class EventPage extends StatelessWidget {
                         ),
                         const SizedBox(height: 6),
                         Text(
-                          Utils.formatDateTime(event.dateTime),
+                          Utils.formatDateTime(widget.event.dateTime),
                         ),
                       ],
                     ),
@@ -85,15 +92,18 @@ class EventPage extends StatelessWidget {
                         ),
                         const SizedBox(height: 6),
                         Text(
-                          Utils.formatDateTime(event.dateTime
-                              .add(Duration(minutes: event.durationInMinutes))),
+                          Utils.formatDateTime(widget.event.dateTime.add(
+                              Duration(
+                                  minutes: widget.event.durationInMinutes))),
                         ),
                       ],
                     ),
                   ],
                 ),
                 const SizedBox(height: 6),
-                Text("Capacity: " + event.capacity.toString() + " people"),
+                Text("Capacity: " +
+                    widget.event.capacity.toString() +
+                    " people"),
                 MaterialButton(
                   height: 10,
                   onPressed: () {
@@ -101,21 +111,27 @@ class EventPage extends StatelessWidget {
                       builder: (ctx) => UserListPage(
                           userFetcher: (limit, offset) => DIContainer
                               .activeSingleton.eventRepo
-                              .fetchParticipants(event.id, limit, offset),
+                              .fetchParticipants(
+                                  widget.event.id, limit, offset),
                           title: "Participants"),
                     ));
                   },
                   child: Text(
-                    "PARTICIPANTS (" + event.participantCount.toString() + ")",
+                    "PARTICIPANTS (" +
+                        widget.event.participantCount.toString() +
+                        ")",
                   ),
                 ),
-                if (_isJoinable())
+                if (_isJoinableEvent)
                   MaterialButton(
                     height: 50,
                     minWidth: MediaQuery.of(context).size.width,
                     color: FunColor.fulvous,
                     child: const Text("JOIN EVENT"),
                     onPressed: () {
+                      setState(() {
+                        _isJoinableEvent = false;
+                      });
                       final messenger = ScaffoldMessenger.of(context);
                       messenger.showSnackBar(
                         const SnackBar(
@@ -123,7 +139,7 @@ class EventPage extends StatelessWidget {
                       );
                       DIContainer.activeSingleton.joinRequestRepo
                           .createJoinRequest(
-                              event.id,
+                              widget.event.id,
                               DIContainer.activeSingleton.userRepo
                                   .getCurrentUserId())
                           .then((value) {
@@ -132,10 +148,16 @@ class EventPage extends StatelessWidget {
                           const SnackBar(
                               content: Text('Created join request.')),
                         );
+                        setState(() {
+                          _isJoinableEvent = true;
+                        });
                       }).onError((error, _) {
                         messenger.hideCurrentSnackBar();
                         messenger.showSnackBar(
                             SnackBar(content: Text(error.toString())));
+                        setState(() {
+                          _isJoinableEvent = true;
+                        });
                       });
                     },
                   )

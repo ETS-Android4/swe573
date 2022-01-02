@@ -70,7 +70,8 @@ class MockUtils {
           faker.address.city(),
           faker.address.country(),
           (random.nextInt(12) + 1) * 30,
-          faker.date.dateTime(minYear: 2022, maxYear: 2023));
+          faker.date.dateTime(minYear: 2022, maxYear: 2023),
+          true);
     });
 
     MockEventDataSource.data =

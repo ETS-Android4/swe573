@@ -36,6 +36,15 @@ public class EventController {
         }
     }
 
+    @GetMapping("/events/feed/followed")
+    ResponseEntity<List<EventDTO>> fetchFollowedFeed(Principal principal, @RequestParam int offset, @RequestParam int limit) {
+        try {
+            return ResponseEntity.ok(eventService.fetchFollowedFeed(principal, offset, limit));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
     @GetMapping("/user/{userId}/events")
     ResponseEntity<List<EventDTO>> fetchEventsOfUser(Principal principal, @RequestParam int offset, @RequestParam int limit, @PathVariable String userId) {
         try {

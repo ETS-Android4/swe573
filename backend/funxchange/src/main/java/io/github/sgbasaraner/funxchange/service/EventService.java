@@ -68,6 +68,16 @@ public class EventService {
                 .collect(Collectors.toUnmodifiableList());
     }
 
+    public List<EventDTO> fetchFollowedFeed(Principal principal, int offset, int limit) {
+        final User requestor = userRepository.findUserByUserName(principal.getName()).get();
+        final Pageable page = util.makePageable(offset, limit, Sort.by("created").descending());
+        return eventRepository
+                .findFollowedFeed(requestor, page)
+                .stream()
+                .map(this::mapToModel)
+                .collect(Collectors.toUnmodifiableList());
+    }
+
     public List<EventDTO> fetchEventsOfUser(int offset, int limit, String userId) {
         final Pageable page = util.makePageable(offset, limit, Sort.by("created").descending());
         final User user = userRepository.getById(UUID.fromString(userId));

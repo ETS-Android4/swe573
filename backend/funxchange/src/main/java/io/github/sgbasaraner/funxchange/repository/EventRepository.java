@@ -16,4 +16,7 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
 
     @Query("select e from Event e where e.startDateTime > current_timestamp")
     List<Event> findFeed(Pageable page);
+
+    @Query("select e from Event e where e.startDateTime > current_timestamp and e.user in (select f.followee from Follower f where f.follower = ?1)")
+    List<Event> findFollowedFeed(User user, Pageable page);
 }

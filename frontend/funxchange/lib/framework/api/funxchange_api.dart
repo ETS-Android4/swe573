@@ -56,8 +56,8 @@ class FunxchangeApiDataSource
 
   @override
   Future<Event> createEvent(NewEventParams params, String userId) {
-    return _jsonPostRequest(
-        "/events", params, (p0) => p0.toString(), (p0) => Event.fromJson(p0),
+    return _jsonPostRequest<NewEventParams, Event>(
+        "/events", params, (p0) => p0.toJson(), (p0) => Event.fromJson(p0),
         authentication: _authToken);
   }
 

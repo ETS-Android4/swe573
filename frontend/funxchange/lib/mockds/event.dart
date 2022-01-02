@@ -56,8 +56,8 @@ class MockEventDataSource implements EventDataSource {
       params.longitude,
       params.cityName,
       params.countryName,
-      params.durationInMinutes,
-      params.dateTime,
+      params.startDateTime.difference(params.endDateTime).inMinutes,
+      params.startDateTime,
     );
 
     data[model.id] = model;

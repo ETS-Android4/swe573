@@ -13,8 +13,8 @@ class NewEventParams {
   final double longitude;
   final String cityName;
   final String countryName;
-  final int durationInMinutes;
-  final DateTime dateTime;
+  final DateTime endDateTime;
+  final DateTime startDateTime;
 
   NewEventParams(
     this.type,
@@ -26,8 +26,8 @@ class NewEventParams {
     this.longitude,
     this.cityName,
     this.countryName,
-    this.durationInMinutes,
-    this.dateTime,
+    this.endDateTime,
+    this.startDateTime,
   );
 
   Map<String, dynamic> toMap() {
@@ -41,8 +41,8 @@ class NewEventParams {
       'longitude': longitude,
       'cityName': cityName,
       'countryName': countryName,
-      'durationInMinutes': durationInMinutes,
-      'dateTime': dateTime.millisecondsSinceEpoch,
+      'endDateTime': endDateTime.toIso8601String(),
+      'startDateTime': startDateTime.toIso8601String()
     };
   }
 
@@ -57,8 +57,8 @@ class NewEventParams {
       map['longitude']?.toDouble() ?? 0.0,
       map['cityName'] ?? '',
       map['countryName'] ?? '',
-      map['durationInMinutes']?.toInt() ?? 0,
-      DateTime.parse(map['dateTime']),
+      DateTime.parse(map['endDateTime']),
+      DateTime.parse(map['startDateTime']),
     );
   }
 

@@ -74,12 +74,15 @@ class _NewEventScreenState extends State<NewEventScreen> {
             location.longitude,
             location.location.region,
             location.location.country,
-            duration,
+            _endDateTime!,
             _startDateTime!,
           );
 
-          final userId = DIContainer.activeSingleton.userRepo.getCurrentUserId();
-          DIContainer.activeSingleton.eventRepo.createEvent(model, userId).then((_) {
+          final userId =
+              DIContainer.activeSingleton.userRepo.getCurrentUserId();
+          DIContainer.activeSingleton.eventRepo
+              .createEvent(model, userId)
+              .then((_) {
             final messenger = ScaffoldMessenger.of(context);
             messenger.hideCurrentSnackBar();
             messenger.showSnackBar(

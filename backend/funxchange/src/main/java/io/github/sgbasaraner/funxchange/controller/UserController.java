@@ -4,6 +4,7 @@ import io.github.sgbasaraner.funxchange.model.AuthRequest;
 import io.github.sgbasaraner.funxchange.model.AuthResponse;
 import io.github.sgbasaraner.funxchange.model.NewUserDTO;
 import io.github.sgbasaraner.funxchange.model.UserDTO;
+import io.github.sgbasaraner.funxchange.repository.EventRepository;
 import io.github.sgbasaraner.funxchange.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -22,6 +23,9 @@ public class UserController {
     @Autowired
     private UserService service;
 
+    @Autowired
+    private EventRepository eventRepository;
+
     @PostMapping("/signup")
     public ResponseEntity<AuthResponse> signUp(@RequestBody NewUserDTO params) {
         try {
@@ -36,7 +40,7 @@ public class UserController {
 
     @GetMapping("/hello")
     public String hello(Principal principal) {
-        return "Hi there, " + principal.getName() + ".";
+        return "Hi there, " + principal.getName() + ". We have a total of " + eventRepository.count() + " events.";
     }
 
     @GetMapping("/user/{userId}/followers")

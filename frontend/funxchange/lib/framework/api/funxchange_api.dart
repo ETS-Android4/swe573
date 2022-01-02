@@ -93,7 +93,12 @@ class FunxchangeApiDataSource
 
   @override
   Future<List<Event>> fetchFeed(int limit, int offset, bool followed) {
-    return _jsonGetRequest(_makePaginatedPath("/events/feed", offset, limit),
+    return _jsonGetRequest(
+        _makePaginatedPath(
+          "/events/feed" + ((followed) ? "/followed" : ""),
+          offset,
+          limit,
+        ),
         (p0) => parseList((p1) => Event.fromMap(p1), p0),
         authentication: _authToken);
   }

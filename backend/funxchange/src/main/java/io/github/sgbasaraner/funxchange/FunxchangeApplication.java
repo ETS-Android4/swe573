@@ -8,10 +8,6 @@ import io.github.sgbasaraner.funxchange.repository.*;
 import io.github.sgbasaraner.funxchange.service.UserService;
 import io.github.sgbasaraner.funxchange.util.DeeplinkUtil;
 import org.apache.commons.lang3.tuple.Pair;
-import org.aspectj.weaver.ast.Not;
-import org.hibernate.mapping.Join;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -61,16 +57,12 @@ public class FunxchangeApplication {
 	@Autowired
 	private NotificationRepository notificationRepository;
 
-
-	Logger logger = LoggerFactory.getLogger(FunxchangeApplication.class);
-
 	public static void main(String[] args) {
 		SpringApplication.run(FunxchangeApplication.class, args);
 	}
 
-	@EventListener(ApplicationReadyEvent.class)
 	@Transactional
-	public void runAfterStartup() {
+	void generateMocks() {
 		Faker faker = new Faker();
 		Random rand = new Random();
 		interestRepository.saveAllAndFlush(generateInterests());
@@ -179,6 +171,11 @@ public class FunxchangeApplication {
 				},
 				10000
 		);
+	}
+
+	@EventListener(ApplicationReadyEvent.class)
+	public void runAfterStartup() {
+		generateMocks();
 	}
 
 	private <T> Predicate<T> alwaysTruePredicate() {

@@ -19,27 +19,31 @@ class _UserSnapshotState extends State<UserSnapshot> {
   User? _currentModel;
 
   @override
-  Widget build(BuildContext context) {
-    return widget.userFetcher.fold(
-      (str) => FutureBuilder<User>(
-        future: DIContainer.activeSingleton.userRepo.fetchUser(str),
-        builder: (ctx, ss) {
-          if (!ss.hasData) {
-            return const CupertinoActivityIndicator();
-          }
-          _currentModel = ss.requireData;
-          return _actualWidget(ctx);
-        },
-      ),
-      (user) {
-        _currentModel = user;
-        return _actualWidget(context);
+  void initState() {
+    widget.userFetcher.fold(
+      (str) => DIContainer.singleton.userRepo.fetchUser(str).then((value) {
+        setState(() {
+          _currentModel = value;
+        });
+      }),
+      (r) {
+        _currentModel = r;
       },
     );
+    super.initState();
   }
 
-  Widget _actualWidget(BuildContext context) {
-    var followed = _currentModel!.isFollowed;
+  @override
+  Widget build(BuildContext context) {
+    final User? user = _currentModel;
+    if (user != null) {
+      return _actualWidget(context, user);
+    } else {
+      return const CupertinoActivityIndicator();
+    }
+  }
+
+  Widget _actualWidget(BuildContext context, User user) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Row(
@@ -50,11 +54,10 @@ class _UserSnapshotState extends State<UserSnapshot> {
           ),
           Expanded(
             child: GestureDetector(
-                child: Text(_currentModel!.userName),
+                child: Text(user.userName),
                 onTap: () {
                   Navigator.of(context).push(MaterialPageRoute(
-                      builder: (ctx) =>
-                          ProfilePage(userId: _currentModel!.id)));
+                      builder: (ctx) => ProfilePage(userId: user.id)));
                 }),
           ),
           const SizedBox(
@@ -63,42 +66,40 @@ class _UserSnapshotState extends State<UserSnapshot> {
           Row(
             children: [
               const Icon(Icons.star),
-              Text(_currentModel!.ratingAvg.toStringAsFixed(1)),
+              Text(user.ratingAvg.toStringAsFixed(1)),
             ],
           ),
           const SizedBox(
             width: 10,
           ),
-          (followed != null)
+          (user.isFollowed != null)
               ? GestureDetector(
                   child: const Icon(Icons.message),
                   onTap: () {
-                    showSendMessageDialog();
+                    showSendMessageDialog(user);
                   },
                 )
               : Container(height: 30),
           const SizedBox(
             width: 10,
           ),
-          (followed != null)
+          (user.isFollowed != null)
               ? MaterialButton(
                   height: 30,
                   onPressed: () {
                     setState(() {
-                      if (_currentModel != null) {
-                        if (_currentModel!.isFollowed!) {
-                          DIContainer.activeSingleton.userRepo
-                              .unfollowUser(_currentModel!.id);
-                        } else {
-                          DIContainer.activeSingleton.userRepo
-                              .followUser(_currentModel!.id);
-                        }
-                        _currentModel!.isFollowed = !_currentModel!.isFollowed!;
+                      if (user.isFollowed!) {
+                        DIContainer.activeSingleton.userRepo
+                            .unfollowUser(user.id);
+                      } else {
+                        DIContainer.activeSingleton.userRepo
+                            .followUser(user.id);
                       }
+                      user.isFollowed = !user.isFollowed!;
                     });
                   },
-                  color: !followed ? FunColor.fulvous : Colors.grey,
-                  child: !followed
+                  color: !user.isFollowed! ? FunColor.fulvous : Colors.grey,
+                  child: !user.isFollowed!
                       ? const Text(
                           'FOLLOW',
                         )
@@ -110,7 +111,7 @@ class _UserSnapshotState extends State<UserSnapshot> {
     );
   }
 
-  void showSendMessageDialog() {
+  void showSendMessageDialog(User user) {
     showDialog(
       context: context,
       builder: (_) {
@@ -136,7 +137,7 @@ class _UserSnapshotState extends State<UserSnapshot> {
                 isSending = true;
 
                 DIContainer.activeSingleton.messageRepo
-                    .sendMessage(text, _currentModel!.id);
+                    .sendMessage(text, user.id);
 
                 Navigator.pop(context);
               },

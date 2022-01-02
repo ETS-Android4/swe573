@@ -73,13 +73,6 @@ class _LoggedInPageState extends State<LoggedInPage> {
   int _selectedIndex = 0;
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-  static final List<Widget> _widgetOptions = <Widget>[
-    const FeedPage(),
-    ProfilePage(
-      userId: MockUserDataSource.currentUserId,
-    ),
-    const NotificationPage()
-  ];
 
   void _onItemTapped(int index) {
     setState(() {
@@ -91,7 +84,13 @@ class _LoggedInPageState extends State<LoggedInPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex),
+        child: [
+          const FeedPage(),
+          ProfilePage(
+            userId: DIContainer.activeSingleton.userRepo.getCurrentUserId(),
+          ),
+          const NotificationPage()
+        ].elementAt(_selectedIndex),
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[

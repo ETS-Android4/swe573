@@ -32,11 +32,11 @@ public class DeeplinkUtil {
         return "<a href=\"" + deeplink + "\">" + event.getTitle() + "</a>";
     }
 
-    public String generateJoinRequestText(JoinRequest request) {
+    public String generateJoinRequestApprovedText(JoinRequest request) {
         return generateUserHtml(request.getEvent().getUser()) + " just approved your request to join " + generateEventHtml(request.getEvent()) + ".";
     }
 
-    public String generateJoinRequestApprovedText(JoinRequest request) {
+    public String generateJoinRequestText(JoinRequest request) {
         final String textBase = generateUserHtml(request.getUser()) + " would like to ";
         final String mid = request.getEvent().getType().equalsIgnoreCase("meetup") ? "join your meetup" : "join your service";
         final String end = " " + generateEventHtml(request.getEvent()) + ".";

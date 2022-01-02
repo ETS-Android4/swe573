@@ -1,5 +1,6 @@
 package io.github.sgbasaraner.funxchange.service;
 
+import io.github.sgbasaraner.funxchange.controller.UserController;
 import io.github.sgbasaraner.funxchange.entity.*;
 import io.github.sgbasaraner.funxchange.model.*;
 import io.github.sgbasaraner.funxchange.repository.FollowerRepository;
@@ -7,6 +8,8 @@ import io.github.sgbasaraner.funxchange.repository.InterestRepository;
 import io.github.sgbasaraner.funxchange.repository.UserRepository;
 import io.github.sgbasaraner.funxchange.util.JwtUtil;
 import io.github.sgbasaraner.funxchange.util.Util;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Pageable;
@@ -54,6 +57,8 @@ public class UserService {
 
     @Autowired
     private NotificationService notificationService;
+
+    Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @Transactional
     public UserDTO signUp(NewUserDTO params) {
@@ -105,10 +110,15 @@ public class UserService {
     }
 
     public UserDTO fetchUser(String id, Principal principal) {
+        logger.info("Fetching user by id: " + id);
         final User loggedInUser = repository.findUserByUserName(principal.getName()).get();
+        logger.info("Fetched logged in user.");
         final Optional<User> userOption = repository.findById(UUID.fromString(id));
-        if (userOption.isEmpty())
+        if (userOption.isEmpty()) {
+            logger.info("User doesn't exist");
             throw new IllegalArgumentException("User doesn't exist.");
+        }
+        logger.info("Mapping User to DTO...");
         return mapUserToDTO(userOption.get(), loggedInUser);
     }
 
@@ -124,6 +134,7 @@ public class UserService {
         } else {
             isFollowed = Optional.of(false);
         }
+        logger.info("Mapped score.");
 
         double ratingAvg = Optional
                 .ofNullable(user.getRateds())
@@ -134,6 +145,8 @@ public class UserService {
                 .mapToDouble(r -> r)
                 .average()
                 .orElse(0);
+
+        logger.info("Mapped rating average.");
 
         return new UserDTO(
                 user.getId().toString(),

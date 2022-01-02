@@ -194,7 +194,7 @@ public class FunxchangeApplication {
 		event.setTitle(faker.job().position()+ ", " + faker.job().seniority() + " for " + faker.rockBand().name());
 
 		event.setStartDateTime(LocalDateTime.now().plus(faker.random().nextInt(-432000, 432000), ChronoUnit.SECONDS));
-		event.setEndDateTime(event.getStartDateTime().plus(faker.random().nextInt(1800, 432000), ChronoUnit.SECONDS));
+		event.setEndDateTime(event.getStartDateTime().plus(faker.random().nextInt(60, 60 * 6), ChronoUnit.MINUTES));
 		event.setDetails(faker.shakespeare().kingRichardIIIQuote());
 		event.setCategory(randomElements(UserService.allowedInterests, alwaysTruePredicate(), 1).get(0));
 		event.setType(faker.random().nextBoolean() ? "meetup" : "service");
@@ -204,8 +204,10 @@ public class FunxchangeApplication {
 		event.setCityName(faker.address().cityName());
 		event.setUser(user);
 		event.setCapacity(faker.random().nextInt(1, 12));
-		event.setCreated(LocalDateTime.now().plus(faker.random().nextInt(20, 1000), ChronoUnit.MILLIS));
-		final List<User> limitedParticipants = participants.stream().limit(event.getCapacity()).collect(Collectors.toUnmodifiableList());
+		event.setCreated(event.getStartDateTime().minusMinutes(faker.random().nextInt(60, 6000)));
+		final List<User> limitedParticipants = participants.stream()
+				.limit((faker.random().nextBoolean()) ? event.getCapacity() : event.getCapacity() - 1)
+				.collect(Collectors.toUnmodifiableList());
 		limitedParticipants.forEach(u -> {
 			Set<Event> participatedEvents = Optional.ofNullable(u.getParticipatedEvents()).orElse(new HashSet<>());
 			participatedEvents.add(event);

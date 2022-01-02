@@ -102,10 +102,7 @@ public class EventService {
     public JoinRequestDTO joinEvent(Principal principal, String eventId) {
         final User requestor = userRepository.findUserByUserName(principal.getName()).get();
         final Event event = eventRepository.getById(UUID.fromString(eventId));
-        if (!event.isInFuture()) throw new IllegalArgumentException("Can't join an event that's already started");
-
-        if (event.getType().equals("service") && !userService.calculateCredits(requestor).canAfford(event.getCreditValue()))
-            throw new IllegalArgumentException("Insufficient credits.");
+        if (!isJoinable(event, requestor)) throw new IllegalArgumentException("Can't join.");
 
         final JoinRequest request = new JoinRequest();
         request.setEvent(event);
@@ -197,22 +194,26 @@ public class EventService {
         return entity;
     }
 
+    boolean isJoinable(Event entity, User requestor) {
+        return !entity.getUser().getId().equals(requestor.getId())
+                && !entity.isInFuture()
+                && entity.getParticipants().size() < entity.getCapacity()
+                && Optional.ofNullable(requestor.getJoinRequests())
+                .orElse(Collections.emptySet())
+                .stream()
+                .map(r -> r.getEvent().getId())
+                .noneMatch(id -> entity.getId().equals(id))
+                && Optional.ofNullable(requestor.getParticipatedEvents())
+                .orElse(Collections.emptySet())
+                .stream()
+                .map(Event::getId)
+                .noneMatch(id -> entity.getId().equals(id))
+                && (!entity.getType().equals("service") || !userService.calculateCredits(requestor).canAfford(entity.getCreditValue()));
+    }
+
     public EventDTO mapToModel(Event entity, User requestor) {
         final int participantCount = entity.getParticipants().size();
-        final boolean isJoinable =
-                !entity.getUser().getId().equals(requestor.getId())
-                        && participantCount < entity.getCapacity()
-                        && Optional.ofNullable(requestor.getJoinRequests())
-                            .orElse(Collections.emptySet())
-                            .stream()
-                            .map(r -> r.getEvent().getId())
-                            .noneMatch(id -> entity.getId().equals(id))
-                        && Optional.ofNullable(requestor.getParticipatedEvents())
-                            .orElse(Collections.emptySet())
-                            .stream()
-                            .map(Event::getId)
-                            .noneMatch(id -> entity.getId().equals(id));
-
+        final boolean isJoinable = isJoinable(entity, requestor);
 
         return new EventDTO(
                 entity.getId().toString(),

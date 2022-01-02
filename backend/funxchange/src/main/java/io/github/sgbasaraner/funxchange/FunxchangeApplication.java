@@ -173,7 +173,7 @@ public class FunxchangeApplication {
 				new java.util.TimerTask() {
 					@Override
 					public void run() {
-						userDTOS.stream().limit(5).forEach(u -> System.out.println("Username: " + u.getUserName() + " pw: " + u.getPassword()));
+						userDTOS.forEach(u -> System.out.println("Username: " + u.getUserName()));
 						t.cancel();
 					}
 				},
@@ -186,7 +186,7 @@ public class FunxchangeApplication {
 	}
 
 	private NewUserDTO mockUser(Faker faker) {
-		return new NewUserDTO(faker.name().username() + faker.internet().domainSuffix(), faker.shakespeare().kingRichardIIIQuote(), randomElements(UserService.allowedInterests, alwaysTruePredicate(), faker.random().nextInt(UserService.allowedInterests.size())), faker.internet().password());
+		return new NewUserDTO(faker.name().username() + faker.internet().domainSuffix(), faker.shakespeare().kingRichardIIIQuote(), randomElements(UserService.allowedInterests, alwaysTruePredicate(), faker.random().nextInt(UserService.allowedInterests.size())), "imamockuser");
 	}
 
 	private Event mockEvent(Faker faker, User user, List<User> participants) {

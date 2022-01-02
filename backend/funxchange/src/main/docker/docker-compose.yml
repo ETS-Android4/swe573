@@ -22,3 +22,8 @@ services:
     environment:
       - POSTGRES_USER=compose-postgres
       - POSTGRES_PASSWORD=compose-postgres
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+volumes:
+  postgres-data:

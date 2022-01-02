@@ -1,6 +1,5 @@
 package io.github.sgbasaraner.funxchange.service;
 
-import io.github.sgbasaraner.funxchange.controller.UserController;
 import io.github.sgbasaraner.funxchange.entity.*;
 import io.github.sgbasaraner.funxchange.model.*;
 import io.github.sgbasaraner.funxchange.repository.FollowerRepository;
@@ -8,8 +7,6 @@ import io.github.sgbasaraner.funxchange.repository.InterestRepository;
 import io.github.sgbasaraner.funxchange.repository.UserRepository;
 import io.github.sgbasaraner.funxchange.util.JwtUtil;
 import io.github.sgbasaraner.funxchange.util.Util;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Pageable;

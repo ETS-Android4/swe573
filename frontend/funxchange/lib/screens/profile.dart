@@ -24,6 +24,13 @@ class ProfilePage extends StatelessWidget {
           return Scaffold(
             appBar: AppBar(
               title: Text(user != null ? user.userName : "Loading"),
+              actions: [
+                IconButton(
+                    onPressed: () {
+                      print("logout");
+                    },
+                    icon: Icon(Icons.logout))
+              ],
             ),
             body: user == null
                 ? Center(child: const CupertinoActivityIndicator())

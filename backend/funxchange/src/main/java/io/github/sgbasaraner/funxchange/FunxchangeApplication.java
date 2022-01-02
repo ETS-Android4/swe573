@@ -191,7 +191,7 @@ public class FunxchangeApplication {
 		if (eventType.equals("service")) {
 			options = List.of(
 					faker.esports().event(),
-					faker.programmingLanguage() + " Lessons",
+					faker.programmingLanguage().name() + " Lessons",
 					faker.ancient().titan() + " History Lessons",
 					faker.nation().language() + " Lessons",
 					"Pokemon Go: " + faker.pokemon().name() + " Catching",
@@ -202,12 +202,13 @@ public class FunxchangeApplication {
 		} else {
 			options = List.of(
 					faker.esports().event(),
-					faker.programmingLanguage() + " Meetup",
+					faker.programmingLanguage().name() + " Meetup",
 					faker.ancient().hero() + " Festival",
 					faker.country().name() + " Citizens Meetup",
 					faker.pokemon().name() + " Appreciation Group",
 					faker.university().name() + " Alumni Meeting",
-					faker.music().genre() + " Session"
+					faker.music().genre() + " Session",
+					faker.programmingLanguage().creator() + " Interview"
 			);
 		}
 		return randomElements(options, alwaysTruePredicate(), 1).get(0);

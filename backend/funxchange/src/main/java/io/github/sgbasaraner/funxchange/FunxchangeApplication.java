@@ -13,8 +13,11 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -175,7 +178,13 @@ public class FunxchangeApplication {
 	@EventListener(ApplicationReadyEvent.class)
 	@Transactional
 	public void runAfterStartup() {
+		deleteAll();
 		generateMocks();
+	}
+
+	void deleteAll() {
+		List<JpaRepository<? extends Object, ? extends Serializable>> repos = List.of(eventRepository, userRepository, ratingRepository, messageRepository, joinRequestRepository, followerRepository, notificationRepository, interestRepository);
+		repos.forEach(CrudRepository::deleteAll);
 	}
 
 	private <T> Predicate<T> alwaysTruePredicate() {

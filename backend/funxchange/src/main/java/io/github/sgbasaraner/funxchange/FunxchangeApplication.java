@@ -190,7 +190,7 @@ public class FunxchangeApplication {
 		final Event event = new Event();
 		event.setTitle(faker.job().position()+ ", " + faker.job().seniority() + " for " + faker.rockBand().name());
 
-		event.setStartDateTime(LocalDateTime.now().plus(faker.random().nextInt(-432000, 432000), ChronoUnit.SECONDS));
+		event.setStartDateTime(LocalDateTime.now().plus(1, ChronoUnit.DAYS).plus(faker.random().nextInt(-432000, 432000), ChronoUnit.SECONDS));
 		event.setEndDateTime(event.getStartDateTime().plus(faker.random().nextInt(60, 60 * 6), ChronoUnit.MINUTES));
 		event.setDetails(faker.shakespeare().kingRichardIIIQuote());
 		event.setCategory(randomElements(UserService.allowedInterests, alwaysTruePredicate(), 1).get(0));

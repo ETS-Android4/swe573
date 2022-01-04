@@ -252,6 +252,7 @@ public class UserService {
                 .stream()
                 .filter(e -> e.getType().equals("service"))
                 .filter(e -> !e.isHandshaken())
+                .filter(Event::isInFuture)
                 .map(Event::getCreditValue)
                 .reduce(0, Integer::sum);
 

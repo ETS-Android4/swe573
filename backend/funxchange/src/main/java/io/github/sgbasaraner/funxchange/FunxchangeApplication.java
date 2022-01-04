@@ -175,11 +175,15 @@ public class FunxchangeApplication {
 		);
 	}
 
-//	@EventListener(ApplicationReadyEvent.class)
-//	@Transactional
-//	public void runAfterStartup() {
-//		generateMocks();
-//	}
+	@EventListener(ApplicationReadyEvent.class)
+	@Transactional
+	public void runAfterStartup() {
+		var event = eventRepository.getById(UUID.fromString("5248542f-0126-4a0f-8f3a-48e2a0251bc2"));
+		event.setStartDateTime(event.getStartDateTime().minusDays(10));
+		event.setEndDateTime(event.getEndDateTime().minusDays(10));
+		eventRepository.save(event);
+
+	}
 
 	private <T> Predicate<T> alwaysTruePredicate() {
 		return x -> true;

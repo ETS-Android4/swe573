@@ -251,8 +251,8 @@ public class UserService {
         final int nonHandshakenReceivedServices = participatedEvents
                 .stream()
                 .filter(e -> e.getType().equals("service"))
-//                .filter(e -> !e.isHandshaken())
-                .filter(e -> e.getRatings().stream().noneMatch(r -> r.getRating() != null))
+                .filter(e -> !e.isHandshaken())
+                .filter(e -> e.getRatings().stream().noneMatch(r -> r.getRating() != null && r.getRating() == 0 && r.getRated().getId().equals(user.getId())))
                 .map(Event::getCreditValue)
                 .reduce(0, Integer::sum);
 

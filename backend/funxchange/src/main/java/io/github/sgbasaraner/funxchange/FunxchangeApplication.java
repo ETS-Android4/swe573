@@ -178,9 +178,9 @@ public class FunxchangeApplication {
 	@EventListener(ApplicationReadyEvent.class)
 	@Transactional
 	public void runAfterStartup() {
-		var event = eventRepository.getById(UUID.fromString("5248542f-0126-4a0f-8f3a-48e2a0251bc2"));
-		event.setStartDateTime(event.getStartDateTime().minusDays(10));
-		event.setEndDateTime(event.getEndDateTime().minusDays(10));
+		var event = eventRepository.getById(UUID.fromString("ff1e35b1-991c-4cda-b7b7-c75c5182153a"));
+		event.setStartDateTime(event.getStartDateTime().minusDays(1));
+		event.setEndDateTime(event.getStartDateTime().plusHours(2));
 		eventRepository.save(event);
 
 	}

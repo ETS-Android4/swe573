@@ -241,6 +241,6 @@ public class Event {
     }
 
     public int getCreditValue() {
-        return (int) Math.abs(Duration.between(getStartDateTime(), getEndDateTime()).toHours());
+        return (int) Math.max(Math.abs(Duration.between(getStartDateTime(), getEndDateTime()).toHours()), 1);
     }
 }

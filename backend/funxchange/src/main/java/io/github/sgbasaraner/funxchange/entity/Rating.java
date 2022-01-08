@@ -81,7 +81,7 @@ public class Rating {
     }
 
     enum RatingStatus {
-        NOT_YET, NO_SHOW, RATED;
+        NOT_YET, NO_SHOW, RATED
     }
 
     public RatingStatus getStatus() {

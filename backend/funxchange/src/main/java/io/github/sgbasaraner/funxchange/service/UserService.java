@@ -217,46 +217,73 @@ public class UserService {
 
     @Transactional
     public CreditScore calculateCredits(User user) {
-        final int handshakenHostedServices = Optional
+        final int appliedScore = 5 + getGainedCredit(user) - getDeductedCredit(user);
+        final int creditOnHold = getInProgressEventCredit(user)
+                + getPendingJoinRequestCredits(user)
+                + getParticipatedEventsWithPendingRating(user);
+        return new CreditScore(appliedScore, creditOnHold);
+    }
+
+    private int getGainedCredit(User user) {
+        return Optional
                 .ofNullable(user.getEvents())
                 .orElse(Collections.emptySet())
                 .stream()
                 .filter(e -> e.getType().equals("service"))
-                .filter(Event::isHandshaken)
+                .filter(e -> e.isHandshaken(user.getId()))
                 .map(Event::getCreditValue)
                 .reduce(0, Integer::sum);
+    }
 
-        final Set<Event> participatedEvents = Optional
+    private int getDeductedCredit(User user) {
+        return Optional
                 .ofNullable(user.getParticipatedEvents())
-                .orElse(Collections.emptySet());
-
-        final int handshakenReceivedServices = participatedEvents
+                .orElse(Collections.emptySet())
                 .stream()
                 .filter(e -> e.getType().equals("service"))
-                .filter(Event::isHandshaken)
+                .filter(e -> e.isHandshaken(user.getId()))
                 .map(Event::getCreditValue)
                 .reduce(0, Integer::sum);
+    }
 
-        final int appliedScore = Math.max(5 + handshakenHostedServices - handshakenReceivedServices, 0);
-
-        final int pendingJoinRequests = Optional
+    private int getPendingJoinRequestCredits(User user) {
+        return Optional
                 .ofNullable(user.getJoinRequests())
                 .orElse(Collections.emptySet())
                 .stream()
                 .map(JoinRequest::getEvent)
                 .filter(e -> e.getType().equals("service"))
+                .filter(Event::isInFuture)
                 .map(Event::getCreditValue)
                 .reduce(0, Integer::sum);
+    }
 
-        final int nonHandshakenReceivedServices = participatedEvents
+    private int getInProgressEventCredit(User user) {
+        return Optional
+                .ofNullable(user.getParticipatedEvents())
+                .orElse(Collections.emptySet())
                 .stream()
                 .filter(e -> e.getType().equals("service"))
-                .filter(e -> !e.isHandshaken())
-                .filter(e -> e.getRatings().stream().noneMatch(r -> r.getRating() != null && r.getRating() == 0 && r.getRated().getId().equals(user.getId())))
+                .filter(e -> !e.isEnded())
                 .map(Event::getCreditValue)
                 .reduce(0, Integer::sum);
+    }
 
-        return new CreditScore(appliedScore, pendingJoinRequests + nonHandshakenReceivedServices);
+    private int getParticipatedEventsWithPendingRating(User user) {
+        return Optional
+                .ofNullable(user.getParticipatedEvents())
+                .orElse(Collections.emptySet())
+                .stream()
+                .filter(e -> e.getType().equals("service"))
+                .filter(Event::isEnded)
+                .filter(e -> Optional
+                        .ofNullable(e.getRatings())
+                        .orElse(Collections.emptySet())
+                        .stream()
+                        .filter(r -> r.getRated().getId().equals(user.getId()))
+                        .anyMatch(r -> r.getStatus() == Rating.RatingStatus.NOT_YET))
+                .map(Event::getCreditValue)
+                .reduce(0, Integer::sum);
     }
 
     public UserDTO fetchUserByUserName(String userName, Principal principal) {

@@ -300,8 +300,7 @@ class _NewEventScreenState extends State<NewEventScreen> {
   int? _durationInMinutes() {
     if (_endDateTime == null) return null;
     if (_startDateTime == null) return null;
-    final nowPlusAnHour = DateTime.now().add(const Duration(hours: 1));
-    if (_startDateTime!.isBefore(nowPlusAnHour)) return null;
+    if (_startDateTime!.isBefore(DateTime.now())) return null;
     if (_endDateTime!.isBefore(_startDateTime!)) return null;
 
     return _endDateTime!.difference(_startDateTime!).inMinutes;

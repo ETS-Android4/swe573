@@ -41,6 +41,7 @@ public class RatingService {
         final Pageable page = util.makePageable(offset, limit, Sort.by("created").descending());
         return ratingRepository.findByRater(requestor, page)
                 .stream()
+                .filter(r -> r.getService().isEnded())
                 .map(r -> mapToDTO(r, requestor))
                 .collect(Collectors.toUnmodifiableList());
     }

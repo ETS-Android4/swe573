@@ -237,7 +237,7 @@ public class Event {
     }
 
     public boolean isEnded() {
-        return getEndDateTime().isAfter(LocalDateTime.now());
+        return getEndDateTime().isBefore(LocalDateTime.now());
     }
 
     public int getCreditValue() {

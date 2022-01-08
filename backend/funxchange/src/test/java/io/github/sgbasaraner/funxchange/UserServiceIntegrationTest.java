@@ -1,15 +1,16 @@
 package io.github.sgbasaraner.funxchange;
 
-import io.github.sgbasaraner.funxchange.entity.Follower;
-import io.github.sgbasaraner.funxchange.entity.Interest;
-import io.github.sgbasaraner.funxchange.entity.User;
+import io.github.sgbasaraner.funxchange.entity.*;
 import io.github.sgbasaraner.funxchange.model.NewUserDTO;
 import io.github.sgbasaraner.funxchange.model.UserDTO;
 import io.github.sgbasaraner.funxchange.repository.FollowerRepository;
 import io.github.sgbasaraner.funxchange.repository.InterestRepository;
+import io.github.sgbasaraner.funxchange.repository.NotificationRepository;
 import io.github.sgbasaraner.funxchange.repository.UserRepository;
+import io.github.sgbasaraner.funxchange.service.NotificationService;
 import io.github.sgbasaraner.funxchange.service.UserDetailsServiceImpl;
 import io.github.sgbasaraner.funxchange.service.UserService;
+import io.github.sgbasaraner.funxchange.util.DeeplinkUtil;
 import io.github.sgbasaraner.funxchange.util.JwtUtil;
 import io.github.sgbasaraner.funxchange.util.Util;
 import org.junit.jupiter.api.Assertions;
@@ -26,6 +27,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @ExtendWith(SpringExtension.class)
@@ -59,6 +61,16 @@ public class UserServiceIntegrationTest {
         }
 
         @Bean
+        public NotificationService notificationService() {
+            return new NotificationService();
+        }
+
+        @Bean
+        public DeeplinkUtil deeplinkUtil() {
+            return new DeeplinkUtil();
+        }
+
+        @Bean
         public Util util() {
             return new Util();
         }
@@ -75,6 +87,9 @@ public class UserServiceIntegrationTest {
 
     @MockBean
     private FollowerRepository followRepository;
+
+    @MockBean
+    private NotificationRepository notificationRepository;
 
     @Test
     public void whenValidUser_thenUserShouldBeSaved() {
@@ -178,5 +193,201 @@ public class UserServiceIntegrationTest {
         final UserDTO foundUser = userService.fetchUser(targetUser.getId().toString(), currentUser::getUserName);
 
         Assertions.assertEquals(foundUser.getUserName(), targetUser.getUserName());
+    }
+
+    @Test
+    public void whenAskedCreditsForHandshakenEvent_shouldComputeCorrectly() {
+        var participantUser = new User();
+        participantUser.setUserName("test_user");
+        participantUser.setId(UUID.randomUUID());
+
+        var organizerUser = new User();
+        organizerUser.setUserName("org_user");
+        organizerUser.setId(UUID.randomUUID());
+
+        var handshakenPastEvent = new Event();
+        handshakenPastEvent.setType("service");
+        handshakenPastEvent.setUser(organizerUser);
+        handshakenPastEvent.setStartDateTime(LocalDateTime.now().minusDays(5));
+        handshakenPastEvent.setEndDateTime(handshakenPastEvent.getStartDateTime().plusHours(2));
+
+        participantUser.setParticipatedEvents(Collections.singleton(handshakenPastEvent));
+        organizerUser.setEvents(Collections.singleton(handshakenPastEvent));
+
+        var participantRating = new Rating();
+        participantRating.setId(UUID.randomUUID());
+        participantRating.setRated(participantUser);
+        participantRating.setRater(organizerUser);
+        participantRating.setRating(1);
+
+        var organizerRating = new Rating();
+        organizerRating.setId(UUID.randomUUID());
+        organizerRating.setRater(participantUser);
+        organizerRating.setRated(organizerUser);
+        organizerRating.setRating(1);
+
+        handshakenPastEvent.setRatings(Set.of(participantRating, organizerRating));
+
+        Assertions.assertEquals(7, userService.calculateCredits(organizerUser).getCredit());
+        Assertions.assertEquals(3, userService.calculateCredits(participantUser).getCredit());
+    }
+
+    @Test
+    public void whenAskedCreditsForNonHandshakenForParticipant_shouldComputeCorrectly() {
+        var participantUser = new User();
+        participantUser.setUserName("test_user");
+        participantUser.setId(UUID.randomUUID());
+
+        var organizerUser = new User();
+        organizerUser.setUserName("org_user");
+        organizerUser.setId(UUID.randomUUID());
+
+        var handshakenPastEvent = new Event();
+        handshakenPastEvent.setType("service");
+        handshakenPastEvent.setUser(organizerUser);
+        handshakenPastEvent.setStartDateTime(LocalDateTime.now().minusDays(5));
+        handshakenPastEvent.setEndDateTime(handshakenPastEvent.getStartDateTime().plusHours(2));
+
+        participantUser.setParticipatedEvents(Collections.singleton(handshakenPastEvent));
+        organizerUser.setEvents(Collections.singleton(handshakenPastEvent));
+
+        var participantRating = new Rating();
+        participantRating.setId(UUID.randomUUID());
+        participantRating.setRated(participantUser);
+        participantRating.setRater(organizerUser);
+
+        var organizerRating = new Rating();
+        organizerRating.setId(UUID.randomUUID());
+        organizerRating.setRater(participantUser);
+        organizerRating.setRated(organizerUser);
+        organizerRating.setRating(1);
+
+        handshakenPastEvent.setRatings(Set.of(participantRating, organizerRating));
+
+        Assertions.assertEquals(7, userService.calculateCredits(organizerUser).getCredit());
+        Assertions.assertEquals(5, userService.calculateCredits(participantUser).getCredit());
+    }
+
+    @Test
+    public void whenAskedCreditsForNonHandshakenForOrganizer_shouldComputeCorrectly() {
+        var participantUser = new User();
+        participantUser.setUserName("test_user");
+        participantUser.setId(UUID.randomUUID());
+
+        var organizerUser = new User();
+        organizerUser.setUserName("org_user");
+        organizerUser.setId(UUID.randomUUID());
+
+        var nonHandshakenEvent = new Event();
+        nonHandshakenEvent.setType("service");
+        nonHandshakenEvent.setUser(organizerUser);
+        nonHandshakenEvent.setStartDateTime(LocalDateTime.now().minusDays(5));
+        nonHandshakenEvent.setEndDateTime(nonHandshakenEvent.getStartDateTime().plusHours(2));
+
+        participantUser.setParticipatedEvents(Collections.singleton(nonHandshakenEvent));
+        organizerUser.setEvents(Collections.singleton(nonHandshakenEvent));
+
+        var participantRating = new Rating();
+        participantRating.setId(UUID.randomUUID());
+        participantRating.setRated(participantUser);
+        participantRating.setRater(organizerUser);
+        participantRating.setRating(1);
+
+        var organizerRating = new Rating();
+        organizerRating.setId(UUID.randomUUID());
+        organizerRating.setRater(participantUser);
+        organizerRating.setRated(organizerUser);
+
+
+        nonHandshakenEvent.setRatings(Set.of(participantRating, organizerRating));
+
+        Assertions.assertEquals(5, userService.calculateCredits(organizerUser).getCredit());
+        Assertions.assertEquals(3, userService.calculateCredits(participantUser).getCredit());
+    }
+
+    @Test
+    public void whenAskedOnHoldCreditsForPendingRatingForParticipant_shouldComputeCorrectly() {
+        var participantUser = new User();
+        participantUser.setUserName("test_user");
+        participantUser.setId(UUID.randomUUID());
+
+        var organizerUser = new User();
+        organizerUser.setUserName("org_user");
+        organizerUser.setId(UUID.randomUUID());
+
+        var nonHandshakenEvent = new Event();
+        nonHandshakenEvent.setType("service");
+        nonHandshakenEvent.setUser(organizerUser);
+        nonHandshakenEvent.setStartDateTime(LocalDateTime.now().minusDays(5));
+        nonHandshakenEvent.setEndDateTime(nonHandshakenEvent.getStartDateTime().plusHours(2));
+
+        participantUser.setParticipatedEvents(Collections.singleton(nonHandshakenEvent));
+        organizerUser.setEvents(Collections.singleton(nonHandshakenEvent));
+
+        var participantRating = new Rating();
+        participantRating.setId(UUID.randomUUID());
+        participantRating.setRated(participantUser);
+        participantRating.setRater(organizerUser);
+
+        var organizerRating = new Rating();
+        organizerRating.setId(UUID.randomUUID());
+        organizerRating.setRater(participantUser);
+        organizerRating.setRated(organizerUser);
+        organizerRating.setRating(1);
+
+        nonHandshakenEvent.setRatings(Set.of(participantRating, organizerRating));
+
+        Assertions.assertEquals(2, userService.calculateCredits(participantUser).getCreditOnHold());
+    }
+
+    @Test
+    public void whenAskedOnHoldCreditsForFutureEvent_shouldComputeCorrectly() {
+        var participantUser = new User();
+        participantUser.setUserName("test_user");
+        participantUser.setId(UUID.randomUUID());
+
+        var organizerUser = new User();
+        organizerUser.setUserName("org_user");
+        organizerUser.setId(UUID.randomUUID());
+
+        var futureEvent = new Event();
+        futureEvent.setType("service");
+        futureEvent.setUser(organizerUser);
+        futureEvent.setStartDateTime(LocalDateTime.now().plusDays(5));
+        futureEvent.setEndDateTime(futureEvent.getStartDateTime().plusHours(2));
+
+        participantUser.setParticipatedEvents(Collections.singleton(futureEvent));
+        organizerUser.setEvents(Collections.singleton(futureEvent));
+
+
+        Assertions.assertEquals(2, userService.calculateCredits(participantUser).getCreditOnHold());
+    }
+
+    @Test
+    public void whenAskedOnHoldCreditsForPendingJoinRequest_shouldComputeCorrectly() {
+        var participantUser = new User();
+        participantUser.setUserName("test_user");
+        participantUser.setId(UUID.randomUUID());
+
+
+        var organizerUser = new User();
+        organizerUser.setUserName("org_user");
+        organizerUser.setId(UUID.randomUUID());
+
+        var futureEvent = new Event();
+        futureEvent.setType("service");
+        futureEvent.setUser(organizerUser);
+        futureEvent.setStartDateTime(LocalDateTime.now().plusDays(5));
+        futureEvent.setEndDateTime(futureEvent.getStartDateTime().plusHours(2));
+
+        var joinRequest = new JoinRequest();
+        joinRequest.setUser(participantUser);
+        joinRequest.setEvent(futureEvent);
+
+        participantUser.setJoinRequests(Collections.singleton(joinRequest));
+
+        organizerUser.setEvents(Collections.singleton(futureEvent));
+
+        Assertions.assertEquals(2, userService.calculateCredits(participantUser).getCreditOnHold());
     }
 }

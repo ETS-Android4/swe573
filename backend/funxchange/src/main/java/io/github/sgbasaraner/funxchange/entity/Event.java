@@ -3,9 +3,8 @@ package io.github.sgbasaraner.funxchange.entity;
 import javax.persistence.*;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Stream;
 
 @Entity
 @Table(name = "event")
@@ -205,34 +204,40 @@ public class Event {
         this.ratings = ratings;
     }
 
-    public boolean isHandshaken() {
+    public boolean isHandshaken(UUID userId) {
+        if (!isEnded())
+            return false;
+
         if (!getType().equals("service"))
             return false;
 
-        final Set<Rating> ratings = getRatings();
-        if (ratings == null) return false;
-        boolean participantVoted = false;
-        boolean ownerVoted = false;
-        final Iterator<Rating> setIterator = ratings.iterator();
-        while(setIterator.hasNext()){
-            Rating rating = setIterator.next();
+        return getUser().getId().equals(userId) ? isHandshakenForOrganizer() : isHandshakenForParticipant(userId);
+    }
 
-            final boolean isValidRating = rating.getRating() != null && rating.getRating() > 0;
-            if (!isValidRating) continue;
+    private boolean isHandshakenForParticipant(UUID userId) {
+        return findRatingsWhereRated(userId)
+                .anyMatch(r -> r.getStatus() == Rating.RatingStatus.RATED);
+    }
 
-            if (rating.getRater().getId().equals(getUser().getId())) {
-                ownerVoted = true;
-                continue;
-            }
+    private boolean isHandshakenForOrganizer() {
+        return findRatingsWhereRated(getUser().getId())
+                .anyMatch(r -> r.getStatus() == Rating.RatingStatus.RATED);
+    }
 
-            participantVoted = true;
-        }
-
-        return participantVoted && ownerVoted;
+    private Stream<Rating> findRatingsWhereRated(UUID ratedId) {
+        return Optional
+                .ofNullable(getRatings())
+                .orElse(Collections.emptySet())
+                .stream()
+                .filter(r -> r.getRated().getId().equals(ratedId));
     }
 
     public boolean isInFuture() {
         return getStartDateTime().isAfter(LocalDateTime.now());
+    }
+
+    public boolean isEnded() {
+        return getEndDateTime().isAfter(LocalDateTime.now());
     }
 
     public int getCreditValue() {

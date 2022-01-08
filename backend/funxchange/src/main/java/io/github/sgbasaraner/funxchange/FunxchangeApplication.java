@@ -178,7 +178,14 @@ public class FunxchangeApplication {
 	@EventListener(ApplicationReadyEvent.class)
 	@Transactional
 	public void runAfterStartup() {
-
+		final var random = new Random();
+		final var allEvents = eventRepository.findAll();
+		final var twentyDaysInSeconds = 20 * 24 * 60 * 60;
+		allEvents.forEach(e -> {
+			e.setStartDateTime(LocalDateTime.now().plusSeconds(random.nextInt(twentyDaysInSeconds)));
+			e.setEndDateTime(e.getStartDateTime().plusMinutes(random.nextInt(6 * 60)));
+		});
+		eventRepository.saveAll(allEvents);
 	}
 
 	private <T> Predicate<T> alwaysTruePredicate() {

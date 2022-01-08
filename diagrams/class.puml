@@ -1,16 +1,15 @@
 @startuml Class
 class User {
-    String id
+    UUID id
     String userName
-    String email
     String passwordHash
     String bio
     LocalDateTime created
 }
 
 class UserInterest {
-    String userId
-    String category
+    UUID userId
+    String interestId
 }
 
 enum EventType {
@@ -19,8 +18,8 @@ enum EventType {
 }
 
 class Event {
-    String id
-    String ownerId
+    UUID id
+    UUID ownerId
     EventType type
     int capacity
     String category
@@ -30,60 +29,56 @@ class Event {
     double longitude
     String cityName
     String countryName
-    int durationInMinutes
-    LocalDateTime dateTime
+    LocalDateTime startDateTime
+    LocalDateTime endDateTime
     LocalDateTime created
+}
+
+class EventUser {
+    UUID eventId
+    UUID userId
 }
 
 class Follow {
-    String id
-    String followerId
-    String followedId
+    Long id
+    UUID followerId
+    UUID followeeId
     LocalDateTime created
 }
 
+class Interest {
+    String name
+}
+
 class Rating {
-    String id
-    String raterId
-    String ratedId
-    String eventId
+    UUID id
+    UUID raterId
+    UUID ratedId
+    UUID eventId
     int rating
     LocalDateTime created
 }
 
 class Message {
-    String id
-    String senderId
-    String receiverId
+    UUID id
+    UUID senderId
+    UUID receiverId
+    String text
     LocalDateTime created
 }
 
-enum NotificationType {
-    SERVICE_JOIN_REQUEST
-    MEETUP_JOIN_REQUEST
-    NEW_FOLLOWER
-}
-
 class Notification {
-    String id
-    NotificationType type
-    String receiverId
-    String text
+    UUID id
+    UUID recipientId
+    String htmlText
     String deeplink
     LocalDateTime created
 }
 
 class JoinRequest {
-    String id
-    String eventId
-    String userId
-    LocalDateTime created
-}
-
-class EventParticipant {
-    String id
-    String eventId
-    String userId
+    UUID id
+    UUID eventId
+    UUID userId
     LocalDateTime created
 }
 

@@ -79,4 +79,21 @@ public class Rating {
     public void setRated(User rated) {
         this.rated = rated;
     }
+
+    enum RatingStatus {
+        NOT_YET, NO_SHOW, RATED;
+    }
+
+    public RatingStatus getStatus() {
+        var rating = getRating();
+        if (rating == null) {
+            return RatingStatus.NOT_YET;
+        }
+
+        if (rating == 0) {
+            return RatingStatus.NO_SHOW;
+        }
+
+        return RatingStatus.RATED;
+    }
 }

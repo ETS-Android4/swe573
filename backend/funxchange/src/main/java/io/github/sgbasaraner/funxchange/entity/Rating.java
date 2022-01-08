@@ -80,7 +80,7 @@ public class Rating {
         this.rated = rated;
     }
 
-    enum RatingStatus {
+    public enum RatingStatus {
         NOT_YET, NO_SHOW, RATED
     }
 

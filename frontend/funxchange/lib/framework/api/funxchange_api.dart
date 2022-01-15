@@ -28,7 +28,7 @@ class FunxchangeApiDataSource
         UserDataSource,
         AuthDataSource,
         RatingDataSource {
-  static const String _baseUrl = "http://20.107.24.75:8080";
+  static const String _baseUrl = "http://20.126.141.239:8080";
   String? _authToken = null;
   String? _currentUserId = null;
 
